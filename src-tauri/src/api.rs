@@ -6,8 +6,8 @@ pub fn collect() -> Builder {
   let builder = Builder::<Wry>::new()
     .error_handling(ErrorHandlingMode::Throw)
     .commands(collect_commands![
-      command::is_desktop,
-      command::is_mobile,
+      command::pick_folder,
+      command::search_kanji,
       command::show_window
     ]);
 

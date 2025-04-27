@@ -1,3 +1,1 @@
-# tauri-vue-template
-
-Opinionated Tauri + Vue template.
+# Kanji Frequency

@@ -2,5 +2,12 @@
   "identifier": "default",
   "description": "Default capabilities",
   "windows": ["*"],
-  "permissions": ["core:event:default", "dialog:default", "pinia:default", "process:allow-exit"]
+  "permissions": [
+    "core:event:default",
+    "core:path:default",
+    "clipboard-manager:allow-write-text",
+    "dialog:default",
+    "pinia:default",
+    "process:allow-exit"
+  ]
 }

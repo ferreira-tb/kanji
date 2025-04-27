@@ -1,5 +1,5 @@
 [package]
-name = "tauri-vue-template"
+name = "kanji-frequency"
 version = "0.1.0"
 publish = false
 
@@ -10,7 +10,7 @@ workspace = true
 workspace = true
 
 [lib]
-name = "template_lib"
+name = "kanji_lib"
 crate-type = ["cdylib", "rlib", "staticlib"]
 
 [lints]
@@ -18,13 +18,18 @@ workspace = true
 
 [dependencies]
 anyhow = "1.0"
-futures = "0.3"
+globset = "0.4"
 itertools = "0.14"
 specta-typescript = "=0.0.9"
+tauri-plugin-clipboard-manager = "2.2"
 tauri-plugin-dialog = "2.2"
 tauri-plugin-fs = "2.2"
 tauri-plugin-persisted-scope = "2.2"
 tauri-plugin-pinia = "3.3"
+tauri-plugin-process = "2.2"
+tauri-plugin-single-instance = "2.2"
+tauri-plugin-window-state = "2.2"
+walkdir = "2.5"
 
 [dependencies.serde]
 version = "1.0"
@@ -38,6 +43,10 @@ features = ["serde", "serde_json"]
 version = "2.5"
 features = ["protocol-asset", "rustls-tls"]
 
+[dependencies.tauri-plugin-prevent-default]
+version = "1.3"
+features = ["unstable-windows"]
+
 [dependencies.tauri-specta]
 version = "=2.0.0-rc.21"
 features = ["derive", "typescript"]
@@ -45,15 +54,6 @@ features = ["derive", "typescript"]
 [dependencies.tokio]
 version = "1.44"
 features = ["full"]
-
-[target."cfg(windows)".dependencies]
-tauri-plugin-process = "2.2"
-tauri-plugin-single-instance = "2.2"
-tauri-plugin-window-state = "2.2"
-
-[target."cfg(windows)".dependencies.tauri-plugin-prevent-default]
-version = "1.3"
-features = ["unstable-windows"]
 
 [build-dependencies.tauri-build]
 version = "2.2"

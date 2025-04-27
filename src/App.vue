@@ -3,10 +3,10 @@ import { onMounted } from 'vue';
 import { commands } from '@/api/bindings';
 import { useColorMode } from '@vueuse/core';
 import { exit } from '@tauri-apps/plugin-process';
-import { useCounterStore } from '@/stores/counter';
+import { useSettingsStore } from '@/stores/settings';
 import { handleError, onKeyDown } from '@tb-dev/vue';
 
-const counterStore = useCounterStore();
+const settings = useSettingsStore();
 
 useColorMode({
   initialValue: 'dark',
@@ -18,14 +18,14 @@ onKeyDown('Escape', () => exit(0).err());
 
 onMounted(() => {
   // prettier-ignore
-  counterStore.$tauri.start()
+  settings.$tauri.start()
     .then(() => commands.showWindow())
     .err()
 });
 </script>
 
 <template>
-  <main class="h-screen w-screen select-none">
+  <main class="fixed inset-0 select-none">
     <div class="size-full overflow-hidden p-0">
       <RouterView #default="{ Component }">
         <template v-if="Component">

@@ -4,11 +4,11 @@
 /** user-defined commands **/
 
 export const commands = {
-  async isDesktop(): Promise<boolean> {
-    return await TAURI_INVOKE('is_desktop');
+  async pickFolder(): Promise<string | null> {
+    return await TAURI_INVOKE('pick_folder');
   },
-  async isMobile(): Promise<boolean> {
-    return await TAURI_INVOKE('is_mobile');
+  async searchKanji(path: string): Promise<Frequency[]> {
+    return await TAURI_INVOKE('search_kanji', { path });
   },
   async showWindow(): Promise<null> {
     return await TAURI_INVOKE('show_window');
@@ -22,6 +22,8 @@ export const commands = {
 /** user-defined types **/
 
 export type Error = string;
+export type Frequency = { kanji: Kanji; amount: number };
+export type Kanji = { character: string };
 
 /** tauri-specta globals **/
 
