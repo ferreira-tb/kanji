@@ -1,6 +1,6 @@
 [package]
 name = "kanji-frequency"
-version = "0.1.0"
+version = "0.2.0"
 publish = false
 
 [package.edition]
@@ -19,7 +19,6 @@ workspace = true
 [dependencies]
 anyhow = "1.0"
 globset = "0.4"
-itertools = "0.14"
 specta-typescript = "=0.0.9"
 tauri-plugin-clipboard-manager = "2.2"
 tauri-plugin-dialog = "2.2"

@@ -1,13 +1,14 @@
-import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { commands } from '@/api/bindings';
 import { handleError } from '@tb-dev/vue';
 import type { Option } from '@tb-dev/utils';
+import { type DeepReadonly, ref } from 'vue';
+import { commands, type Frequency } from '@/api/bindings';
 
 export const useSettingsStore = defineStore('settings', () => {
   const folder = ref<Option<string>>(null);
   const search = ref<Option<string>>(null);
   const sorting = ref<Sorting>({ ascending: false });
+  const selected = ref<Option<DeepReadonly<Frequency>>>(null);
 
   async function pickFolder() {
     try {
@@ -21,6 +22,7 @@ export const useSettingsStore = defineStore('settings', () => {
     folder,
     search,
     sorting,
+    selected,
     pickFolder,
   };
 });

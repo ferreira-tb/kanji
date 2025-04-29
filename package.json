@@ -1,8 +1,8 @@
 {
   "name": "kanji-frequency",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
-  "packageManager": "pnpm@10.9.0",
+  "packageManager": "pnpm@10.10.0",
   "private": true,
   "scripts": {
     "build": "cargo tauri build",
@@ -22,8 +22,9 @@
     "@tauri-apps/plugin-process": "^2.2.1",
     "@tauri-store/pinia": "^3.3.0",
     "@tb-dev/utils": "^6.0.3",
-    "@tb-dev/vue": "^0.3.39",
+    "@tb-dev/vue": "^0.3.41",
     "@vueuse/core": "^13.1.0",
+    "change-case": "^5.4.4",
     "lucide-vue-next": "^0.503.0",
     "pinia": "^3.0.2",
     "vue": "^3.5.13",
@@ -32,7 +33,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.4",
     "@tb-dev/eslint-config": "^7.1.0",
-    "@types/node": "^22.15.2",
+    "@types/node": "^22.15.3",
     "@vitejs/plugin-vue": "^5.2.3",
     "eslint": "^9.25.1",
     "prettier": "^3.5.3",

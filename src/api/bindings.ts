@@ -22,8 +22,16 @@ export const commands = {
 /** user-defined types **/
 
 export type Error = string;
-export type Frequency = { kanji: Kanji; amount: number };
+export type Frequency = {
+  kanji: Kanji;
+  seen: number;
+  ratio: number;
+  level: Level;
+  sources: Source[];
+};
 export type Kanji = { character: string };
+export type Level = 'common' | 'uncommon' | 'rare' | 'very-rare' | 'unknown';
+export type Source = { name: string; seen: number };
 
 /** tauri-specta globals **/
 

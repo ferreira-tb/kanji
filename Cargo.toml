@@ -28,6 +28,7 @@ unsafe_op_in_unsafe_fn = "deny"
 variant_size_differences = "warn"
 
 [workspace.lints.clippy]
+cast_precision_loss = "allow"
 clone_on_ref_ptr = "deny"
 dbg_macro = "deny"
 enum_glob_use = "allow"

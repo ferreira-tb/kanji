@@ -1,7 +1,5 @@
-use crate::error::WrapOk;
-use anyhow::{Error, Result};
+use anyhow::Result;
 use globset::{Glob, GlobBuilder, GlobSet, GlobSetBuilder};
-use itertools::Itertools;
 use serde::Serialize;
 use specta::Type;
 use std::collections::HashMap;
@@ -19,60 +17,127 @@ static GLOBSET: LazyLock<GlobSet> = LazyLock::new(|| {
     .unwrap()
 });
 
-#[derive(Clone, Copy, Serialize, Type)]
+#[derive(Serialize, Type)]
 pub struct Frequency {
   kanji: Kanji,
-  amount: u32,
+  seen: u32,
+  ratio: f64,
+  level: Level,
+  sources: Vec<Source>,
 }
 
 impl Frequency {
-  fn new(kanji: Kanji, amount: u32) -> Self {
-    Self { kanji, amount }
+  fn new(kanji: Kanji) -> Frequency {
+    Frequency {
+      kanji,
+      seen: 0,
+      ratio: 0.0,
+      level: Level::Unknown,
+      sources: Vec::default(),
+    }
   }
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Serialize, Type)]
-pub struct Kanji {
+struct Kanji {
   character: char,
 }
 
 impl Kanji {
   #[allow(clippy::unnecessary_lazy_evaluations)]
-  pub fn from_char(c: char) -> Option<Self> {
+  fn from_char(c: char) -> Option<Self> {
     is_kanji(c).then(|| Self { character: c })
   }
 }
 
+#[derive(Serialize, Type)]
+struct Source {
+  name: String,
+  seen: u32,
+}
+
+#[derive(Serialize, Type)]
+#[serde(rename_all = "kebab-case")]
+enum Level {
+  Common,
+  Uncommon,
+  Rare,
+  VeryRare,
+  Unknown,
+}
+
+impl Level {
+  const fn from_ratio(mut ratio: f64) -> Self {
+    ratio *= 100.0;
+    if ratio >= 0.1 {
+      Self::Common
+    } else if ratio >= 0.01 {
+      Self::Uncommon
+    } else if ratio >= 0.001 {
+      Self::Rare
+    } else if ratio >= 0.0001 {
+      Self::VeryRare
+    } else {
+      Self::Unknown
+    }
+  }
+}
+
 pub async fn search(path: PathBuf) -> Result<Vec<Frequency>> {
-  let handle = spawn_blocking(move || {
-    let mut frequency: HashMap<Kanji, u32> = HashMap::new();
-    for entry in WalkDir::new(path).into_iter().flatten() {
-      let entry = entry.into_path();
-      if entry.is_file() && GLOBSET.is_match(&entry) {
-        for kanji in fs::read_to_string(&entry)?
-          .chars()
-          .filter_map(Kanji::from_char)
+  spawn_blocking(move || blocking_search(path)).await?
+}
+
+fn blocking_search(path: PathBuf) -> Result<Vec<Frequency>> {
+  let mut map: HashMap<Kanji, Frequency> = HashMap::new();
+  for entry in WalkDir::new(path).into_iter().flatten() {
+    let path = entry.into_path();
+    if path.is_file() && GLOBSET.is_match(&path) {
+      for kanji in fs::read_to_string(&path)?
+        .chars()
+        .filter_map(Kanji::from_char)
+      {
+        let frequency = map
+          .entry(kanji)
+          .or_insert_with(|| Frequency::new(kanji));
+
+        frequency.seen = frequency.seen.saturating_add(1);
+
+        if let Some(parent) = path.parent()
+          && let Some(name) = parent.file_name()
+          && let Some(name) = name.to_str()
         {
-          frequency
-            .entry(kanji)
-            .and_modify(|e| *e = e.saturating_add(1))
-            .or_insert(1);
+          if let Some(source) = frequency
+            .sources
+            .iter_mut()
+            .find(|s| s.name == name)
+          {
+            source.seen = source.seen.saturating_add(1);
+          } else {
+            frequency
+              .sources
+              .push(Source { name: name.to_owned(), seen: 1 });
+          }
         }
       }
     }
+  }
 
-    Ok::<_, Error>(frequency)
-  });
+  let total = map
+    .values()
+    .map(|frequency| u64::from(frequency.seen))
+    .fold(0u64, u64::saturating_add) as f64;
 
-  handle
-    .await??
-    .into_iter()
-    .map(|(kanji, amount)| Frequency::new(kanji, amount))
-    .collect_vec()
-    .wrap_ok()
+  if total.is_normal() {
+    for frequency in map.values_mut() {
+      frequency.ratio = f64::from(frequency.seen) / total;
+      frequency.level = Level::from_ratio(frequency.ratio);
+    }
+  }
+
+  Ok(map.into_values().collect())
 }
 
-pub const fn is_kanji(c: char) -> bool {
+const fn is_kanji(c: char) -> bool {
   // http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml
   matches!(c, '\u{4e00}'..='\u{9faf}' | '\u{3400}' ..= '\u{4dbf}')
 }

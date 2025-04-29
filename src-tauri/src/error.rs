@@ -1,4 +1,3 @@
-use anyhow::Result;
 use serde::Serialize;
 use specta::Type;
 use std::fmt::Display;
@@ -15,15 +14,5 @@ pub struct Error(String);
 impl<T: Display> From<T> for Error {
   fn from(value: T) -> Self {
     Self(value.to_string())
-  }
-}
-
-pub trait WrapOk<T> {
-  fn wrap_ok(self) -> Result<T>;
-}
-
-impl<T> WrapOk<T> for T {
-  fn wrap_ok(self) -> Result<T> {
-    Ok(self)
   }
 }
