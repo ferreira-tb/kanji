@@ -51,13 +51,13 @@ onMounted(() => {
 
         <div class="grid grid-cols-2 gap-4 px-4">
           <div class="flex h-16 flex-col items-center justify-center">
-            <span class="text-muted-foreground text-sm">Total</span>
-            <span class="text-lg font-semibold">{{ selected.seen }}</span>
+            <span class="text-muted-foreground text-sm">Rank</span>
+            <span class="text-lg font-semibold">{{ ranking ? ranking : '?' }}</span>
           </div>
 
           <div class="flex h-16 flex-col items-center justify-center">
-            <span class="text-muted-foreground text-sm">Rank</span>
-            <span class="text-lg font-semibold">{{ ranking ? ranking : '?' }}</span>
+            <span class="text-muted-foreground text-sm">Total</span>
+            <span class="text-lg font-semibold">{{ selected.seen }}</span>
           </div>
         </div>
 
