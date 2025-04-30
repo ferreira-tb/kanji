@@ -5,6 +5,7 @@ mod command;
 mod error;
 mod kanji;
 mod plugin;
+mod tray;
 mod window;
 
 use error::BoxResult;

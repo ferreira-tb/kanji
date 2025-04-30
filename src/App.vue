@@ -25,6 +25,7 @@ onKeyDown('Escape', () => exit(0).err());
 onMounted(() => {
   // prettier-ignore
   settings.$tauri.start()
+    .then(() => commands.createTrayIcon())
     .then(() => commands.showWindow())
     .err()
 });

@@ -1,23 +1,38 @@
 use crate::error::CResult;
 use crate::kanji::{self, Frequency};
+use crate::tray;
 use std::path::PathBuf;
 use tauri::{AppHandle, WebviewWindow};
 use tauri_plugin_dialog::DialogExt;
-use tauri_plugin_fs::FilePath;
+use tauri_plugin_fs::{FilePath, FsExt};
 use tokio::sync::oneshot;
+
+#[tauri::command]
+#[specta::specta]
+pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
+  let handle = app.clone();
+  handle
+    .run_on_main_thread(move || tray::create(&app).unwrap())
+    .map_err(Into::into)
+}
 
 #[tauri::command]
 #[specta::specta]
 pub async fn pick_folder(app: AppHandle) -> CResult<Option<PathBuf>> {
   let (tx, rx) = oneshot::channel();
   app.dialog().file().pick_folder(move |response| {
-    let _ = tx.send(response);
+    let _ = tx.send(response.map(FilePath::into_path));
   });
 
-  rx.await?
-    .map(FilePath::into_path)
-    .transpose()
-    .map_err(Into::into)
+  let path = rx.await?.transpose()?;
+  if let Some(path) = path.as_deref() {
+    let scope = app.fs_scope();
+    if !scope.is_allowed(path) {
+      let _ = scope.allow_directory(path, true);
+    }
+  }
+
+  Ok(path)
 }
 
 #[tauri::command]

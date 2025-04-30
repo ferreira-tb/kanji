@@ -4,6 +4,9 @@
 /** user-defined commands **/
 
 export const commands = {
+  async createTrayIcon(): Promise<null> {
+    return await TAURI_INVOKE('create_tray_icon');
+  },
   async pickFolder(): Promise<string | null> {
     return await TAURI_INVOKE('pick_folder');
   },

@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { storeToRefs } from 'pinia';
 import { watchImmediate } from '@vueuse/core';
+import { tryInjectOrElse } from '@tb-dev/vue';
+import type { Fn, Option } from '@tb-dev/utils';
 import { useSettingsStore } from '@/stores/settings';
 import { commands, type Frequency } from '@/api/bindings';
-import { handleError, tryInjectOrElse } from '@tb-dev/vue';
+import { watch as watchFiles } from '@tauri-apps/plugin-fs';
 import {
   computed,
   type DeepReadonly,
@@ -29,7 +31,6 @@ export function useFrequency() {
       const { folder, sorting, search, selected } = storeToRefs(settings);
 
       const raw = shallowRef<Frequency[]>([]);
-
       const entries = computed<Frequency[]>(() => {
         let result = raw.value;
         if (folder.value) {
@@ -53,7 +54,20 @@ export function useFrequency() {
         return result;
       });
 
-      watchImmediate(folder, load);
+      let unwatchFs: Option<Fn> = null;
+
+      watchImmediate(folder, async (_folder) => {
+        await load();
+        if (_folder) {
+          unwatchFs = await watchFiles(_folder, onFileEvent, {
+            delayMs: 5000,
+            recursive: true,
+          });
+        } else {
+          unwatchFs?.();
+          unwatchFs = null;
+        }
+      });
 
       watchImmediate(entries, (_entries) => {
         const char = selected.value?.kanji.character;
@@ -65,12 +79,15 @@ export function useFrequency() {
       });
 
       async function load() {
-        try {
-          raw.value = folder.value ? await commands.searchKanji(folder.value) : [];
-        } catch (err) {
-          handleError(err);
+        if (folder.value) {
+          raw.value = await commands.searchKanji(folder.value);
+        } else {
           raw.value = [];
         }
+      }
+
+      function onFileEvent() {
+        load().err();
       }
 
       return { entries, raw, load };

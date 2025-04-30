@@ -1,5 +1,15 @@
 use anyhow::Result;
-use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindow, WebviewWindowBuilder, Window, Wry};
+
+use tauri::{
+  AppHandle,
+  Manager,
+  WebviewUrl,
+  WebviewWindow,
+  WebviewWindowBuilder,
+  Window,
+  WindowEvent,
+  Wry,
+};
 
 pub trait WindowExt: Manager<Wry> {
   fn main_window(&self) -> WebviewWindow<Wry> {
@@ -13,7 +23,7 @@ impl WindowExt for Window<Wry> {}
 
 pub fn open(app: &AppHandle) -> Result<()> {
   let url = WebviewUrl::App("index.html".into());
-  WebviewWindowBuilder::new(app, "main", url)
+  let window = WebviewWindowBuilder::new(app, "main", url)
     .title("Kanji Frequency")
     .inner_size(800.0, 600.0)
     .min_inner_size(800.0, 600.0)
@@ -24,5 +34,19 @@ pub fn open(app: &AppHandle) -> Result<()> {
     .prevent_overflow()
     .build()?;
 
+  window.on_window_event(on_window_event(app));
+
   Ok(())
+}
+
+fn on_window_event(app: &AppHandle) -> impl Fn(&WindowEvent) + use<> {
+  let app = app.clone();
+  move |event| {
+    if !cfg!(debug_assertions)
+      && let WindowEvent::CloseRequested { api, .. } = event
+    {
+      api.prevent_close();
+      app.main_window().hide().unwrap();
+    }
+  }
 }
