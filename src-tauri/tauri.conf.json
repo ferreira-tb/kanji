@@ -2,8 +2,6 @@
   "productName": "kanji-frequency",
   "version": "0.2.3",
   "identifier": "tsukilabs.kanji-frequency",
-  "publisher": "Tsukilabs",
-  "shortDescription": "Kanji frequency in text files",
   "build": {
     "beforeDevCommand": "pnpm run vite:dev",
     "beforeBuildCommand": "pnpm run vite:build",
@@ -26,6 +24,8 @@
     }
   },
   "bundle": {
+    "publisher": "Tsukilabs",
+    "shortDescription": "Kanji frequency in text files",
     "active": true,
     "targets": ["nsis"],
     "icon": [
