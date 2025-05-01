@@ -1,4 +1,4 @@
-type Route = 'home';
+type Route = 'home' | 'settings';
 
 interface Sorting {
   ascending: boolean;

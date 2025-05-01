@@ -1,18 +1,33 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import { capitalCase } from 'change-case';
+import { useRoute } from 'vue-router';
 import { commands } from '@/api/bindings';
+import { capitalCase } from 'change-case';
 import { useColorMode } from '@vueuse/core';
+import { ChevronUp } from 'lucide-vue-next';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
-import { useSettingsStore } from '@/stores/settings';
-import { Badge, handleError, onKeyDown, Sidebar } from '@tb-dev/vue';
+import { useSettingsStore } from './stores/settings';
+import { useFrequencyStore } from '@/stores/frequency';
+import {
+  Badge,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  handleError,
+  onKeyDown,
+  Sidebar,
+} from '@tb-dev/vue';
 
-const settings = useSettingsStore();
-const { selected } = storeToRefs(settings);
-
+const store = useFrequencyStore();
+const { selected } = storeToRefs(store);
 const ranking = useRanking(selected);
+
+const route = useRoute();
+const settings = useSettingsStore();
 
 useColorMode({
   initialValue: 'dark',
@@ -24,7 +39,9 @@ onKeyDown('Escape', () => exit(0).err());
 
 onMounted(() => {
   // prettier-ignore
-  settings.$tauri.start()
+  store.$tauri.start()
+    .chain(settings.$tauri.start())
+    .joinFlushed()
     .then(() => commands.createTrayIcon())
     .then(() => commands.showWindow())
     .err()
@@ -37,14 +54,16 @@ onMounted(() => {
       <div class="size-full overflow-hidden p-0">
         <RouterView #default="{ Component }">
           <template v-if="Component">
-            <component :is="Component" />
+            <KeepAlive>
+              <component :is="Component" />
+            </KeepAlive>
           </template>
         </RouterView>
       </div>
     </main>
 
     <template #content>
-      <div v-if="selected" class="flex flex-col gap-4 p-4 select-none">
+      <div v-if="selected" class="flex h-full flex-col gap-4 p-4 select-none">
         <div class="flex flex-col items-center justify-center gap-4 pt-4">
           <span class="text-9xl">{{ selected.kanji.character }}</span>
           <Badge>{{ capitalCase(selected.level) }}</Badge>
@@ -69,6 +88,26 @@ onMounted(() => {
           </template>
         </div>
       </div>
+    </template>
+
+    <template #footer>
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <Button v-if="typeof route.name === 'string'" variant="outline">
+            <span>{{ capitalCase(route.name) }}</span>
+            <ChevronUp class="ml-auto" />
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent side="top" class="w-[var(--reka-dropdown-menu-trigger-width)]">
+          <DropdownMenuItem>
+            <RouterLink to="/" class="w-full">Home</RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <RouterLink to="/settings" class="w-full">Settings</RouterLink>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </template>
   </Sidebar>
 </template>

@@ -1,4 +1,5 @@
 use anyhow::Result;
+use tauri_plugin_pinia::ManagerExt as _;
 
 use tauri::{
   AppHandle,
@@ -42,8 +43,10 @@ pub fn open(app: &AppHandle) -> Result<()> {
 fn on_window_event(app: &AppHandle) -> impl Fn(&WindowEvent) + use<> {
   let app = app.clone();
   move |event| {
-    if !cfg!(debug_assertions)
-      && let WindowEvent::CloseRequested { api, .. } = event
+    if let WindowEvent::CloseRequested { api, .. } = event
+      && app
+        .pinia()
+        .try_get_or_default("settings", "hideOnClose")
     {
       api.prevent_close();
       app.main_window().hide().unwrap();

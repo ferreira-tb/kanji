@@ -8,6 +8,11 @@ export const router = createRouter({
       name: 'home' satisfies Route,
       path: '/',
     },
+    {
+      component: () => import('@/views/settings/index.vue'),
+      name: 'settings' satisfies Route,
+      path: '/settings',
+    },
   ],
 });
 

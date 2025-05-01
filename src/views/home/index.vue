@@ -3,19 +3,19 @@ import { storeToRefs } from 'pinia';
 import { toPixel } from '@tb-dev/utils';
 import Search from '@/components/Search.vue';
 import type { Frequency } from '@/api/bindings';
-import { useSettingsStore } from '@/stores/settings';
+import { useFrequencyStore } from '@/stores/frequency';
 import { useFrequency } from '@/composables/frequency';
 import { type DeepReadonly, useTemplateRef } from 'vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { Button, Card, handleError, useHeightDiff } from '@tb-dev/vue';
 
-const settings = useSettingsStore();
-const { folder, search, selected } = storeToRefs(settings);
+const store = useFrequencyStore();
+const { folder, search, selected } = storeToRefs(store);
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
-const { entries } = useFrequency();
+const { entries, loading } = useFrequency();
 
 async function onCardClick(entry: DeepReadonly<Frequency>) {
   try {
@@ -38,7 +38,9 @@ async function onCardClick(entry: DeepReadonly<Frequency>) {
           {{ folder }}
         </span>
         <div class="flex items-center justify-center">
-          <Button size="sm" @click="() => settings.pickFolder()">Select Folder</Button>
+          <Button size="sm" :disabled="loading" @click="() => store.pickFolder()">
+            Select Folder
+          </Button>
         </div>
       </div>
     </div>
