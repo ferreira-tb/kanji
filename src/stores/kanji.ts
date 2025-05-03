@@ -2,13 +2,13 @@ import { defineStore } from 'pinia';
 import { handleError } from '@tb-dev/vue';
 import type { Option } from '@tb-dev/utils';
 import { type DeepReadonly, ref } from 'vue';
-import { commands, type Frequency } from '@/api/bindings';
+import { commands, type Kanji } from '@/api/bindings';
 
-export const useFrequencyStore = defineStore('frequency', () => {
+export const useKanjiStore = defineStore('kanji', () => {
   const folder = ref<Option<string>>(null);
   const search = ref<Option<string>>(null);
   const sorting = ref<Sorting>({ ascending: false });
-  const selected = ref<Option<DeepReadonly<Frequency>>>(null);
+  const selected = ref<Option<DeepReadonly<Kanji>>>(null);
 
   async function pickFolder() {
     try {

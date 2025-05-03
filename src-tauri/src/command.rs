@@ -1,5 +1,5 @@
 use crate::error::CResult;
-use crate::kanji::{self, Frequency};
+use crate::kanji::{self, Kanji};
 use crate::tray;
 use std::path::PathBuf;
 use tauri::{AppHandle, WebviewWindow};
@@ -37,7 +37,7 @@ pub async fn pick_folder(app: AppHandle) -> CResult<Option<PathBuf>> {
 
 #[tauri::command]
 #[specta::specta]
-pub async fn search_kanji(path: PathBuf) -> CResult<Vec<Frequency>> {
+pub async fn search_kanji(path: PathBuf) -> CResult<Vec<Kanji>> {
   kanji::search(path).await.map_err(Into::into)
 }
 

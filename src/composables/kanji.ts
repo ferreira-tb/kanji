@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { storeToRefs } from 'pinia';
 import { tryInjectOrElse } from '@tb-dev/vue';
+import { useKanjiStore } from '@/stores/kanji';
 import type { Fn, Option } from '@tb-dev/utils';
 import { until, watchImmediate } from '@vueuse/core';
 import { useSettingsStore } from '@/stores/settings';
-import { useFrequencyStore } from '@/stores/frequency';
-import { commands, type Frequency } from '@/api/bindings';
+import { commands, type Kanji } from '@/api/bindings';
 import { watch as watchFiles } from '@tauri-apps/plugin-fs';
 import {
   computed,
@@ -20,20 +20,20 @@ import {
 } from 'vue';
 
 interface UseFrequencyReturn {
-  entries: Readonly<ShallowRef<DeepReadonly<Frequency[]>>>;
+  kanjis: Readonly<ShallowRef<DeepReadonly<Kanji[]>>>;
   load: () => Promise<void>;
   loading: Readonly<Ref<boolean>>;
-  raw: Readonly<ShallowRef<DeepReadonly<Frequency[]>>>;
+  raw: Readonly<ShallowRef<DeepReadonly<Kanji[]>>>;
 }
 
 const SYMBOL = Symbol() as InjectionKey<UseFrequencyReturn>;
 
-export function useFrequency() {
+export function useKanjis() {
   return tryInjectOrElse(SYMBOL, () => {
     const scope = effectScope(/* detached */ true);
     const value = scope.run(start)!;
     return {
-      entries: value.entries,
+      kanjis: value.kanjis,
       raw: value.raw,
       load: value.load,
       loading: value.loading,
@@ -42,20 +42,20 @@ export function useFrequency() {
 }
 
 function start() {
-  const store = useFrequencyStore();
+  const store = useKanjiStore();
   const { folder, sorting, search, selected } = storeToRefs(store);
 
   const settings = useSettingsStore();
   const { watchFiles: shouldWatchFiles } = storeToRefs(settings);
 
   const loading = ref(false);
-  const raw = shallowRef<Frequency[]>([]);
-  const entries = computed<Frequency[]>(() => {
+  const raw = shallowRef<Kanji[]>([]);
+  const kanjis = computed<Kanji[]>(() => {
     let result = raw.value;
     if (folder.value) {
       if (typeof search.value === 'string' && search.value.length > 0) {
-        result = result.filter(({ kanji }) => {
-          return search.value?.includes(kanji.character);
+        result = result.filter(({ character }) => {
+          return search.value?.includes(character);
         });
       }
 
@@ -89,13 +89,13 @@ function start() {
     }
   });
 
-  watchImmediate(entries, () => {
-    const char = selected.value?.kanji.character;
-    if (char && entries.value.every(({ kanji }) => kanji.character !== char)) {
+  watchImmediate(kanjis, () => {
+    const char = selected.value?.character;
+    if (char && kanjis.value.every((kanji) => kanji.character !== char)) {
       selected.value = null;
     }
 
-    selected.value ??= entries.value.at(0);
+    selected.value ??= kanjis.value.at(0);
   });
 
   async function load() {
@@ -114,7 +114,7 @@ function start() {
   }
 
   return {
-    entries,
+    kanjis,
     raw,
     load,
     loading: readonly(loading),

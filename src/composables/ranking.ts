@@ -1,14 +1,16 @@
-import { useFrequency } from './frequency';
+import { useKanjis } from './kanji';
 import type { Option } from '@tb-dev/utils';
-import type { Frequency } from '@/api/bindings';
+import type { Kanji } from '@/api/bindings';
 import { computed, type DeepReadonly, type Ref } from 'vue';
 
-export function useRanking(frequency: Ref<Option<DeepReadonly<Frequency>>>) {
-  const { raw } = useFrequency();
+export function useRanking(kanji: Ref<Option<DeepReadonly<Kanji>>>) {
+  const { raw } = useKanjis();
   return computed(() => {
-    const index = raw.value.findIndex((it) => {
-      return it.kanji.character === frequency.value?.kanji.character;
-    });
+    const index = raw.value
+      .toSorted(({ seen: a }, { seen: b }) => b - a)
+      .findIndex(({ character }) => {
+        return kanji.value?.character === character;
+      });
 
     return index !== -1 ? index + 1 : null;
   });

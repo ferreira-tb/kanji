@@ -6,10 +6,10 @@ import { commands } from '@/api/bindings';
 import { capitalCase } from 'change-case';
 import { useColorMode } from '@vueuse/core';
 import { ChevronUp } from 'lucide-vue-next';
+import { useKanjiStore } from '@/stores/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
 import { useSettingsStore } from './stores/settings';
-import { useFrequencyStore } from '@/stores/frequency';
 import {
   Badge,
   Button,
@@ -22,7 +22,7 @@ import {
   Sidebar,
 } from '@tb-dev/vue';
 
-const store = useFrequencyStore();
+const store = useKanjiStore();
 const { selected } = storeToRefs(store);
 const ranking = useRanking(selected);
 
@@ -65,7 +65,7 @@ onMounted(() => {
     <template #content>
       <div v-if="selected" class="flex h-full flex-col gap-4 p-4 select-none">
         <div class="flex flex-col items-center justify-center gap-4 pt-4">
-          <span class="text-9xl">{{ selected.kanji.character }}</span>
+          <span class="text-9xl">{{ selected.character }}</span>
           <Badge>{{ capitalCase(selected.level) }}</Badge>
         </div>
 

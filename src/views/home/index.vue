@@ -1,26 +1,26 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { toPixel } from '@tb-dev/utils';
+import type { Kanji } from '@/api/bindings';
 import Search from '@/components/Search.vue';
-import type { Frequency } from '@/api/bindings';
-import { useFrequencyStore } from '@/stores/frequency';
-import { useFrequency } from '@/composables/frequency';
+import { useKanjiStore } from '@/stores/kanji';
+import { useKanjis } from '@/composables/kanji';
 import { type DeepReadonly, useTemplateRef } from 'vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { Button, Card, handleError, useHeightDiff } from '@tb-dev/vue';
 
-const store = useFrequencyStore();
+const store = useKanjiStore();
 const { folder, search, selected } = storeToRefs(store);
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
-const { entries, loading } = useFrequency();
+const { kanjis, loading } = useKanjis();
 
-async function onCardClick(entry: DeepReadonly<Frequency>) {
+async function onCardClick(kanji: DeepReadonly<Kanji>) {
   try {
-    selected.value = entry;
-    await writeText(entry.kanji.character);
+    selected.value = kanji;
+    await writeText(kanji.character);
   } catch (err) {
     handleError(err);
   }
@@ -49,13 +49,13 @@ async function onCardClick(entry: DeepReadonly<Frequency>) {
       :style="{ height: toPixel(contentHeight) }"
     >
       <div
-        v-if="entries.length > 0"
+        v-if="kanjis.length > 0"
         class="grid gap-2 px-4 sm:grid-cols-8 lg:grid-cols-10 2xl:grid-cols-12"
       >
-        <Card v-for="entry of entries" :key="entry.kanji.character" class="p-2">
-          <div class="flex cursor-pointer flex-col items-center" @click="() => onCardClick(entry)">
-            <span class="text-3xl font-bold">{{ entry.kanji.character }}</span>
-            <span class="text-muted-foreground text-xs">{{ entry.seen }}</span>
+        <Card v-for="kanji of kanjis" :key="kanji.character" class="p-2">
+          <div class="flex cursor-pointer flex-col items-center" @click="() => onCardClick(kanji)">
+            <span class="text-3xl font-bold">{{ kanji.character }}</span>
+            <span class="text-muted-foreground text-xs">{{ kanji.seen }}</span>
           </div>
         </Card>
       </div>

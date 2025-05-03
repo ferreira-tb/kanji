@@ -10,7 +10,7 @@ export const commands = {
   async pickFolder(): Promise<string | null> {
     return await TAURI_INVOKE('pick_folder');
   },
-  async searchKanji(path: string): Promise<Frequency[]> {
+  async searchKanji(path: string): Promise<Kanji[]> {
     return await TAURI_INVOKE('search_kanji', { path });
   },
   async showWindow(): Promise<null> {
@@ -25,14 +25,14 @@ export const commands = {
 /** user-defined types **/
 
 export type Error = string;
-export type Frequency = {
-  kanji: Kanji;
+export type Kanji = {
+  character: KanjiChar;
   seen: number;
   ratio: number;
   level: Level;
   sources: Source[];
 };
-export type Kanji = { character: string };
+export type KanjiChar = string;
 export type Level = 'common' | 'uncommon' | 'rare' | 'very-rare' | 'unknown';
 export type Source = { name: string; seen: number };
 
