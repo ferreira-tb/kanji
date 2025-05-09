@@ -1,6 +1,6 @@
 {
   "productName": "kanji-frequency",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "identifier": "tsukilabs.kanji-frequency",
   "build": {
     "beforeDevCommand": "pnpm run vite:dev",

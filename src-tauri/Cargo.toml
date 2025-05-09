@@ -1,6 +1,6 @@
 [package]
 name = "kanji-frequency"
-version = "0.2.4"
+version = "0.2.5"
 publish = false
 
 [package.edition]
@@ -8,10 +8,6 @@ workspace = true
 
 [package.rust-version]
 workspace = true
-
-[lib]
-name = "kanji_lib"
-crate-type = ["cdylib", "rlib", "staticlib"]
 
 [lints]
 workspace = true
@@ -23,7 +19,7 @@ specta-typescript = "=0.0.9"
 tauri-plugin-clipboard-manager = "2.2"
 tauri-plugin-dialog = "2.2"
 tauri-plugin-persisted-scope = "2.2"
-tauri-plugin-pinia = "3.3"
+tauri-plugin-pinia = "3.4"
 tauri-plugin-process = "2.2"
 tauri-plugin-single-instance = "2.2"
 tauri-plugin-window-state = "2.2"
@@ -54,7 +50,7 @@ version = "=2.0.0-rc.21"
 features = ["derive", "typescript"]
 
 [dependencies.tokio]
-version = "1.44"
+version = "1.45"
 features = ["full"]
 
 [build-dependencies.tauri-build]
