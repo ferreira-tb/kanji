@@ -5,9 +5,10 @@ import type { Kanji } from '@/api/bindings';
 import Search from '@/components/Search.vue';
 import { useKanjiStore } from '@/stores/kanji';
 import { useKanjis } from '@/composables/kanji';
+import { Button, Card } from '@tb-dev/vue-components';
 import { type DeepReadonly, useTemplateRef } from 'vue';
+import { handleError, useHeightDiff } from '@tb-dev/vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { Button, Card, handleError, useHeightDiff } from '@tb-dev/vue';
 
 const store = useKanjiStore();
 const { folder, search, selected } = storeToRefs(store);

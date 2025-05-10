@@ -10,6 +10,7 @@ import { useKanjiStore } from '@/stores/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
 import { useSettingsStore } from './stores/settings';
+import { handleError, onKeyDown } from '@tb-dev/vue';
 import {
   Badge,
   Button,
@@ -17,10 +18,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  handleError,
-  onKeyDown,
   Sidebar,
-} from '@tb-dev/vue';
+} from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
 const { selected } = storeToRefs(store);

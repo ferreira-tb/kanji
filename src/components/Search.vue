@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { InputText } from '@tb-dev/vue';
 import type { Option } from '@tb-dev/utils';
+import { InputText } from '@tb-dev/vue-components';
 import { Search as SearchIcon } from 'lucide-vue-next';
 
 const search = defineModel<Option<string>>({ required: true });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Checkbox } from '@tb-dev/vue';
+import { Checkbox } from '@tb-dev/vue-components';
 import { useSettingsStore } from '@/stores/settings';
 
 const settings = useSettingsStore();
