@@ -7,7 +7,6 @@ use tauri::{
   WebviewUrl,
   WebviewWindow,
   WebviewWindowBuilder,
-  Window,
   WindowEvent,
   Wry,
 };
@@ -18,9 +17,7 @@ pub trait WindowExt: Manager<Wry> {
   }
 }
 
-impl WindowExt for AppHandle<Wry> {}
-impl WindowExt for WebviewWindow<Wry> {}
-impl WindowExt for Window<Wry> {}
+impl<T: Manager<Wry>> WindowExt for T {}
 
 pub fn open(app: &AppHandle) -> Result<()> {
   let url = WebviewUrl::App("index.html".into());

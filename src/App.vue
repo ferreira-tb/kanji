@@ -9,7 +9,6 @@ import { ChevronUp } from 'lucide-vue-next';
 import { useKanjiStore } from '@/stores/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
-import { useSettingsStore } from './stores/settings';
 import { handleError, onKeyDown } from '@tb-dev/vue';
 import {
   Badge,
@@ -26,7 +25,6 @@ const { selected } = storeToRefs(store);
 const ranking = useRanking(selected);
 
 const route = useRoute();
-const settings = useSettingsStore();
 
 useColorMode({
   initialValue: 'dark',
@@ -36,14 +34,13 @@ useColorMode({
 
 onKeyDown('Escape', () => exit(0).err());
 
-onMounted(() => {
-  // prettier-ignore
-  store.$tauri.start()
-    .chain(settings.$tauri.start())
-    .joinFlushed()
-    .then(() => commands.createTrayIcon())
-    .then(() => commands.showWindow())
-    .err()
+onMounted(async () => {
+  try {
+    await commands.createTrayIcon();
+    await commands.showWindow();
+  } catch (err) {
+    handleError(err);
+  }
 });
 </script>
 

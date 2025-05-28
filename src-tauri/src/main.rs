@@ -15,7 +15,6 @@ use tauri::{AppHandle, Manager};
 fn main() {
   let specta = api::collect();
   tauri::Builder::default()
-    .plugin(plugin::pinia())
     .plugin(plugin::prevent_default())
     .plugin(plugin::single_instance())
     .plugin(plugin::window_state())
@@ -23,6 +22,7 @@ fn main() {
     .plugin(tauri_plugin_fs::init())
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_persisted_scope::init())
+    .plugin(tauri_plugin_pinia::init())
     .plugin(tauri_plugin_process::init())
     .setup(|app| setup(app.app_handle()))
     .invoke_handler(specta.invoke_handler())

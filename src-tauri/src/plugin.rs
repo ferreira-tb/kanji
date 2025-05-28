@@ -3,12 +3,6 @@ use anyhow::Result;
 use tauri::Wry;
 use tauri::plugin::TauriPlugin;
 
-pub fn pinia() -> TauriPlugin<Wry> {
-  tauri_plugin_pinia::Builder::new()
-    .pretty(true)
-    .build()
-}
-
 pub fn prevent_default() -> TauriPlugin<Wry> {
   use tauri_plugin_prevent_default::{Builder, Flags, PlatformOptions};
   Builder::new()
@@ -35,6 +29,6 @@ pub fn window_state() -> TauriPlugin<Wry> {
   use tauri_plugin_window_state::StateFlags as Flags;
 
   tauri_plugin_window_state::Builder::new()
-    .with_state_flags(Flags::MAXIMIZED | Flags::POSITION | Flags::SIZE)
+    .with_state_flags(Flags::MAXIMIZED | Flags::POSITION)
     .build()
 }
