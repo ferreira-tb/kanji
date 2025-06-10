@@ -49,3 +49,36 @@ button {
   cursor: pointer;
   user-select: none;
 }
+
+label:where(
+    :has(input[type='number']),
+    :has(input[type='text']),
+    :has(input[type='url']),
+    :has(select),
+    :has(textarea)
+  ) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+  font-weight: 400;
+
+  & > span {
+    width: 100%;
+  }
+}
+
+label:where(:has(button[role='switch']), :has(input[type='checkbox']), :has(input[type='radio'])) {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+
+  & > span {
+    width: 100%;
+  }
+}
