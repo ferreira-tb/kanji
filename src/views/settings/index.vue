@@ -10,6 +10,10 @@ const settings = useSettingsStore();
     <h1 class="text-2xl font-semibold">Settings</h1>
     <div class="flex flex-col gap-2">
       <Label>
+        <Checkbox v-model="settings.copyKanji" />
+        <span>Copy kanji to the clipboard</span>
+      </Label>
+      <Label>
         <Checkbox v-model="settings.hideOnClose" />
         <span>Hide on close</span>
       </Label>

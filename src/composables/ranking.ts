@@ -1,6 +1,5 @@
 import { useKanjis } from './kanji';
 import type { Option } from '@tb-dev/utils';
-import type { Kanji } from '@/api/bindings';
 import { computed, type DeepReadonly, type Ref } from 'vue';
 
 export function useRanking(kanji: Ref<Option<DeepReadonly<Kanji>>>) {

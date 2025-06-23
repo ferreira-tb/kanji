@@ -1,7 +1,6 @@
 use anyhow::Result;
 use globset::{Glob, GlobBuilder, GlobSet, GlobSetBuilder};
 use serde::Serialize;
-use specta::Type;
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
@@ -17,7 +16,8 @@ static GLOBSET: LazyLock<GlobSet> = LazyLock::new(|| {
     .unwrap()
 });
 
-#[derive(Serialize, Type)]
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Kanji {
   character: KanjiChar,
   seen: u32,
@@ -38,7 +38,7 @@ impl Kanji {
   }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Serialize, Type)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Serialize)]
 struct KanjiChar(char);
 
 impl KanjiChar {
@@ -47,13 +47,14 @@ impl KanjiChar {
   }
 }
 
-#[derive(Serialize, Type)]
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 struct Source {
   name: String,
   seen: u32,
 }
 
-#[derive(Serialize, Type)]
+#[derive(Serialize)]
 #[serde(rename_all = "kebab-case")]
 enum Level {
   Common,

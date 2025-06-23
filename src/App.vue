@@ -2,7 +2,6 @@
 import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { commands } from '@/api/bindings';
 import { capitalCase } from 'change-case';
 import { useColorMode } from '@vueuse/core';
 import { ChevronUp } from 'lucide-vue-next';
@@ -10,6 +9,7 @@ import { useKanjiStore } from '@/stores/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
 import { handleError, onKeyDown } from '@tb-dev/vue';
+import { createTrayIcon, showWindow } from '@/commands';
 import {
   Badge,
   Button,
@@ -37,8 +37,8 @@ onKeyDown('Escape', () => exit(0).err());
 
 onMounted(async () => {
   try {
-    await commands.createTrayIcon();
-    await commands.showWindow();
+    await createTrayIcon();
+    await showWindow();
   } catch (err) {
     handleError(err);
   }

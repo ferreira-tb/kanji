@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { toPixel } from '@tb-dev/utils';
-import type { Kanji } from '@/api/bindings';
 import Search from '@/components/Search.vue';
 import { useKanjiStore } from '@/stores/kanji';
 import { useKanjis } from '@/composables/kanji';
+import { useSettingsStore } from '@/stores/settings';
 import { Button, Card } from '@tb-dev/vue-components';
 import { type DeepReadonly, useTemplateRef } from 'vue';
 import { handleError, useHeightDiff } from '@tb-dev/vue';
@@ -12,6 +12,8 @@ import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 
 const store = useKanjiStore();
 const { folder, search, selected } = storeToRefs(store);
+
+const settings = useSettingsStore();
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
@@ -21,7 +23,9 @@ const { kanjis, loading } = useKanjis();
 async function onCardClick(kanji: DeepReadonly<Kanji>) {
   try {
     selected.value = kanji;
-    await writeText(kanji.character);
+    if (settings.copyKanji) {
+      await writeText(kanji.character);
+    }
   } catch (err) {
     handleError(err);
   }

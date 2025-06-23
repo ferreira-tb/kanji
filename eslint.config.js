@@ -6,4 +6,10 @@ export default defineConfig({
   features: {
     vue: true,
   },
+  overrides: {
+    perfectionist: {
+      'perfectionist/sort-interfaces': 'off',
+      'perfectionist/sort-object-types': 'off',
+    },
+  },
 });

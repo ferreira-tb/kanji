@@ -8,7 +8,6 @@ use tauri_plugin_fs::{FilePath, FsExt};
 use tokio::sync::oneshot;
 
 #[tauri::command]
-#[specta::specta]
 pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
   let handle = app.clone();
   handle
@@ -17,7 +16,6 @@ pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
 }
 
 #[tauri::command]
-#[specta::specta]
 pub async fn pick_folder(app: AppHandle) -> CResult<Option<PathBuf>> {
   let (tx, rx) = oneshot::channel();
   app.dialog().file().pick_folder(move |response| {
@@ -36,13 +34,11 @@ pub async fn pick_folder(app: AppHandle) -> CResult<Option<PathBuf>> {
 }
 
 #[tauri::command]
-#[specta::specta]
 pub async fn search_kanji(path: PathBuf) -> CResult<Vec<Kanji>> {
   kanji::search(path).await.map_err(Into::into)
 }
 
 #[tauri::command]
-#[specta::specta]
 pub async fn show_window(window: WebviewWindow) -> CResult<()> {
   window
     .show()

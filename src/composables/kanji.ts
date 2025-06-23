@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { storeToRefs } from 'pinia';
+import { searchKanji } from '@/commands';
 import { tryInjectOrElse } from '@tb-dev/vue';
 import { useKanjiStore } from '@/stores/kanji';
 import type { Fn, Option } from '@tb-dev/utils';
 import { until, watchImmediate } from '@vueuse/core';
 import { useSettingsStore } from '@/stores/settings';
-import { commands, type Kanji } from '@/api/bindings';
 import { watch as watchFiles } from '@tauri-apps/plugin-fs';
 import {
   computed,
@@ -104,7 +104,7 @@ function start() {
 
     try {
       if (folder.value) {
-        raw.value = await commands.searchKanji(folder.value);
+        raw.value = await searchKanji(folder.value);
       } else if (raw.value.length > 0) {
         raw.value = [];
       }

@@ -23,7 +23,7 @@ pub fn open(app: &AppHandle) -> Result<()> {
   let url = WebviewUrl::App("index.html".into());
   let window = WebviewWindowBuilder::new(app, "main", url)
     .title("Kanji Frequency")
-    .inner_size(800.0, 600.0)
+    .inner_size(1200.0, 800.0)
     .min_inner_size(800.0, 600.0)
     .resizable(true)
     .maximizable(true)

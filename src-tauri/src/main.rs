@@ -1,7 +1,6 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 #![feature(try_blocks)]
 
-mod api;
 mod command;
 mod error;
 mod kanji;
@@ -13,7 +12,6 @@ use error::BoxResult;
 use tauri::{AppHandle, Manager};
 
 fn main() {
-  let specta = api::collect();
   tauri::Builder::default()
     .plugin(plugin::prevent_default())
     .plugin(plugin::single_instance())
@@ -25,7 +23,12 @@ fn main() {
     .plugin(tauri_plugin_pinia::init())
     .plugin(tauri_plugin_process::init())
     .setup(|app| setup(app.app_handle()))
-    .invoke_handler(specta.invoke_handler())
+    .invoke_handler(tauri::generate_handler![
+      command::create_tray_icon,
+      command::pick_folder,
+      command::search_kanji,
+      command::show_window
+    ])
     .run(tauri::generate_context!())
     .expect("failed to start tauri app");
 }

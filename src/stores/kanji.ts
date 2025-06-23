@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
+import { pickFolder } from '@/commands';
 import { handleError } from '@tb-dev/vue';
 import type { Option } from '@tb-dev/utils';
 import { type DeepReadonly, ref } from 'vue';
-import { commands, type Kanji } from '@/api/bindings';
 
 export const useKanjiStore = defineStore('kanji', () => {
   const folder = ref<Option<string>>(null);
@@ -10,9 +10,9 @@ export const useKanjiStore = defineStore('kanji', () => {
   const sorting = ref<Sorting>({ ascending: false });
   const selected = ref<Option<DeepReadonly<Kanji>>>(null);
 
-  async function pickFolder() {
+  async function pick() {
     try {
-      folder.value = await commands.pickFolder();
+      folder.value = await pickFolder();
     } catch (err) {
       handleError(err);
     }
@@ -23,6 +23,6 @@ export const useKanjiStore = defineStore('kanji', () => {
     search,
     sorting,
     selected,
-    pickFolder,
+    pickFolder: pick,
   };
 });
