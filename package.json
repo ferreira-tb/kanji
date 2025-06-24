@@ -1,12 +1,12 @@
 {
   "name": "kanji-frequency",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "type": "module",
-  "packageManager": "pnpm@10.12.2",
+  "packageManager": "pnpm@10.12.3",
   "private": true,
   "scripts": {
     "build": "cargo tauri build",
-    "clippy": "cargo +nightly clippy --workspace",
+    "clippy": "cargo clippy --workspace",
     "dev": "cargo tauri dev",
     "eslint": "eslint . --config eslint.config.js",
     "format": "prettier . --write && cargo fmt --all",
@@ -28,7 +28,7 @@
     "@tb-dev/vue-components": "^2.1.1",
     "@vueuse/core": "^13.4.0",
     "change-case": "^5.4.4",
-    "lucide-vue-next": "^0.522.0",
+    "lucide-vue-next": "^0.523.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
@@ -36,8 +36,8 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.10",
     "@tb-dev/eslint-config": "^7.1.8",
-    "@types/node": "^24.0.3",
-    "@vitejs/plugin-vue": "^5.2.4",
+    "@types/node": "^24.0.4",
+    "@vitejs/plugin-vue": "^6.0.0",
     "eslint": "^9.29.0",
     "prettier": "^3.6.0",
     "prettier-plugin-css-order": "^2.1.2",
@@ -45,7 +45,7 @@
     "tailwindcss": "^4.1.10",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5",
+    "vite": "^7.0.0",
     "vue-tsc": "^2.2.10"
   }
 }

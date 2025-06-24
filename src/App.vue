@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { go } from '@/router';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { capitalCase } from 'change-case';
 import { useColorMode } from '@vueuse/core';
-import { ChevronUp } from 'lucide-vue-next';
 import { useKanjiStore } from '@/stores/kanji';
+import { ChevronUpIcon } from 'lucide-vue-next';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
 import { handleError, onKeyDown } from '@tb-dev/vue';
@@ -33,6 +34,9 @@ useColorMode({
   writeDefaults: true,
 });
 
+onKeyDown('F1', () => go('home'));
+onKeyDown('F2', () => go('snippets'));
+onKeyDown('F3', () => go('settings'));
 onKeyDown('Escape', () => exit(0).err());
 
 onMounted(async () => {
@@ -92,13 +96,16 @@ onMounted(async () => {
         <DropdownMenuTrigger as-child>
           <Button v-if="typeof route.name === 'string'" variant="outline">
             <span>{{ capitalCase(route.name) }}</span>
-            <ChevronUp class="ml-auto" />
+            <ChevronUpIcon class="ml-auto" />
           </Button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent side="top" class="w-[var(--reka-dropdown-menu-trigger-width)]">
           <DropdownMenuItem>
             <RouterLink to="/" class="w-full">Home</RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <RouterLink to="/snippets" class="w-full">Snippets</RouterLink>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <RouterLink to="/settings" class="w-full">Settings</RouterLink>

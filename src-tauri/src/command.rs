@@ -1,5 +1,6 @@
 use crate::error::CResult;
-use crate::kanji::{self, Kanji};
+use crate::kanji::{self, Kanji, KanjiChar};
+use crate::snippet::{self, Snippet};
 use crate::tray;
 use std::path::PathBuf;
 use tauri::{AppHandle, WebviewWindow};
@@ -13,6 +14,11 @@ pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
   handle
     .run_on_main_thread(move || tray::create(&app).unwrap())
     .map_err(Into::into)
+}
+
+#[tauri::command]
+pub async fn open(path: PathBuf) -> CResult<()> {
+  open::that_detached(path).map_err(Into::into)
 }
 
 #[tauri::command]
@@ -34,8 +40,15 @@ pub async fn pick_folder(app: AppHandle) -> CResult<Option<PathBuf>> {
 }
 
 #[tauri::command]
-pub async fn search_kanji(path: PathBuf) -> CResult<Vec<Kanji>> {
-  kanji::search(path).await.map_err(Into::into)
+pub async fn search_kanji(dir: PathBuf) -> CResult<Vec<Kanji>> {
+  kanji::search(dir).await.map_err(Into::into)
+}
+
+#[tauri::command]
+pub async fn search_snippets(dir: PathBuf, kanji: KanjiChar) -> CResult<Vec<Snippet>> {
+  snippet::search(dir, kanji)
+    .await
+    .map_err(Into::into)
 }
 
 #[tauri::command]

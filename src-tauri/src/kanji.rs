@@ -1,20 +1,11 @@
+use crate::util::walk_dir;
 use anyhow::Result;
-use globset::{Glob, GlobBuilder, GlobSet, GlobSetBuilder};
-use serde::Serialize;
+use derive_more::Deref;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
-use std::path::PathBuf;
-use std::sync::LazyLock;
+use std::path::{Path, PathBuf};
 use tauri::async_runtime::spawn_blocking;
-use walkdir::WalkDir;
-
-static GLOBSET: LazyLock<GlobSet> = LazyLock::new(|| {
-  GlobSetBuilder::new()
-    .add(glob("*.md"))
-    .add(glob("*.txt"))
-    .build()
-    .unwrap()
-});
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -38,8 +29,8 @@ impl Kanji {
   }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Serialize)]
-struct KanjiChar(char);
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Deref, Deserialize, Serialize)]
+pub struct KanjiChar(char);
 
 impl KanjiChar {
   fn from_char(c: char) -> Option<Self> {
@@ -81,36 +72,33 @@ impl Level {
   }
 }
 
-pub async fn search(path: PathBuf) -> Result<Vec<Kanji>> {
-  spawn_blocking(move || blocking_search(path)).await?
+pub async fn search(dir: PathBuf) -> Result<Vec<Kanji>> {
+  spawn_blocking(move || blocking_search(&dir)).await?
 }
 
-fn blocking_search(path: PathBuf) -> Result<Vec<Kanji>> {
+fn blocking_search(dir: &Path) -> Result<Vec<Kanji>> {
   let mut kanjis: HashMap<KanjiChar, Kanji> = HashMap::new();
-  for entry in WalkDir::new(path).into_iter().flatten() {
-    let path = entry.into_path();
-    if path.is_file() && GLOBSET.is_match(&path) {
-      for character in fs::read_to_string(&path)?
-        .chars()
-        .filter_map(KanjiChar::from_char)
+  for path in walk_dir(dir) {
+    for character in fs::read_to_string(&path)?
+      .chars()
+      .filter_map(KanjiChar::from_char)
+    {
+      let kanji = kanjis
+        .entry(character)
+        .or_insert_with(|| Kanji::new(character));
+
+      kanji.seen = kanji.seen.saturating_add(1);
+
+      if let Some(parent) = path.parent()
+        && let Some(name) = parent.file_name()
+        && let Some(name) = name.to_str()
       {
-        let kanji = kanjis
-          .entry(character)
-          .or_insert_with(|| Kanji::new(character));
-
-        kanji.seen = kanji.seen.saturating_add(1);
-
-        if let Some(parent) = path.parent()
-          && let Some(name) = parent.file_name()
-          && let Some(name) = name.to_str()
-        {
-          if let Some(source) = kanji.sources.iter_mut().find(|s| s.name == name) {
-            source.seen = source.seen.saturating_add(1);
-          } else {
-            kanji
-              .sources
-              .push(Source { name: name.to_owned(), seen: 1 });
-          }
+        if let Some(source) = kanji.sources.iter_mut().find(|s| s.name == name) {
+          source.seen = source.seen.saturating_add(1);
+        } else {
+          kanji
+            .sources
+            .push(Source { name: name.to_owned(), seen: 1 });
         }
       }
     }
@@ -134,11 +122,4 @@ fn blocking_search(path: PathBuf) -> Result<Vec<Kanji>> {
 const fn is_kanji(c: char) -> bool {
   // http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml
   matches!(c, '\u{4e00}'..='\u{9faf}' | '\u{3400}' ..= '\u{4dbf}')
-}
-
-fn glob(glob: &str) -> Glob {
-  GlobBuilder::new(glob)
-    .case_insensitive(true)
-    .build()
-    .unwrap()
 }

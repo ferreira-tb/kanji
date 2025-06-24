@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import { go } from '@/router';
 import { storeToRefs } from 'pinia';
 import { toPixel } from '@tb-dev/utils';
+import { useHeightDiff } from '@tb-dev/vue';
 import Search from '@/components/Search.vue';
 import { useKanjiStore } from '@/stores/kanji';
 import { useKanjis } from '@/composables/kanji';
 import { useSettingsStore } from '@/stores/settings';
 import { Button, Card } from '@tb-dev/vue-components';
-import { type DeepReadonly, useTemplateRef } from 'vue';
-import { handleError, useHeightDiff } from '@tb-dev/vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { type DeepReadonly, nextTick, useTemplateRef } from 'vue';
 
 const store = useKanjiStore();
 const { folder, search, selected } = storeToRefs(store);
@@ -18,17 +19,17 @@ const settings = useSettingsStore();
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
-const { kanjis, loading } = useKanjis();
+const { kanjis, loading, load } = useKanjis();
 
-async function onCardClick(kanji: DeepReadonly<Kanji>) {
-  try {
-    selected.value = kanji;
-    if (settings.copyKanji) {
-      await writeText(kanji.character);
-    }
-  } catch (err) {
-    handleError(err);
+function onCardClick(kanji: DeepReadonly<Kanji>) {
+  selected.value = kanji;
+  if (settings.clipboard) {
+    writeText(kanji.character).err();
   }
+}
+
+function onCardDblClick() {
+  void nextTick(() => go('snippets'));
 }
 </script>
 
@@ -42,15 +43,18 @@ async function onCardClick(kanji: DeepReadonly<Kanji>) {
         <span v-if="folder" class="text-muted-foreground text-xs">
           {{ folder }}
         </span>
-        <div class="flex items-center justify-center">
+        <div class="flex items-center justify-center gap-2">
           <Button size="sm" :disabled="loading" @click="() => store.pickFolder()">
-            Select Folder
+            <span>Select Folder</span>
+          </Button>
+          <Button size="sm" variant="secondary" :disabled="loading || !folder" @click="load">
+            <span>Reload</span>
           </Button>
         </div>
       </div>
     </div>
     <div
-      class="h-full overflow-x-hidden overflow-y-auto pb-12"
+      class="overflow-x-hidden overflow-y-auto pb-12"
       :style="{ height: toPixel(contentHeight) }"
     >
       <div
@@ -58,7 +62,11 @@ async function onCardClick(kanji: DeepReadonly<Kanji>) {
         class="grid gap-2 px-4 sm:grid-cols-8 lg:grid-cols-10 2xl:grid-cols-12"
       >
         <Card v-for="kanji of kanjis" :key="kanji.character" class="p-2">
-          <div class="flex cursor-pointer flex-col items-center" @click="() => onCardClick(kanji)">
+          <div
+            class="flex cursor-pointer flex-col items-center"
+            @click="() => onCardClick(kanji)"
+            @dblclick="() => onCardDblClick()"
+          >
             <span class="text-3xl font-bold">{{ kanji.character }}</span>
             <span class="text-muted-foreground text-xs">{{ kanji.seen }}</span>
           </div>

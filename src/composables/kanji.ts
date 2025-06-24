@@ -1,12 +1,8 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { storeToRefs } from 'pinia';
 import { searchKanji } from '@/commands';
 import { tryInjectOrElse } from '@tb-dev/vue';
 import { useKanjiStore } from '@/stores/kanji';
-import type { Fn, Option } from '@tb-dev/utils';
 import { until, watchImmediate } from '@vueuse/core';
-import { useSettingsStore } from '@/stores/settings';
-import { watch as watchFiles } from '@tauri-apps/plugin-fs';
 import {
   computed,
   type DeepReadonly,
@@ -19,14 +15,14 @@ import {
   type ShallowRef,
 } from 'vue';
 
-interface UseFrequencyReturn {
+interface UseKanjiReturn {
   kanjis: Readonly<ShallowRef<DeepReadonly<Kanji[]>>>;
   load: () => Promise<void>;
   loading: Readonly<Ref<boolean>>;
   raw: Readonly<ShallowRef<DeepReadonly<Kanji[]>>>;
 }
 
-const SYMBOL = Symbol() as InjectionKey<UseFrequencyReturn>;
+const SYMBOL = Symbol() as InjectionKey<UseKanjiReturn>;
 
 export function useKanjis() {
   return tryInjectOrElse(SYMBOL, () => {
@@ -45,15 +41,12 @@ function start() {
   const store = useKanjiStore();
   const { folder, sorting, search, selected } = storeToRefs(store);
 
-  const settings = useSettingsStore();
-  const { watchFiles: shouldWatchFiles } = storeToRefs(settings);
-
   const loading = ref(false);
   const raw = shallowRef<Kanji[]>([]);
   const kanjis = computed<Kanji[]>(() => {
     let result = raw.value;
     if (folder.value) {
-      if (typeof search.value === 'string' && search.value.length > 0) {
+      if (search.value) {
         result = result.filter(({ character }) => {
           return search.value?.includes(character);
         });
@@ -73,21 +66,7 @@ function start() {
     return result;
   });
 
-  let unwatchFiles: Option<Fn> = null;
-  watchImmediate([folder, shouldWatchFiles], async () => {
-    unwatchFiles?.();
-    unwatchFiles = null;
-    await load();
-
-    if (shouldWatchFiles.value && folder.value) {
-      const cb = () => load().err();
-      // eslint-disable-next-line require-atomic-updates
-      unwatchFiles = await watchFiles(folder.value, cb, {
-        delayMs: 5000,
-        recursive: true,
-      });
-    }
-  });
+  watchImmediate(folder, load);
 
   watchImmediate(kanjis, () => {
     const char = selected.value?.character;

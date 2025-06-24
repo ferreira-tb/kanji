@@ -20,15 +20,13 @@ impl TrayMenu {
 }
 
 pub fn create(app: &AppHandle) -> Result<()> {
-  if app.tray_by_id(ID).is_some() {
-    return Ok(());
+  if app.tray_by_id(ID).is_none() {
+    TrayIconBuilder::with_id(ID)
+      .tooltip(env!("CARGO_PKG_NAME"))
+      .icon(include_image!("./icons/32x32.png"))
+      .on_tray_icon_event(on_tray_event())
+      .build(app)?;
   }
-
-  TrayIconBuilder::with_id(ID)
-    .tooltip(env!("CARGO_PKG_NAME"))
-    .icon(include_image!("./icons/32x32.png"))
-    .on_tray_icon_event(on_tray_event())
-    .build(app)?;
 
   Ok(())
 }

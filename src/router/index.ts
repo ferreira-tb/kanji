@@ -9,6 +9,11 @@ export const router = createRouter({
       path: '/',
     },
     {
+      component: () => import('@/views/snippets/index.vue'),
+      name: 'snippets' satisfies Route,
+      path: '/snippets',
+    },
+    {
       component: () => import('@/views/settings/index.vue'),
       name: 'settings' satisfies Route,
       path: '/settings',

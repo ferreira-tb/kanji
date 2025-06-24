@@ -1,6 +1,4 @@
 use anyhow::Result;
-use tauri_plugin_pinia::ManagerExt as _;
-
 use tauri::{
   AppHandle,
   Manager,
@@ -10,6 +8,7 @@ use tauri::{
   WindowEvent,
   Wry,
 };
+use tauri_plugin_pinia::ManagerExt as _;
 
 pub trait WindowExt: Manager<Wry> {
   fn main_window(&self) -> WebviewWindow<Wry> {

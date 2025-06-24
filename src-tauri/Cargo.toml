@@ -1,6 +1,6 @@
 [package]
 name = "kanji-frequency"
-version = "1.1.1"
+version = "2.0.0"
 publish = false
 
 [package.edition]
@@ -15,14 +15,26 @@ workspace = true
 [dependencies]
 anyhow = "1.0"
 globset = "0.4"
+itertools = "0.14"
+memchr = "2.7"
+rand = "0.9"
 tauri-plugin-clipboard-manager = "2.2"
 tauri-plugin-dialog = "2.2"
+tauri-plugin-fs = "2.3"
 tauri-plugin-persisted-scope = "2.2"
 tauri-plugin-pinia = "3.7"
 tauri-plugin-process = "2.2"
 tauri-plugin-single-instance = "2.2"
 tauri-plugin-window-state = "2.2"
 walkdir = "2.5"
+
+[dependencies.derive_more]
+version = "2.0"
+features = ["deref"]
+
+[dependencies.open]
+version = "5.3"
+features = ["shellexecute-on-windows"]
 
 [dependencies.serde]
 version = "1.0"
@@ -31,10 +43,6 @@ features = ["derive"]
 [dependencies.tauri]
 version = "2.5"
 features = ["image-png", "protocol-asset", "rustls-tls", "tray-icon"]
-
-[dependencies.tauri-plugin-fs]
-version = "2.3"
-features = ["watch"]
 
 [dependencies.tauri-plugin-prevent-default]
 version = "2.1"

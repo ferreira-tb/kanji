@@ -1,11 +1,13 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
-#![feature(try_blocks)]
+#![feature(file_buffered, try_blocks)]
 
 mod command;
 mod error;
 mod kanji;
 mod plugin;
+mod snippet;
 mod tray;
+mod util;
 mod window;
 
 use error::BoxResult;
@@ -25,8 +27,10 @@ fn main() {
     .setup(|app| setup(app.app_handle()))
     .invoke_handler(tauri::generate_handler![
       command::create_tray_icon,
+      command::open,
       command::pick_folder,
       command::search_kanji,
+      command::search_snippets,
       command::show_window
     ])
     .run(tauri::generate_context!())

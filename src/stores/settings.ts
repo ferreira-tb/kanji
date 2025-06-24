@@ -2,13 +2,11 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
 export const useSettingsStore = defineStore('settings', () => {
-  const copyKanji = ref(true);
+  const clipboard = ref(true);
   const hideOnClose = ref(false);
-  const watchFiles = ref(true);
 
   return {
-    copyKanji,
+    clipboard,
     hideOnClose,
-    watchFiles,
   };
 });
