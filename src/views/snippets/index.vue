@@ -65,7 +65,7 @@ function onContentClick(snippet: DeepReadonly<Snippet>) {
             >
               <span>{{ `${snippet.source.path}:L${snippet.source.line}` }}</span>
             </div>
-            <div class="cursor-pointer" @click="() => onContentClick(snippet)">
+            <div class="cursor-pointer text-lg" @click="() => onContentClick(snippet)">
               <span>{{ snippet.content }}</span>
             </div>
           </div>

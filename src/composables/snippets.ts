@@ -1,3 +1,4 @@
+import { watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { asyncRef } from '@tb-dev/vue';
 import { searchSnippets } from '@/commands';
@@ -16,6 +17,8 @@ export function useSnippets() {
 
     return _snippets;
   });
+
+  watch(selected, () => void snippets.execute());
 
   return {
     snippets: snippets.state,

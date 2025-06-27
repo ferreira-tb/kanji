@@ -7,6 +7,7 @@ import { capitalCase } from 'change-case';
 import { useColorMode } from '@vueuse/core';
 import { useKanjiStore } from '@/stores/kanji';
 import { ChevronUpIcon } from 'lucide-vue-next';
+import { useKanjis } from '@/composables/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
 import { handleError, onKeyDown } from '@tb-dev/vue';
@@ -24,6 +25,8 @@ import {
 const store = useKanjiStore();
 const { selected } = storeToRefs(store);
 const ranking = useRanking(selected);
+
+const { kanjis, loading, next, previous } = useKanjis();
 
 const route = useRoute();
 const isSidebarOpen = ref(true);
@@ -64,29 +67,46 @@ onMounted(async () => {
     </main>
 
     <template #content>
-      <div v-if="selected" class="flex h-full flex-col gap-4 p-4 select-none">
-        <div class="flex flex-col items-center justify-center gap-4 pt-4">
-          <span class="text-9xl">{{ selected.character }}</span>
-          <Badge>{{ capitalCase(selected.level) }}</Badge>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 px-4">
-          <div class="flex h-16 flex-col items-center justify-center">
-            <span class="text-muted-foreground text-sm">Rank</span>
-            <span class="text-lg font-semibold">{{ ranking ? ranking : '?' }}</span>
+      <div v-if="selected" class="flex h-full flex-col justify-between gap-6 p-4 select-none">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col items-center justify-center gap-4 pt-4">
+            <span class="text-9xl">{{ selected.character }}</span>
+            <Badge>{{ capitalCase(selected.level) }}</Badge>
           </div>
-
-          <div class="flex h-16 flex-col items-center justify-center">
-            <span class="text-muted-foreground text-sm">Total</span>
-            <span class="text-lg font-semibold">{{ selected.seen }}</span>
+          <div class="grid grid-cols-2 gap-4 px-4">
+            <div class="flex h-16 flex-col items-center justify-center">
+              <span class="text-muted-foreground text-sm">Rank</span>
+              <span class="text-lg font-semibold">{{ ranking ? ranking : '?' }}</span>
+            </div>
+            <div class="flex h-16 flex-col items-center justify-center">
+              <span class="text-muted-foreground text-sm">Total</span>
+              <span class="text-lg font-semibold">{{ selected.seen }}</span>
+            </div>
+          </div>
+          <div id="source-grid" class="text-sidebar-accent-foreground text-sm">
+            <template v-for="source of selected.sources" :key="source.name">
+              <div>{{ source.name }}</div>
+              <div class="text-end">{{ source.seen }}</div>
+            </template>
           </div>
         </div>
-
-        <div id="source-grid" class="text-sidebar-accent-foreground text-sm">
-          <template v-for="source of selected.sources" :key="source.name">
-            <div>{{ source.name }}</div>
-            <div class="text-end">{{ source.seen }}</div>
-          </template>
+        <div class="grid grid-cols-2 items-center gap-4">
+          <Button
+            variant="secondary"
+            size="sm"
+            :disabled="loading || kanjis.length === 0"
+            @click="previous"
+          >
+            <span>Previous</span>
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            :disabled="loading || kanjis.length === 0"
+            @click="next"
+          >
+            <span>Next</span>
+          </Button>
         </div>
       </div>
     </template>
