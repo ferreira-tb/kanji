@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { go } from '@/router';
+import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { capitalCase } from 'change-case';
-import { useColorMode } from '@vueuse/core';
 import { useKanjiStore } from '@/stores/kanji';
+import History from '@/components/History.vue';
 import { ChevronUpIcon } from 'lucide-vue-next';
 import { useKanjis } from '@/composables/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
-import { handleError, onKeyDown } from '@tb-dev/vue';
+import { useColorMode, useToggle } from '@vueuse/core';
 import { createTrayIcon, showWindow } from '@/commands';
+import { handleError, onCtrlKeyDown, onKeyDown } from '@tb-dev/vue';
 import {
   Badge,
   Button,
@@ -29,7 +30,8 @@ const ranking = useRanking(selected);
 const { kanjis, loading, next, previous } = useKanjis();
 
 const route = useRoute();
-const isSidebarOpen = ref(true);
+const [isSidebarOpen] = useToggle(true);
+const [isHistoryOpen, toggleHistory] = useToggle(false);
 
 useColorMode({
   initialValue: 'dark',
@@ -42,6 +44,8 @@ onKeyDown('F2', () => go('snippets'));
 onKeyDown('F3', () => go('settings'));
 onKeyDown('Escape', () => exit(0).err());
 
+onCtrlKeyDown(['o', 'O'], () => toggleHistory());
+
 onMounted(async () => {
   try {
     await createTrayIcon();
@@ -53,6 +57,7 @@ onMounted(async () => {
 </script>
 
 <template>
+  <History v-model="isHistoryOpen" />
   <Sidebar v-model:open="isSidebarOpen" width="250px">
     <main class="h-screen w-[calc(100vw-var(--sidebar-width))] select-none">
       <div class="size-full overflow-hidden p-0">

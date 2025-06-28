@@ -44,7 +44,7 @@ function onCardDblClick() {
           {{ folder }}
         </span>
         <div class="flex items-center justify-center gap-2">
-          <Button size="sm" :disabled="loading" @click="() => store.pickFolder()">
+          <Button size="sm" :disabled="loading" @click="() => store.setFolder()">
             <span>Select Folder</span>
           </Button>
           <Button size="sm" variant="secondary" :disabled="loading || !folder" @click="load">
