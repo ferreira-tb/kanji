@@ -58,7 +58,7 @@ onMounted(async () => {
 
 <template>
   <History v-model="isHistoryOpen" />
-  <Sidebar v-model:open="isSidebarOpen" width="250px">
+  <Sidebar v-model:open="isSidebarOpen" width="300px">
     <main class="h-screen w-[calc(100vw-var(--sidebar-width))] select-none">
       <div class="size-full overflow-hidden p-0">
         <RouterView #default="{ Component }">
