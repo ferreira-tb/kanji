@@ -23,7 +23,8 @@ export const useKanjiStore = defineStore('kanji', () => {
           history.value.shift();
         }
       }
-    } catch (err) {
+    }
+    catch (err) {
       handleError(err);
     }
   }

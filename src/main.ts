@@ -1,5 +1,4 @@
-import '@/assets/index.css';
-import '@tb-dev/vue-components/style';
+import '@/assets/style.css';
 import '@/lib/prototype';
 import App from '@/App.vue';
 import { createApp } from 'vue';
@@ -18,7 +17,7 @@ pinia.use(
     saveOnChange: true,
     saveStrategy: 'debounce',
     saveInterval: 1000,
-  })
+  }),
 );
 
 setCurrentApp(app);
@@ -27,7 +26,6 @@ setErrorHandler(onError, app);
 app.use(router);
 app.use(pinia);
 
-// prettier-ignore
 void router
   .push({ name: 'home' satisfies Route })
   .then(() => app.mount('#app'));

@@ -1,7 +1,7 @@
 use globset::{Glob, GlobBuilder, GlobSet, GlobSetBuilder};
 use std::path::{Path, PathBuf};
 use std::sync::LazyLock;
-use walkdir::WalkDir;
+use walkdir::{DirEntry, WalkDir};
 
 static GLOBSET: LazyLock<GlobSet> = LazyLock::new(|| {
   GlobSetBuilder::new()
@@ -22,7 +22,7 @@ pub fn walk_dir(dir: &Path) -> Vec<PathBuf> {
   WalkDir::new(dir)
     .into_iter()
     .flatten()
-    .map(|entry| entry.into_path())
-    .filter(|path| path.is_file() && GLOBSET.is_match(&path))
+    .map(DirEntry::into_path)
+    .filter(|path| path.is_file() && GLOBSET.is_match(path))
     .collect()
 }

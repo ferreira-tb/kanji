@@ -7,9 +7,9 @@ import Search from '@/components/Search.vue';
 import { useKanjiStore } from '@/stores/kanji';
 import { useKanjis } from '@/composables/kanji';
 import { useSettingsStore } from '@/stores/settings';
-import { Button, Card } from '@tb-dev/vue-components';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { type DeepReadonly, nextTick, useTemplateRef } from 'vue';
+import { Button, Card, CardContent } from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
 const { folder, search, selected } = storeToRefs(store);
@@ -59,17 +59,19 @@ function onCardDblClick() {
     >
       <div
         v-if="kanjis.length > 0"
-        class="grid gap-2 px-4 sm:grid-cols-8 lg:grid-cols-10 2xl:grid-cols-12"
+        class="grid grid-cols-4 gap-2 px-4 sm:grid-cols-6 lg:grid-cols-10 2xl:grid-cols-12"
       >
         <Card v-for="kanji of kanjis" :key="kanji.character" class="p-2">
-          <div
-            class="flex cursor-pointer flex-col items-center"
-            @click="() => onCardClick(kanji)"
-            @dblclick="() => onCardDblClick()"
-          >
-            <span class="text-3xl font-bold">{{ kanji.character }}</span>
-            <span class="text-muted-foreground text-xs">{{ kanji.seen }}</span>
-          </div>
+          <CardContent>
+            <div
+              class="flex cursor-pointer flex-col items-center"
+              @click="() => onCardClick(kanji)"
+              @dblclick="() => onCardDblClick()"
+            >
+              <span class="text-3xl font-bold">{{ kanji.character }}</span>
+              <span class="text-muted-foreground text-xs">{{ kanji.seen }}</span>
+            </div>
+          </CardContent>
         </Card>
       </div>
     </div>

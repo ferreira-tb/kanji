@@ -13,5 +13,8 @@ export default defineConfig({
       'perfectionist/sort-interfaces': 'off',
       'perfectionist/sort-object-types': 'off',
     },
+    vue: {
+      'vue/no-static-inline-styles': 'off',
+    },
   },
 });

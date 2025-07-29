@@ -96,10 +96,12 @@ function start() {
       loading.value = true;
       if (folder.value) {
         raw.value = await searchKanji(folder.value);
-      } else if (raw.value.length > 0) {
+      }
+      else if (raw.value.length > 0) {
         raw.value = [];
       }
-    } finally {
+    }
+    finally {
       loading.value = false;
     }
   }

@@ -1,6 +1,6 @@
 {
   "productName": "kanji-frequency",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "identifier": "tsukilabs.kanji-frequency",
   "build": {
     "beforeDevCommand": "pnpm run vite:dev",
@@ -14,7 +14,11 @@
     "security": {
       "assetProtocol": {
         "enable": true,
-        "scope": ["$APPCACHE/**", "$APPCONFIG/**", "$APPDATA/**"]
+        "scope": [
+          "$APPCACHE/**",
+          "$APPCONFIG/**",
+          "$APPDATA/**"
+        ]
       },
       "csp": {
         "default-src": "'self'",
@@ -30,7 +34,9 @@
     "license": "MIT",
     "licenseFile": "../LICENSE",
     "active": true,
-    "targets": ["nsis"],
+    "targets": [
+      "nsis"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
