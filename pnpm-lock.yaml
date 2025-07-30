@@ -27,14 +27,14 @@ importers:
         specifier: ^3.7.1
         version: 3.7.1(typescript@5.8.3)
       '@tb-dev/utils':
-        specifier: ^7.0.8
-        version: 7.0.8
+        specifier: ^7.0.9
+        version: 7.0.9
       '@tb-dev/vue':
-        specifier: ^3.0.0
-        version: 3.0.0(typescript@5.8.3)
+        specifier: ^3.0.1
+        version: 3.0.1(typescript@5.8.3)
       '@tb-dev/vue-components':
-        specifier: ^5.0.2
-        version: 5.0.2(typescript@5.8.3)
+        specifier: ^5.0.4
+        version: 5.0.4(typescript@5.8.3)
       '@vueuse/core':
         specifier: ^13.6.0
         version: 13.6.0(vue@3.5.18(typescript@5.8.3))
@@ -45,8 +45,8 @@ importers:
         specifier: ^1.39.8
         version: 1.39.8
       lucide-vue-next:
-        specifier: ^0.532.0
-        version: 0.532.0(vue@3.5.18(typescript@5.8.3))
+        specifier: ^0.534.0
+        version: 0.534.0(vue@3.5.18(typescript@5.8.3))
       pinia:
         specifier: ^3.0.3
         version: 3.0.3(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
@@ -622,17 +622,14 @@ packages:
     resolution: {integrity: sha512-0UCQruvAITDTautt5o0rQrLt+dvLS3VCaFbHg2YrLtqktzGKKeH/gY/qlsFDOoPwl7OUNaRJtVOnQAKJBML8qA==}
     engines: {node: '>=22'}
 
-  '@tb-dev/utils@7.0.8':
-    resolution: {integrity: sha512-JcbJeZBnfcerjoiNt/qNgbgAPIrV26UsTGSWFXvpwJQh0ohX1SCuZeLnNJUfq3joOc6uMwz5EcpRdnTmUp9TYA==}
+  '@tb-dev/utils@7.0.9':
+    resolution: {integrity: sha512-oAeq9xc0aVXdIeBC1fl8gJyqQqelahvZK0J75iW0BYLElqAwWQajcTWdD8HZrt13W7SN2/2mr/95PHAvkWk5mw==}
 
-  '@tb-dev/vue-components@5.0.2':
-    resolution: {integrity: sha512-HUf1E8OvsddTetDmJLWEKYDsxloC6otRQBWvC2mx7lOT6mcQELTCtilmukpPq+X1WvBzY4c5W3aJ+LqCcI6MWA==}
+  '@tb-dev/vue-components@5.0.4':
+    resolution: {integrity: sha512-4rMelwJFrUPuNJpgaXesucSuD047Lcrqj20luLr3eq2Q6TJt2w5waOaSSLJOAV38hAMccwYT1qcbfWNzBHBrPA==}
 
-  '@tb-dev/vue@2.2.1':
-    resolution: {integrity: sha512-UtIWTAYCt7hmv/YS+jwTkkjFnT9x7ApsEC5um67oeVcxHEHvUjm4LCJxBuoVT70KK5v2lnulSQO+dQhZeYKI8Q==}
-
-  '@tb-dev/vue@3.0.0':
-    resolution: {integrity: sha512-te8l0G/iyqU/zGPzBJN8P9uUZotCM4jIIp8rBuxsCwk/N9baF1B6yjP15lw96/XZqN6VSlMX46B5qYGahdcRVQ==}
+  '@tb-dev/vue@3.0.1':
+    resolution: {integrity: sha512-/VOUvMN94eHzJmFY2pFeGbbpxTO8NkuvhpmxNKXp+DXOev+h1SEJMTvrnSU1h2ZCvRWeQhuLGCZzYP65aa9NXg==}
 
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
@@ -1324,13 +1321,8 @@ packages:
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
 
-  lucide-vue-next@0.525.0:
-    resolution: {integrity: sha512-Xf8+x8B2DrnGDV/rxylS+KBp2FIe6ljwDn2JsGTZZvXIfhmm/q+nv8RuGO1OyoMjOVkkz7CqtUqJfwtFPRbB2w==}
-    peerDependencies:
-      vue: '>=3.0.1'
-
-  lucide-vue-next@0.532.0:
-    resolution: {integrity: sha512-6sUgS8D9Dcmk4gBv4Dpqf8s0Iiq1Zmkp206li/wB29Pw0NhatYlabzWaYLS1HPSxJmtjDz9u1nko2BH3/dQpug==}
+  lucide-vue-next@0.534.0:
+    resolution: {integrity: sha512-tdJSP1bp6R7KPX2PEENxcF2M0GwDYR6W/ghKmQ8ScOchptOOOi2MIk6d3sp5wovs1nE7XzDIpbxmAUi6VGSJ2A==}
     peerDependencies:
       vue: '>=3.0.1'
 
@@ -1484,8 +1476,8 @@ packages:
     resolution: {integrity: sha512-cnE+y8bz4NhMjISKbgeVJtqNbtf5QpjZP+Bslo+UqkIt9QPnX9q095eiRRASJG1/tz6dlNr6Z5NsBiWYokp6EQ==}
     hasBin: true
 
-  reka-ui@2.4.0:
-    resolution: {integrity: sha512-5WHLEquWI5W67NnjH9F+RhpzRAcwjAEQHtHZMa5wYdhClcYDr59q0RAAcymcnfndFqv0MiBxyFfzbGSRyIZG5g==}
+  reka-ui@2.4.1:
+    resolution: {integrity: sha512-NB7DrCsODN8MH02BWtgiExygfFcuuZ5/PTn6fMgjppmFHqePvNhmSn1LEuF35nel6PFbA4v+gdj0IoGN1yZ+vw==}
     peerDependencies:
       vue: '>= 3.2.0'
 
@@ -2136,21 +2128,21 @@ snapshots:
       - supports-color
       - typescript
 
-  '@tb-dev/utils@7.0.8': {}
+  '@tb-dev/utils@7.0.9': {}
 
-  '@tb-dev/vue-components@5.0.2(typescript@5.8.3)':
+  '@tb-dev/vue-components@5.0.4(typescript@5.8.3)':
     dependencies:
       '@tanstack/vue-table': 8.21.3(vue@3.5.18(typescript@5.8.3))
-      '@tb-dev/utils': 7.0.8
-      '@tb-dev/vue': 2.2.1(typescript@5.8.3)
+      '@tb-dev/utils': 7.0.9
+      '@tb-dev/vue': 3.0.1(typescript@5.8.3)
       '@vueuse/core': 13.6.0(vue@3.5.18(typescript@5.8.3))
       class-variance-authority: 0.7.1
       clsx: 2.1.1
-      lucide-vue-next: 0.525.0(vue@3.5.18(typescript@5.8.3))
-      reka-ui: 2.4.0(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
+      lucide-vue-next: 0.534.0(vue@3.5.18(typescript@5.8.3))
+      reka-ui: 2.4.1(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
       tailwind-merge: 3.3.1
       tw-animate-css: 1.3.6
-      vaul-vue: 0.4.1(reka-ui@2.4.0(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)))(vue@3.5.18(typescript@5.8.3))
+      vaul-vue: 0.4.1(reka-ui@2.4.1(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)))(vue@3.5.18(typescript@5.8.3))
       vue: 3.5.18(typescript@5.8.3)
       vue-router: 4.5.1(vue@3.5.18(typescript@5.8.3))
       vue-sonner: 2.0.2
@@ -2158,18 +2150,9 @@ snapshots:
       - '@vue/composition-api'
       - typescript
 
-  '@tb-dev/vue@2.2.1(typescript@5.8.3)':
+  '@tb-dev/vue@3.0.1(typescript@5.8.3)':
     dependencies:
-      '@tb-dev/utils': 7.0.8
-      '@vueuse/core': 13.6.0(vue@3.5.18(typescript@5.8.3))
-      es-toolkit: 1.39.8
-      vue: 3.5.18(typescript@5.8.3)
-    transitivePeerDependencies:
-      - typescript
-
-  '@tb-dev/vue@3.0.0(typescript@5.8.3)':
-    dependencies:
-      '@tb-dev/utils': 7.0.8
+      '@tb-dev/utils': 7.0.9
       '@vueuse/core': 13.6.0(vue@3.5.18(typescript@5.8.3))
       es-toolkit: 1.39.8
       vue: 3.5.18(typescript@5.8.3)
@@ -2958,11 +2941,7 @@ snapshots:
 
   lodash.merge@4.6.2: {}
 
-  lucide-vue-next@0.525.0(vue@3.5.18(typescript@5.8.3)):
-    dependencies:
-      vue: 3.5.18(typescript@5.8.3)
-
-  lucide-vue-next@0.532.0(vue@3.5.18(typescript@5.8.3)):
+  lucide-vue-next@0.534.0(vue@3.5.18(typescript@5.8.3)):
     dependencies:
       vue: 3.5.18(typescript@5.8.3)
 
@@ -3084,7 +3063,7 @@ snapshots:
     dependencies:
       jsesc: 3.0.2
 
-  reka-ui@2.4.0(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)):
+  reka-ui@2.4.1(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)):
     dependencies:
       '@floating-ui/dom': 1.7.0
       '@floating-ui/vue': 1.1.6(vue@3.5.18(typescript@5.8.3))
@@ -3217,10 +3196,10 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vaul-vue@0.4.1(reka-ui@2.4.0(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)))(vue@3.5.18(typescript@5.8.3)):
+  vaul-vue@0.4.1(reka-ui@2.4.1(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)))(vue@3.5.18(typescript@5.8.3)):
     dependencies:
       '@vueuse/core': 10.11.1(vue@3.5.18(typescript@5.8.3))
-      reka-ui: 2.4.0(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
+      reka-ui: 2.4.1(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
       vue: 3.5.18(typescript@5.8.3)
     transitivePeerDependencies:
       - '@vue/composition-api'

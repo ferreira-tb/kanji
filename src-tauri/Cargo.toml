@@ -1,6 +1,6 @@
 [package]
 name = "kanji-frequency"
-version = "2.3.0"
+version = "2.3.1"
 publish = false
 
 [package.edition]
@@ -45,8 +45,8 @@ version = "2.7"
 features = ["image-png", "protocol-asset", "rustls-tls", "tray-icon"]
 
 [dependencies.tauri-plugin-prevent-default]
-version = "2.1"
-features = ["unstable-windows"]
+version = "3.0"
+features = ["platform-windows"]
 
 [dependencies.tokio]
 version = "1.47"
