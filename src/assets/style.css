@@ -123,6 +123,7 @@
 * {
   @apply border-border outline-ring/50;
 }
+
 body {
   @apply bg-background text-foreground;
 }
@@ -153,4 +154,12 @@ label:has(input[type="radio"]) {
   & > span {
     @apply w-full;
   }
+}
+
+[data-scrollbarimpl] {
+  @apply border-0!;
+}
+
+.ellipsis {
+  @apply inline-block overflow-hidden text-ellipsis whitespace-nowrap;
 }

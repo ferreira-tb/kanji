@@ -30,11 +30,11 @@ importers:
         specifier: ^7.0.9
         version: 7.0.9
       '@tb-dev/vue':
-        specifier: ^3.0.1
-        version: 3.0.1(typescript@5.8.3)
+        specifier: ^3.1.0
+        version: 3.1.0(typescript@5.8.3)
       '@tb-dev/vue-components':
-        specifier: ^5.0.4
-        version: 5.0.4(typescript@5.8.3)
+        specifier: ^5.1.0
+        version: 5.1.0(typescript@5.8.3)
       '@vueuse/core':
         specifier: ^13.6.0
         version: 13.6.0(vue@3.5.18(typescript@5.8.3))
@@ -625,11 +625,11 @@ packages:
   '@tb-dev/utils@7.0.9':
     resolution: {integrity: sha512-oAeq9xc0aVXdIeBC1fl8gJyqQqelahvZK0J75iW0BYLElqAwWQajcTWdD8HZrt13W7SN2/2mr/95PHAvkWk5mw==}
 
-  '@tb-dev/vue-components@5.0.4':
-    resolution: {integrity: sha512-4rMelwJFrUPuNJpgaXesucSuD047Lcrqj20luLr3eq2Q6TJt2w5waOaSSLJOAV38hAMccwYT1qcbfWNzBHBrPA==}
+  '@tb-dev/vue-components@5.1.0':
+    resolution: {integrity: sha512-Jid6QwdcVow3l4OArJYfIvCyuIHm9gTjiC3nzqX5Kpek7NkwdvJUiQxnW7biPCW/WIRGzMT1TS99xKby4wnoew==}
 
-  '@tb-dev/vue@3.0.1':
-    resolution: {integrity: sha512-/VOUvMN94eHzJmFY2pFeGbbpxTO8NkuvhpmxNKXp+DXOev+h1SEJMTvrnSU1h2ZCvRWeQhuLGCZzYP65aa9NXg==}
+  '@tb-dev/vue@3.1.0':
+    resolution: {integrity: sha512-Dl7xq9aMnpR9yKd02hg5eRID8Ec29l0rQY9BM3ck2Fp0KxsLkOsgYKMC2WxrAaKvgYce053rLM1pJALiiZUqQg==}
 
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
@@ -2130,11 +2130,11 @@ snapshots:
 
   '@tb-dev/utils@7.0.9': {}
 
-  '@tb-dev/vue-components@5.0.4(typescript@5.8.3)':
+  '@tb-dev/vue-components@5.1.0(typescript@5.8.3)':
     dependencies:
       '@tanstack/vue-table': 8.21.3(vue@3.5.18(typescript@5.8.3))
       '@tb-dev/utils': 7.0.9
-      '@tb-dev/vue': 3.0.1(typescript@5.8.3)
+      '@tb-dev/vue': 3.1.0(typescript@5.8.3)
       '@vueuse/core': 13.6.0(vue@3.5.18(typescript@5.8.3))
       class-variance-authority: 0.7.1
       clsx: 2.1.1
@@ -2150,7 +2150,7 @@ snapshots:
       - '@vue/composition-api'
       - typescript
 
-  '@tb-dev/vue@3.0.1(typescript@5.8.3)':
+  '@tb-dev/vue@3.1.0(typescript@5.8.3)':
     dependencies:
       '@tb-dev/utils': 7.0.9
       '@vueuse/core': 13.6.0(vue@3.5.18(typescript@5.8.3))

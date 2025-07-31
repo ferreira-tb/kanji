@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { go } from '@/router';
-import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRoute } from 'vue-router';
+import { toPixel } from '@tb-dev/utils';
 import { capitalCase } from 'change-case';
 import { useKanjiStore } from '@/stores/kanji';
 import History from '@/components/History.vue';
@@ -12,7 +12,8 @@ import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
 import { useColorMode, useToggle } from '@vueuse/core';
 import { createTrayIcon, showWindow } from '@/commands';
-import { handleError, onCtrlKeyDown, onKeyDown } from '@tb-dev/vue';
+import { computed, onMounted, useTemplateRef } from 'vue';
+import { handleError, onCtrlKeyDown, onKeyDown, useHeight } from '@tb-dev/vue';
 import {
   Badge,
   Button,
@@ -20,9 +21,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  ScrollArea,
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarHeader,
   SidebarProvider,
 } from '@tb-dev/vue-components';
 
@@ -35,6 +38,13 @@ const { kanjis, loading, next, previous } = useKanjis();
 const route = useRoute();
 const [isSidebarOpen] = useToggle(true);
 const [isHistoryOpen, toggleHistory] = useToggle(false);
+
+const contentEl = useTemplateRef('content');
+const contentHeight = useHeight(contentEl);
+const actionEl = useTemplateRef('action');
+const actionHeight = useHeight(actionEl);
+
+const listHeight = computed(() => contentHeight.value - actionHeight.value);
 
 useColorMode({
   initialValue: 'dark',
@@ -63,32 +73,37 @@ onMounted(async () => {
 <template>
   <SidebarProvider v-model:open="isSidebarOpen" style="--sidebar-width: 20rem">
     <Sidebar>
+      <SidebarHeader class="pb-0">
+        <div v-if="selected" class="flex flex-col gap-4">
+          <div class="flex flex-col items-center justify-center gap-4 pt-2">
+            <span class="text-9xl">{{ selected.character }}</span>
+            <Badge>{{ capitalCase(selected.level) }}</Badge>
+          </div>
+          <div class="grid grid-cols-2 gap-4 px-4">
+            <div class="flex h-16 flex-col items-center justify-center">
+              <span class="text-muted-foreground text-sm">Rank</span>
+              <span class="text-lg font-semibold">{{ ranking ? ranking : '?' }}</span>
+            </div>
+            <div class="flex h-16 flex-col items-center justify-center">
+              <span class="text-muted-foreground text-sm">Total</span>
+              <span class="text-lg font-semibold">{{ selected.seen }}</span>
+            </div>
+          </div>
+        </div>
+      </SidebarHeader>
+
       <SidebarContent>
-        <div v-if="selected" class="flex h-full flex-col justify-between gap-6 p-4 select-none">
-          <div class="flex flex-col gap-4">
-            <div class="flex flex-col items-center justify-center gap-4 pt-4">
-              <span class="text-9xl">{{ selected.character }}</span>
-              <Badge>{{ capitalCase(selected.level) }}</Badge>
-            </div>
-            <div class="grid grid-cols-2 gap-4 px-4">
-              <div class="flex h-16 flex-col items-center justify-center">
-                <span class="text-muted-foreground text-sm">Rank</span>
-                <span class="text-lg font-semibold">{{ ranking ? ranking : '?' }}</span>
-              </div>
-              <div class="flex h-16 flex-col items-center justify-center">
-                <span class="text-muted-foreground text-sm">Total</span>
-                <span class="text-lg font-semibold">{{ selected.seen }}</span>
-              </div>
-            </div>
-            <div id="source-grid" class="text-sidebar-accent-foreground text-sm">
+        <div v-if="selected" ref="content" class="flex size-full flex-col justify-between gap-6 p-4 select-none">
+          <ScrollArea :style="{ height: toPixel(listHeight - 50) }">
+            <div id="source-grid" class="text-sidebar-accent-foreground text-sm pr-4">
               <template v-for="source of selected.sources" :key="source.name">
                 <div>{{ source.name }}</div>
                 <div class="text-end">{{ source.seen }}</div>
               </template>
             </div>
-          </div>
+          </ScrollArea>
 
-          <div class="grid grid-cols-2 items-center gap-4">
+          <div ref="action" class="grid grid-cols-2 items-center gap-4">
             <Button
               variant="secondary"
               size="sm"
