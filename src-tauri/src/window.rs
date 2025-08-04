@@ -21,7 +21,7 @@ impl<T: Manager<Wry>> WindowExt for T {}
 pub fn open(app: &AppHandle) -> Result<()> {
   let url = WebviewUrl::App("index.html".into());
   let window = WebviewWindowBuilder::new(app, "main", url)
-    .title("Kanji Frequency")
+    .title("Kanji")
     .inner_size(1200.0, 800.0)
     .min_inner_size(800.0, 600.0)
     .resizable(true)
