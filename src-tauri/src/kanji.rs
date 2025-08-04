@@ -93,7 +93,11 @@ fn blocking_search(dir: &Path) -> Result<Vec<Kanji>> {
         && let Some(name) = parent.file_name()
         && let Some(name) = name.to_str()
       {
-        if let Some(source) = kanji.sources.iter_mut().find(|s| s.name == name) {
+        if let Some(source) = kanji
+          .sources
+          .iter_mut()
+          .find(|s| s.name == name)
+        {
           source.seen = source.seen.saturating_add(1);
         } else {
           kanji

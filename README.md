@@ -1,1 +1,1 @@
-# Kanji Frequency
+# Kanji

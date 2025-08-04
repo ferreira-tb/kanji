@@ -24,9 +24,12 @@ pub async fn open(path: PathBuf) -> CResult<()> {
 #[tauri::command]
 pub async fn pick_folder(app: AppHandle) -> CResult<Option<PathBuf>> {
   let (tx, rx) = oneshot::channel();
-  app.dialog().file().pick_folder(move |response| {
-    let _ = tx.send(response.map(FilePath::into_path));
-  });
+  app
+    .dialog()
+    .file()
+    .pick_folder(move |response| {
+      let _ = tx.send(response.map(FilePath::into_path));
+    });
 
   let path = rx.await?.transpose()?;
   if let Some(path) = path.as_deref() {

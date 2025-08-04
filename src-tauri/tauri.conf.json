@@ -1,7 +1,7 @@
 {
-  "productName": "kanji-frequency",
-  "version": "2.4.0",
-  "identifier": "tsukilabs.kanji-frequency",
+  "productName": "kanji",
+  "version": "3.0.0",
+  "identifier": "tsukilabs.kanji",
   "build": {
     "beforeDevCommand": "pnpm run vite:dev",
     "beforeBuildCommand": "pnpm run vite:build",
@@ -31,7 +31,7 @@
   "bundle": {
     "publisher": "Tsukilabs",
     "shortDescription": "Kanji frequency in text files",
-    "license": "MIT",
+    "license": "GPL-3.0-only",
     "licenseFile": "../LICENSE",
     "active": true,
     "targets": [

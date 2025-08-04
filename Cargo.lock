@@ -2133,8 +2133,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "kanji-frequency"
-version = "2.4.0"
+name = "kanji"
+version = "3.0.0"
 dependencies = [
  "anyhow",
  "derive_more 2.0.1",
