@@ -47,7 +47,7 @@ pub async fn export_set(app: AppHandle, src: PathBuf) -> CResult<()> {
       set.push(b'\n');
     }
 
-    let path = dir.join("kanji-set.txt");
+    let path = dir.join("Kanji Set.txt");
     let mut file = File::create(path).await?;
     file.write_all(&set).await?;
     file.flush().await?;
