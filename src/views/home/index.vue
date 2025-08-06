@@ -19,7 +19,7 @@ const settings = useSettingsStore();
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
-const { kanjis, loading, load } = useKanjis();
+const { kanjis, loading, load, exportSet } = useKanjis();
 
 function onCardClick(kanji: DeepReadonly<Kanji>) {
   selected.value = kanji;
@@ -44,11 +44,28 @@ function onCardDblClick() {
           {{ folder }}
         </span>
         <div class="flex items-center justify-center gap-2">
-          <Button size="sm" :disabled="loading" @click="() => store.setFolder()">
+          <Button
+            size="sm"
+            :disabled="loading"
+            @click="() => store.setFolder()"
+          >
             <span>Select Folder</span>
           </Button>
-          <Button size="sm" variant="secondary" :disabled="loading || !folder" @click="load">
+          <Button
+            size="sm"
+            variant="secondary"
+            :disabled="loading || !folder"
+            @click="load"
+          >
             <span>Reload</span>
+          </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            :disabled="!folder"
+            @click="exportSet"
+          >
+            <span>Export</span>
           </Button>
         </div>
       </div>

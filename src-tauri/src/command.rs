@@ -2,11 +2,14 @@ use crate::error::CResult;
 use crate::kanji::{self, Kanji, KanjiChar};
 use crate::snippet::{self, Snippet};
 use crate::tray;
+use itertools::Itertools;
 use std::path::PathBuf;
 use std::process::Stdio;
 use tauri::{AppHandle, WebviewWindow};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_fs::{FilePath, FsExt};
+use tokio::fs::File;
+use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
 use tokio::sync::oneshot;
 use windows::Win32::System::Threading::{CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW};
@@ -17,6 +20,36 @@ pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
   handle
     .run_on_main_thread(move || tray::create(&app).unwrap())
     .map_err(Into::into)
+}
+
+#[tauri::command]
+pub async fn export_set(app: AppHandle, src: PathBuf) -> CResult<()> {
+  if let Some(dir) = pick_folder(app).await? {
+    let mut kanji = search_kanji(src).await?;
+    kanji.sort_by_key(Kanji::seen);
+
+    let chunk_size = 50;
+    let capacity = kanji.len().div_ceil(chunk_size);
+    let mut set = Vec::with_capacity(capacity);
+
+    for mut chunk in &kanji
+      .iter()
+      .map(Kanji::character)
+      .rev()
+      .chunks(chunk_size)
+    {
+      let chunk = chunk.join("");
+      set.extend(chunk.bytes());
+      set.push(b'\n');
+    }
+
+    let path = dir.join("kanji-set.txt");
+    let mut file = File::create(path).await?;
+    file.write_all(&set).await?;
+    file.flush().await?;
+  }
+
+  Ok(())
 }
 
 #[tauri::command]

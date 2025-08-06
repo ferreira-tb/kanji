@@ -1,6 +1,6 @@
 use crate::util::walk_dir;
 use anyhow::Result;
-use derive_more::Deref;
+use derive_more::{Deref, Display};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
@@ -27,9 +27,17 @@ impl Kanji {
       sources: Vec::default(),
     }
   }
+
+  pub fn character(&self) -> KanjiChar {
+    self.character
+  }
+
+  pub fn seen(&self) -> u32 {
+    self.seen
+  }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Deref, Deserialize, Serialize)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Deref, Display, Deserialize, Serialize)]
 pub struct KanjiChar(char);
 
 impl KanjiChar {

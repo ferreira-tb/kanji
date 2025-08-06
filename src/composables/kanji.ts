@@ -1,16 +1,14 @@
 import { storeToRefs } from 'pinia';
-import { searchKanji } from '@/commands';
-import { tryInjectOrElse } from '@tb-dev/vue';
+import * as commands from '@/commands';
+import { watchImmediate } from '@vueuse/core';
 import { useKanjiStore } from '@/stores/kanji';
-import { until, watchImmediate } from '@vueuse/core';
+import { tryInjectOrElse, useMutex } from '@tb-dev/vue';
 import {
   computed,
   type DeepReadonly,
   effectScope,
   type InjectionKey,
-  readonly,
   type Ref,
-  ref,
   shallowRef,
   type ShallowRef,
 } from 'vue';
@@ -23,6 +21,7 @@ interface UseKanjiReturn {
   load: () => Promise<void>;
   next: () => void;
   previous: () => void;
+  exportSet: () => Promise<void>;
 }
 
 const SYMBOL = Symbol() as InjectionKey<UseKanjiReturn>;
@@ -39,6 +38,7 @@ export function useKanjis() {
       load: value.load,
       next: value.next,
       previous: value.previous,
+      exportSet: value.exportSet,
     };
   });
 }
@@ -47,7 +47,7 @@ function start() {
   const store = useKanjiStore();
   const { folder, sorting, search, selected } = storeToRefs(store);
 
-  const loading = ref(false);
+  const { locked, lock } = useMutex();
   const raw = shallowRef<Kanji[]>([]);
 
   const kanjis = computed<Kanji[]>(() => {
@@ -91,19 +91,14 @@ function start() {
   });
 
   async function load() {
-    await until(loading).not.toBeTruthy();
-    try {
-      loading.value = true;
+    await lock(async () => {
       if (folder.value) {
-        raw.value = await searchKanji(folder.value);
+        raw.value = await commands.searchKanji(folder.value);
       }
       else if (raw.value.length > 0) {
         raw.value = [];
       }
-    }
-    finally {
-      loading.value = false;
-    }
+    });
   }
 
   function go(index: number) {
@@ -120,13 +115,20 @@ function start() {
     go(currentIndex.value - 1);
   }
 
+  async function exportSet() {
+    if (folder.value) {
+      await commands.exportSet(folder.value);
+    }
+  }
+
   return {
     kanjis,
     raw,
     currentIndex,
-    loading: readonly(loading),
+    loading: locked,
     load,
     next,
     previous,
+    exportSet,
   };
 }

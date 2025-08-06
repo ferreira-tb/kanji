@@ -5,6 +5,10 @@ export async function createTrayIcon() {
   return invoke<nil>('create_tray_icon');
 }
 
+export function exportSet(src: string) {
+  return invoke<nil>('export_set', { src });
+}
+
 export async function open(path: string, line: number) {
   return invoke<nil>('open', { path, line });
 }

@@ -27,6 +27,7 @@ fn main() {
     .setup(|app| setup(app.app_handle()))
     .invoke_handler(tauri::generate_handler![
       command::create_tray_icon,
+      command::export_set,
       command::open,
       command::pick_folder,
       command::search_kanji,
