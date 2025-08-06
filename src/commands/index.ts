@@ -5,8 +5,8 @@ export async function createTrayIcon() {
   return invoke<nil>('create_tray_icon');
 }
 
-export async function open(path: string) {
-  return invoke<nil>('open', { path });
+export async function open(path: string, line: number) {
+  return invoke<nil>('open', { path, line });
 }
 
 export async function pickFolder() {

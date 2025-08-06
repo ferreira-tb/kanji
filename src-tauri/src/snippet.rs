@@ -65,6 +65,7 @@ fn blocking_search(dir: &Path, kanji: KanjiChar) -> Result<Vec<Snippet>> {
       let bytes = text.as_bytes();
       if finder.find(bytes).is_some() {
         let path = Arc::clone(&path);
+        let line = line.saturating_add(1);
         snippets.push(Snippet {
           id: SnippetId::next(),
           content: Arc::from(text),

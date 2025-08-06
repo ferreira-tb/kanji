@@ -3,10 +3,13 @@ use crate::kanji::{self, Kanji, KanjiChar};
 use crate::snippet::{self, Snippet};
 use crate::tray;
 use std::path::PathBuf;
+use std::process::Stdio;
 use tauri::{AppHandle, WebviewWindow};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_fs::{FilePath, FsExt};
+use tokio::process::Command;
 use tokio::sync::oneshot;
+use windows::Win32::System::Threading::{CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW};
 
 #[tauri::command]
 pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
@@ -17,8 +20,18 @@ pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
 }
 
 #[tauri::command]
-pub async fn open(path: PathBuf) -> CResult<()> {
-  open::that_detached(path).map_err(Into::into)
+pub async fn open(path: PathBuf, line: u32) -> CResult<()> {
+  let path = format!("{}:{}", path.to_string_lossy(), line);
+  Command::new("pwsh")
+    .args(["-Command", "code", "--goto", path.as_str()])
+    .creation_flags(CREATE_NEW_PROCESS_GROUP.0 | CREATE_NO_WINDOW.0)
+    .stdin(Stdio::null())
+    .stdout(Stdio::null())
+    .stderr(Stdio::null())
+    .status()
+    .await?;
+
+  Ok(())
 }
 
 #[tauri::command]

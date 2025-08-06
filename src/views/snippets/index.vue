@@ -59,9 +59,9 @@ function onContentClick(snippet: DeepReadonly<Snippet>) {
             <div class="flex flex-col gap-2">
               <div
                 class="text-muted-foreground cursor-pointer text-xs"
-                @click="() => open(snippet.source.path)"
+                @click="() => open(snippet.source.path, snippet.source.line)"
               >
-                <span>{{ `${snippet.source.path}:L${snippet.source.line}` }}</span>
+                <span>{{ `${snippet.source.path}:${snippet.source.line}` }}</span>
               </div>
               <div class="cursor-pointer text-lg" @click="() => onContentClick(snippet)">
                 <span>{{ snippet.content }}</span>
