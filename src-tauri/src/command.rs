@@ -29,7 +29,11 @@ pub async fn export_set(app: AppHandle, src: PathBuf) -> CResult<()> {
     kanji.sort_by_key(Kanji::seen);
 
     let chunk_size = 50;
-    let capacity = kanji.len().div_ceil(chunk_size);
+    let capacity = kanji
+      .len()
+      .saturating_mul(2)
+      .saturating_add(chunk_size);
+
     let mut set = Vec::with_capacity(capacity);
 
     for mut chunk in &kanji
