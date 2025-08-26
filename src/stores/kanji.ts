@@ -8,7 +8,9 @@ import { type DeepReadonly, ref } from 'vue';
 export const useKanjiStore = defineStore('kanji', () => {
   const folder = ref<Option<string>>(null);
   const history = ref<string[]>([]);
-  const selected = ref<Option<DeepReadonly<Kanji>>>(null);
+
+  const currentKanji = ref<Option<DeepReadonly<Kanji>>>(null);
+  const currentSource = ref<Option<KanjiSource>>(null);
 
   const search = ref<Option<string>>(null);
   const sorting = ref<Sorting>({ ascending: false });
@@ -34,7 +36,8 @@ export const useKanjiStore = defineStore('kanji', () => {
     history,
     search,
     sorting,
-    selected,
+    currentKanji,
+    currentSource,
     setFolder: set,
   };
 });

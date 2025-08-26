@@ -30,8 +30,8 @@ import {
 } from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
-const { selected } = storeToRefs(store);
-const ranking = useRanking(selected);
+const { currentKanji, currentSource } = storeToRefs(store);
+const ranking = useRanking(currentKanji);
 
 const { kanjis, loading, next, previous } = useKanjis();
 
@@ -68,16 +68,23 @@ onMounted(async () => {
     handleError(err);
   }
 });
+
+function setCurrentSource(source: KanjiSource) {
+  currentSource.value = source;
+  if (route.name !== ('snippets' satisfies Route)) {
+    go('snippets');
+  }
+}
 </script>
 
 <template>
   <SidebarProvider v-model:open="isSidebarOpen" style="--sidebar-width: 20rem">
     <Sidebar>
       <SidebarHeader class="pb-0">
-        <div v-if="selected" class="flex flex-col gap-4">
+        <div v-if="currentKanji" class="flex flex-col gap-4">
           <div class="flex flex-col items-center justify-center gap-4 pt-2">
-            <span class="text-9xl">{{ selected.character }}</span>
-            <Badge>{{ capitalCase(selected.level) }}</Badge>
+            <span class="text-9xl">{{ currentKanji.character }}</span>
+            <Badge>{{ capitalCase(currentKanji.level) }}</Badge>
           </div>
           <div class="grid grid-cols-2 gap-4 px-4">
             <div class="flex h-16 flex-col items-center justify-center">
@@ -86,18 +93,20 @@ onMounted(async () => {
             </div>
             <div class="flex h-16 flex-col items-center justify-center">
               <span class="text-muted-foreground text-sm">Total</span>
-              <span class="text-lg font-semibold">{{ selected.seen }}</span>
+              <span class="text-lg font-semibold">{{ currentKanji.seen }}</span>
             </div>
           </div>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
-        <div v-if="selected" ref="content" class="flex size-full flex-col justify-between gap-6 p-4 select-none">
+        <div v-if="currentKanji" ref="content" class="flex size-full flex-col justify-between gap-6 p-4 select-none">
           <ScrollArea :style="{ height: toPixel(listHeight - 50) }">
             <div id="source-grid" class="text-sidebar-accent-foreground text-sm pr-4">
-              <template v-for="source of selected.sources" :key="source.name">
-                <div>{{ source.name }}</div>
+              <template v-for="source of currentKanji.sources" :key="source.name">
+                <div class="cursor-pointer" @click="() => setCurrentSource(source)">
+                  {{ source.name }}
+                </div>
                 <div class="text-end">{{ source.seen }}</div>
               </template>
             </div>

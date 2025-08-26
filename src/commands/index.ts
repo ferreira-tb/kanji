@@ -21,8 +21,8 @@ export async function searchKanji(dir: string) {
   return invoke<Kanji[]>('search_kanji', { dir });
 }
 
-export async function searchSnippets(dir: string, kanji: KanjiChar) {
-  return invoke<Snippet[]>('search_snippets', { dir, kanji });
+export async function searchSnippets(search: SnippetSearch) {
+  return invoke<Snippet[]>('search_snippets', { search });
 }
 
 export async function showWindow() {

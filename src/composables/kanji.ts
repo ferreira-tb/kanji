@@ -45,7 +45,7 @@ export function useKanjis() {
 
 function start() {
   const store = useKanjiStore();
-  const { folder, sorting, search, selected } = storeToRefs(store);
+  const { folder, sorting, search, currentKanji } = storeToRefs(store);
 
   const { locked, lock } = useMutex();
   const raw = shallowRef<Kanji[]>([]);
@@ -75,19 +75,19 @@ function start() {
 
   const currentIndex = computed(() => {
     return kanjis.value.findIndex((kanji) => {
-      return kanji.character === selected.value?.character;
+      return kanji.character === currentKanji.value?.character;
     });
   });
 
   watchImmediate(folder, load);
 
   watchImmediate(kanjis, (_kanjis) => {
-    const char = selected.value?.character;
+    const char = currentKanji.value?.character;
     if (char && _kanjis.every((kanji) => kanji.character !== char)) {
-      selected.value = null;
+      currentKanji.value = null;
     }
 
-    selected.value ??= _kanjis.at(0);
+    currentKanji.value ??= _kanjis.at(0);
   });
 
   async function load() {
@@ -104,7 +104,7 @@ function start() {
   function go(index: number) {
     const size = kanjis.value.length;
     index = ((index % size) + size) % size;
-    selected.value = kanjis.value.at(index);
+    currentKanji.value = kanjis.value.at(index);
   }
 
   function next() {

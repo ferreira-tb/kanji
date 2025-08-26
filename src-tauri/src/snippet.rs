@@ -4,7 +4,7 @@ use anyhow::Result;
 use itertools::Itertools;
 use memchr::memmem::Finder;
 use rand::seq::SliceRandom;
-use serde::{Serialize, Serializer};
+use serde::{Deserialize, Serialize, Serializer};
 use std::fs::File;
 use std::io::BufRead;
 use std::path::{Path, PathBuf};
@@ -48,42 +48,57 @@ struct Source {
   line: usize,
 }
 
-pub async fn search(dir: PathBuf, kanji: KanjiChar) -> Result<Vec<Snippet>> {
-  spawn_blocking(move || blocking_search(&dir, kanji)).await?
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SnippetSearch {
+  dir: PathBuf,
+  kanji: KanjiChar,
+  limit: usize,
 }
 
-fn blocking_search(dir: &Path, kanji: KanjiChar) -> Result<Vec<Snippet>> {
-  let mut snippets = Vec::new();
-  let mut buf = [0u8; 4];
-  let finder = Finder::new(kanji.encode_utf8(&mut buf));
-
-  for path in walk_dir(dir) {
-    let path = Arc::from(path);
-    let file = File::open_buffered(&path)?;
-    for (line, text) in file.lines().enumerate() {
-      let Ok(text) = text else { continue };
-      let bytes = text.as_bytes();
-      if finder.find(bytes).is_some() {
-        let path = Arc::clone(&path);
-        let line = line.saturating_add(1);
-        snippets.push(Snippet {
-          id: SnippetId::next(),
-          content: Arc::from(text),
-          source: Source { path, line },
-        });
-      }
-    }
+impl SnippetSearch {
+  pub async fn execute(self) -> Result<Vec<Snippet>> {
+    spawn_blocking(move || self.blocking_execute()).await?
   }
 
-  snippets = snippets
-    .into_iter()
-    .unique_by(|snippet: &Snippet| Arc::clone(&snippet.content))
-    .collect();
+  fn blocking_execute(self) -> Result<Vec<Snippet>> {
+    let mut snippets = Vec::new();
+    let mut buf = [0u8; 4];
+    let finder = Finder::new(self.kanji.encode_utf8(&mut buf));
 
-  let mut rng = rand::rng();
-  snippets.shuffle(&mut rng);
+    for path in walk_dir(&self.dir) {
+      let path = Arc::from(path);
+      let file = File::open_buffered(&path)?;
+      for (line, text) in file.lines().enumerate() {
+        let Ok(text) = text else { continue };
+        if text.len() > 5 {
+          let bytes = text.as_bytes();
+          if finder.find(bytes).is_some() {
+            let path = Arc::clone(&path);
+            let line = line.saturating_add(1);
+            snippets.push(Snippet {
+              id: SnippetId::next(),
+              content: Arc::from(text),
+              source: Source { path, line },
+            });
+          }
+        }
+      }
+    }
 
-  snippets = snippets.into_iter().take(1000).collect();
+    snippets = snippets
+      .into_iter()
+      .unique_by(|snippet: &Snippet| Arc::clone(&snippet.content))
+      .collect();
 
-  Ok(snippets)
+    let mut rng = rand::rng();
+    snippets.shuffle(&mut rng);
+
+    snippets = snippets
+      .into_iter()
+      .take(self.limit)
+      .collect();
+
+    Ok(snippets)
+  }
 }

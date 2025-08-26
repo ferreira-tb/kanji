@@ -8,3 +8,9 @@ interface SnippetSource {
   readonly path: string;
   readonly line: number;
 }
+
+interface SnippetSearch {
+  readonly dir: string;
+  readonly kanji: KanjiChar;
+  readonly limit: usize;
+}

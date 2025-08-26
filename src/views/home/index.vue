@@ -12,7 +12,7 @@ import { type DeepReadonly, nextTick, useTemplateRef } from 'vue';
 import { Button, Card, CardContent } from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
-const { folder, search, selected } = storeToRefs(store);
+const { folder, search, currentKanji } = storeToRefs(store);
 
 const settings = useSettingsStore();
 
@@ -22,7 +22,7 @@ const contentHeight = useHeightDiff(topbar);
 const { kanjis, loading, load, exportSet } = useKanjis();
 
 function onCardClick(kanji: DeepReadonly<Kanji>) {
-  selected.value = kanji;
+  currentKanji.value = kanji;
   if (settings.clipboard) {
     writeText(kanji.character).err();
   }

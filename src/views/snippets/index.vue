@@ -5,16 +5,28 @@ import { toPixel } from '@tb-dev/utils';
 import { useKanjiStore } from '@/stores/kanji';
 import { useSnippets } from '@/composables/snippets';
 import { useSettingsStore } from '@/stores/settings';
-import { handleError, useHeightDiff } from '@tb-dev/vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { Button, Card, CardContent, Loading } from '@tb-dev/vue-components';
+import { handleError, localRef, useHeightDiff } from '@tb-dev/vue';
 import { type DeepReadonly, nextTick, onActivated, useTemplateRef } from 'vue';
+import {
+  Button,
+  Card,
+  CardContent,
+  Loading,
+  NumberField,
+  NumberFieldContent,
+  NumberFieldDecrement,
+  NumberFieldIncrement,
+  NumberFieldInput,
+} from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
-const { folder, selected } = storeToRefs(store);
+const { folder, currentKanji, currentSource } = storeToRefs(store);
 
 const settings = useSettingsStore();
-const { snippets, load, loading } = useSnippets();
+
+const limit = localRef('kanji:snippet-limit', 1000);
+const { snippets, load, loading } = useSnippets(limit);
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
@@ -40,8 +52,35 @@ function onContentClick(snippet: DeepReadonly<Snippet>) {
   <div class="flex size-full flex-col gap-2">
     <div ref="topbarEl" class="flex h-14 w-full items-center justify-end px-6 py-4">
       <div class="flex items-center justify-center gap-2">
-        <Button size="sm" :disabled="loading || !folder || !selected" @click="load">
+        <NumberField
+          v-model="limit"
+          :min="1"
+          :max="5_000"
+          :step="1"
+          class="mr-4"
+        >
+          <NumberFieldContent>
+            <NumberFieldDecrement />
+            <NumberFieldInput class="dark:bg-input/40" />
+            <NumberFieldIncrement />
+          </NumberFieldContent>
+        </NumberField>
+
+        <Button
+          size="sm"
+          :disabled="loading || !folder || !currentKanji"
+          @click="load"
+        >
           <span>Reload</span>
+        </Button>
+
+        <Button
+          variant="secondary"
+          size="sm"
+          :disabled="loading || !currentSource"
+          @click="() => (currentSource = null)"
+        >
+          <span>Clear source</span>
         </Button>
       </div>
     </div>

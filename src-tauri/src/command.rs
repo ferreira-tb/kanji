@@ -1,6 +1,6 @@
 use crate::error::CResult;
-use crate::kanji::{self, Kanji, KanjiChar};
-use crate::snippet::{self, Snippet};
+use crate::kanji::{self, Kanji};
+use crate::snippet::{Snippet, SnippetSearch};
 use crate::tray;
 use itertools::Itertools;
 use std::path::PathBuf;
@@ -98,10 +98,8 @@ pub async fn search_kanji(dir: PathBuf) -> CResult<Vec<Kanji>> {
 }
 
 #[tauri::command]
-pub async fn search_snippets(dir: PathBuf, kanji: KanjiChar) -> CResult<Vec<Snippet>> {
-  snippet::search(dir, kanji)
-    .await
-    .map_err(Into::into)
+pub async fn search_snippets(search: SnippetSearch) -> CResult<Vec<Snippet>> {
+  search.execute().await.map_err(Into::into)
 }
 
 #[tauri::command]
