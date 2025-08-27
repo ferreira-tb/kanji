@@ -131,7 +131,7 @@ fn blocking_search(dir: &Path) -> Result<Vec<Kanji>> {
   Ok(kanjis.into_values().collect())
 }
 
-const fn is_kanji(c: char) -> bool {
+pub const fn is_kanji(c: char) -> bool {
   // http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml
   matches!(c, '\u{4e00}'..='\u{9faf}' | '\u{3400}' ..= '\u{4dbf}')
 }

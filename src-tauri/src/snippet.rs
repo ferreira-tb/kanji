@@ -1,4 +1,4 @@
-use crate::kanji::KanjiChar;
+use crate::kanji::{KanjiChar, is_kanji};
 use crate::util::walk_dir;
 use anyhow::Result;
 use itertools::Itertools;
@@ -54,6 +54,7 @@ pub struct SnippetSearch {
   dir: PathBuf,
   kanji: KanjiChar,
   limit: usize,
+  min_len: usize,
 }
 
 impl SnippetSearch {
@@ -71,7 +72,7 @@ impl SnippetSearch {
       let file = File::open_buffered(&path)?;
       for (line, text) in file.lines().enumerate() {
         let Ok(text) = text else { continue };
-        if text.len() > 5 {
+        if !should_skip(&text) && has_min_len(&text, self.min_len) {
           let bytes = text.as_bytes();
           if finder.find(bytes).is_some() {
             let path = Arc::clone(&path);
@@ -101,4 +102,24 @@ impl SnippetSearch {
 
     Ok(snippets)
   }
+}
+
+fn should_skip(text: &str) -> bool {
+  let text = text.trim_start();
+  text.starts_with('#') || text.starts_with('<')
+}
+
+fn has_min_len(text: &str, min_len: usize) -> bool {
+  let mut matches: usize = 0;
+  for char in text.chars() {
+    if is_kanji(char) {
+      matches = matches.saturating_add(1);
+    }
+
+    if matches >= min_len {
+      return true;
+    }
+  }
+
+  false
 }

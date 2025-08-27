@@ -12,5 +12,6 @@ interface SnippetSource {
 interface SnippetSearch {
   readonly dir: string;
   readonly kanji: KanjiChar;
-  readonly limit: usize;
+  readonly limit: number;
+  readonly minLen: number;
 }

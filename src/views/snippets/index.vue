@@ -5,8 +5,8 @@ import { toPixel } from '@tb-dev/utils';
 import { useKanjiStore } from '@/stores/kanji';
 import { useSnippets } from '@/composables/snippets';
 import { useSettingsStore } from '@/stores/settings';
+import { handleError, useHeightDiff } from '@tb-dev/vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { handleError, localRef, useHeightDiff } from '@tb-dev/vue';
 import { type DeepReadonly, nextTick, onActivated, useTemplateRef } from 'vue';
 import {
   Button,
@@ -24,9 +24,9 @@ const store = useKanjiStore();
 const { folder, currentKanji, currentSource } = storeToRefs(store);
 
 const settings = useSettingsStore();
+const { snippetLimit } = storeToRefs(settings);
 
-const limit = localRef('kanji:snippet-limit', 1000);
-const { snippets, load, loading } = useSnippets(limit);
+const { snippets, load, loading } = useSnippets();
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
@@ -53,7 +53,7 @@ function onContentClick(snippet: DeepReadonly<Snippet>) {
     <div ref="topbarEl" class="flex h-14 w-full items-center justify-end px-6 py-4">
       <div class="flex items-center justify-center gap-2">
         <NumberField
-          v-model="limit"
+          v-model="snippetLimit"
           :min="1"
           :max="5_000"
           :step="1"
