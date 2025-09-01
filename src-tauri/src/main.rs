@@ -2,14 +2,17 @@
 #![feature(file_buffered, try_blocks)]
 
 mod command;
+mod database;
 mod error;
 mod kanji;
+mod manager;
 mod plugin;
+mod settings;
 mod snippet;
 mod tray;
-mod util;
 mod window;
 
+use crate::database::DatabaseHandle;
 use error::BoxResult;
 use tauri::{AppHandle, Manager};
 
@@ -26,10 +29,11 @@ fn main() {
     .plugin(tauri_plugin_process::init())
     .setup(|app| setup(app.app_handle()))
     .invoke_handler(tauri::generate_handler![
+      command::create_source,
       command::create_tray_icon,
       command::export_set,
       command::open,
-      command::pick_folder,
+      command::pick_folders,
       command::search_kanji,
       command::search_snippets,
       command::show_window
@@ -39,6 +43,7 @@ fn main() {
 }
 
 fn setup(app: &AppHandle) -> BoxResult<()> {
+  app.manage(DatabaseHandle::new()?);
   window::open(app)?;
   Ok(())
 }

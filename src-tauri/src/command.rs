@@ -1,6 +1,9 @@
-use crate::error::CResult;
-use crate::kanji::{self, Kanji};
-use crate::snippet::{Snippet, SnippetSearch};
+use crate::database::model::source::NewSource;
+use crate::database::sql_types::{KanjiChar, Path, SourceId};
+use crate::error::{CResult, Error};
+use crate::kanji::{self, KanjiStats};
+use crate::settings::Settings;
+use crate::snippet::{self, Snippet};
 use crate::tray;
 use itertools::Itertools;
 use std::path::PathBuf;
@@ -15,6 +18,20 @@ use tokio::sync::oneshot;
 use windows::Win32::System::Threading::{CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW};
 
 #[tauri::command]
+pub async fn create_source(app: AppHandle, source: Path) -> CResult<SourceId> {
+  let name: Option<String> = try { source.file_stem()?.to_str()?.to_owned() };
+  let Some(name) = name else {
+    return Err(Error::from(format!("invalid source: {source}")));
+  };
+
+  NewSource::builder(source)
+    .name(name.as_str())
+    .build()
+    .create(&app)
+    .map_err(Into::into)
+}
+
+#[tauri::command]
 pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
   let handle = app.clone();
   handle
@@ -23,10 +40,10 @@ pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
 }
 
 #[tauri::command]
-pub async fn export_set(app: AppHandle, src: PathBuf) -> CResult<()> {
-  if let Some(dir) = pick_folder(app).await? {
-    let mut kanji = search_kanji(src).await?;
-    kanji.sort_by_key(Kanji::seen);
+pub async fn export_set(app: AppHandle) -> CResult<()> {
+  if let Some(folder) = pick_folders(app.clone()).await?.get(0) {
+    let mut kanji = search_kanji(app.clone()).await?;
+    kanji.sort_by_key(KanjiStats::seen);
 
     let chunk_size = 50;
     let capacity = kanji
@@ -38,7 +55,7 @@ pub async fn export_set(app: AppHandle, src: PathBuf) -> CResult<()> {
 
     for mut chunk in &kanji
       .iter()
-      .map(Kanji::character)
+      .map(KanjiStats::character)
       .rev()
       .chunks(chunk_size)
     {
@@ -47,7 +64,8 @@ pub async fn export_set(app: AppHandle, src: PathBuf) -> CResult<()> {
       set.push(b'\n');
     }
 
-    let path = dir.join("Kanji Set.txt");
+    let settings = Settings::get(&app)?;
+    let path = folder.join(settings.set_file_name.as_ref());
     let mut file = File::create(path).await?;
     file.write_all(&set).await?;
     file.flush().await?;
@@ -72,34 +90,46 @@ pub async fn open(path: PathBuf, line: u32) -> CResult<()> {
 }
 
 #[tauri::command]
-pub async fn pick_folder(app: AppHandle) -> CResult<Option<PathBuf>> {
+pub async fn pick_folders(app: AppHandle) -> CResult<Vec<PathBuf>> {
   let (tx, rx) = oneshot::channel();
   app
     .dialog()
     .file()
-    .pick_folder(move |response| {
-      let _ = tx.send(response.map(FilePath::into_path));
+    .pick_folders(move |response| {
+      let folders = response
+        .unwrap_or_default()
+        .into_iter()
+        .map(FilePath::into_path)
+        .process_results(|it| it.collect_vec());
+
+      let _ = tx.send(folders);
     });
 
-  let path = rx.await?.transpose()?;
-  if let Some(path) = path.as_deref() {
+  let folders = rx.await??;
+  for folder in &folders {
     let scope = app.fs_scope();
-    if !scope.is_allowed(path) {
-      let _ = scope.allow_directory(path, true);
+    if !scope.is_allowed(folder) {
+      let _ = scope.allow_directory(folder, true);
     }
   }
 
-  Ok(path)
+  Ok(folders)
 }
 
 #[tauri::command]
-pub async fn search_kanji(dir: PathBuf) -> CResult<Vec<Kanji>> {
-  kanji::search(dir).await.map_err(Into::into)
+pub async fn search_kanji(app: AppHandle) -> CResult<Vec<KanjiStats>> {
+  kanji::search(app).await.map_err(Into::into)
 }
 
 #[tauri::command]
-pub async fn search_snippets(search: SnippetSearch) -> CResult<Vec<Snippet>> {
-  search.execute().await.map_err(Into::into)
+pub async fn search_snippets(
+  app: AppHandle,
+  kanji: KanjiChar,
+  source: Option<SourceId>,
+) -> CResult<Vec<Snippet>> {
+  snippet::search(app, kanji, source)
+    .await
+    .map_err(Into::into)
 }
 
 #[tauri::command]

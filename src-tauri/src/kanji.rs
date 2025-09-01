@@ -1,25 +1,28 @@
-use crate::util::walk_dir;
+use crate::database::model::kanji::NewKanji;
+use crate::database::sql_types::{KanjiChar, SourceId};
+use crate::manager::ManagerExt;
 use anyhow::Result;
-use derive_more::{Deref, Display};
-use serde::{Deserialize, Serialize};
+use itertools::Itertools;
+use serde::Serialize;
 use std::collections::HashMap;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::sync::Arc;
+use tauri::AppHandle;
 use tauri::async_runtime::spawn_blocking;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Kanji {
+pub struct KanjiStats {
   character: KanjiChar,
   seen: u32,
   ratio: f64,
   level: Level,
-  sources: Vec<Source>,
+  sources: Vec<KanjiStatsSource>,
 }
 
-impl Kanji {
-  fn new(kanji: KanjiChar) -> Kanji {
-    Kanji {
+impl KanjiStats {
+  fn new(kanji: KanjiChar) -> KanjiStats {
+    KanjiStats {
       character: kanji,
       seen: 0,
       ratio: 0.0,
@@ -37,19 +40,11 @@ impl Kanji {
   }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Deref, Display, Deserialize, Serialize)]
-pub struct KanjiChar(char);
-
-impl KanjiChar {
-  fn from_char(c: char) -> Option<Self> {
-    is_kanji(c).then_some(Self(c))
-  }
-}
-
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-struct Source {
-  name: String,
+struct KanjiStatsSource {
+  id: SourceId,
+  name: Arc<str>,
   seen: u32,
 }
 
@@ -80,37 +75,40 @@ impl Level {
   }
 }
 
-pub async fn search(dir: PathBuf) -> Result<Vec<Kanji>> {
-  spawn_blocking(move || blocking_search(&dir)).await?
+pub async fn search(app: AppHandle) -> Result<Vec<KanjiStats>> {
+  spawn_blocking(move || blocking_search(&app)).await?
 }
 
-fn blocking_search(dir: &Path) -> Result<Vec<Kanji>> {
-  let mut kanjis: HashMap<KanjiChar, Kanji> = HashMap::new();
-  for path in walk_dir(dir) {
-    for character in fs::read_to_string(&path)?
-      .chars()
-      .filter_map(KanjiChar::from_char)
-    {
-      let kanji = kanjis
-        .entry(character)
-        .or_insert_with(|| Kanji::new(character));
+fn blocking_search(app: &AppHandle) -> Result<Vec<KanjiStats>> {
+  let db = app.database();
+  let sources = db.get_sources()?;
+  let mut kanjis: HashMap<KanjiChar, KanjiStats> = HashMap::new();
 
-      kanji.seen = kanji.seen.saturating_add(1);
-
-      if let Some(parent) = path.parent()
-        && let Some(name) = parent.file_name()
-        && let Some(name) = name.to_str()
+  for source in sources {
+    let id = source.id;
+    let name: Arc<str> = Arc::from(source.name.as_str());
+    for file in source.walk() {
+      for character in fs::read_to_string(&file)?
+        .chars()
+        .filter_map(KanjiChar::from_char)
       {
+        let kanji = kanjis
+          .entry(character)
+          .or_insert_with(|| KanjiStats::new(character));
+
+        kanji.seen = kanji.seen.saturating_add(1);
+
         if let Some(source) = kanji
           .sources
           .iter_mut()
-          .find(|s| s.name == name)
+          .find(|it| it.name == name)
         {
           source.seen = source.seen.saturating_add(1);
         } else {
+          let name = Arc::clone(&name);
           kanji
             .sources
-            .push(Source { name: name.to_owned(), seen: 1 });
+            .push(KanjiStatsSource { id, name, seen: 1 });
         }
       }
     }
@@ -128,7 +126,16 @@ fn blocking_search(dir: &Path) -> Result<Vec<Kanji>> {
     }
   }
 
-  Ok(kanjis.into_values().collect())
+  let kanjis = kanjis.into_values().collect_vec();
+  for kanji in &kanjis {
+    if !db.has_kanji(kanji.character)? {
+      NewKanji::builder(kanji.character)
+        .build()
+        .create(app)?;
+    }
+  }
+
+  Ok(kanjis)
 }
 
 pub const fn is_kanji(c: char) -> bool {

@@ -7,24 +7,13 @@ import { useSnippets } from '@/composables/snippets';
 import { useSettingsStore } from '@/stores/settings';
 import { handleError, useHeightDiff } from '@tb-dev/vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { Button, Card, CardContent, Loading } from '@tb-dev/vue-components';
 import { type DeepReadonly, nextTick, onActivated, useTemplateRef } from 'vue';
-import {
-  Button,
-  Card,
-  CardContent,
-  Loading,
-  NumberField,
-  NumberFieldContent,
-  NumberFieldDecrement,
-  NumberFieldIncrement,
-  NumberFieldInput,
-} from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
-const { folder, currentKanji, currentSource } = storeToRefs(store);
+const { currentKanji, currentSource } = storeToRefs(store);
 
 const settings = useSettingsStore();
-const { snippetLimit } = storeToRefs(settings);
 
 const { snippets, load, loading } = useSnippets();
 
@@ -52,23 +41,9 @@ function onContentClick(snippet: DeepReadonly<Snippet>) {
   <div class="flex size-full flex-col gap-2">
     <div ref="topbarEl" class="flex h-14 w-full items-center justify-end px-6 py-4">
       <div class="flex items-center justify-center gap-2">
-        <NumberField
-          v-model="snippetLimit"
-          :min="1"
-          :max="5_000"
-          :step="1"
-          class="mr-4"
-        >
-          <NumberFieldContent>
-            <NumberFieldDecrement />
-            <NumberFieldInput class="dark:bg-input/40" />
-            <NumberFieldIncrement />
-          </NumberFieldContent>
-        </NumberField>
-
         <Button
           size="sm"
-          :disabled="loading || !folder || !currentKanji"
+          :disabled="loading || !currentKanji"
           @click="load"
         >
           <span>Reload</span>

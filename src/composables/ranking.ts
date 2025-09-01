@@ -2,7 +2,7 @@ import { useKanjis } from './kanji';
 import type { Option } from '@tb-dev/utils';
 import { computed, type DeepReadonly, type Ref } from 'vue';
 
-export function useRanking(kanji: Ref<Option<DeepReadonly<Kanji>>>) {
+export function useRanking(kanji: Ref<Option<DeepReadonly<KanjiStats>>>) {
   const { raw } = useKanjis();
   return computed(() => {
     const index = raw.value

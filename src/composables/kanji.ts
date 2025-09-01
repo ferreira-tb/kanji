@@ -14,14 +14,13 @@ import {
 } from 'vue';
 
 interface UseKanjiReturn {
-  kanjis: Readonly<ShallowRef<DeepReadonly<Kanji[]>>>;
-  raw: Readonly<ShallowRef<DeepReadonly<Kanji[]>>>;
+  kanjis: Readonly<ShallowRef<DeepReadonly<KanjiStats[]>>>;
+  raw: Readonly<ShallowRef<DeepReadonly<KanjiStats[]>>>;
   currentIndex: Readonly<Ref<number>>;
   loading: Readonly<Ref<boolean>>;
   load: () => Promise<void>;
   next: () => void;
   previous: () => void;
-  exportSet: () => Promise<void>;
 }
 
 const SYMBOL = Symbol() as InjectionKey<UseKanjiReturn>;
@@ -38,36 +37,33 @@ export function useKanjis() {
       load: value.load,
       next: value.next,
       previous: value.previous,
-      exportSet: value.exportSet,
     };
   });
 }
 
 function start() {
   const store = useKanjiStore();
-  const { folder, sorting, search, currentKanji } = storeToRefs(store);
+  const { sorting, search, currentKanji } = storeToRefs(store);
 
   const { locked, lock } = useMutex();
-  const raw = shallowRef<Kanji[]>([]);
+  const raw = shallowRef<KanjiStats[]>([]);
 
-  const kanjis = computed<Kanji[]>(() => {
+  const kanjis = computed<KanjiStats[]>(() => {
     let result = raw.value;
-    if (folder.value) {
-      if (search.value) {
-        result = result.filter(({ character }) => {
-          return search.value?.includes(character);
-        });
-      }
+    if (search.value) {
+      result = result.filter(({ character }) => {
+        return search.value?.includes(character);
+      });
+    }
 
-      result.sort(({ seen: a }, { seen: b }) => {
+    result.sort(({ seen: a }, { seen: b }) => {
+      return sorting.value.ascending ? a - b : b - a;
+    });
+
+    for (const { sources } of result) {
+      sources.sort(({ seen: a }, { seen: b }) => {
         return sorting.value.ascending ? a - b : b - a;
       });
-
-      for (const { sources } of result) {
-        sources.sort(({ seen: a }, { seen: b }) => {
-          return sorting.value.ascending ? a - b : b - a;
-        });
-      }
     }
 
     return result;
@@ -79,25 +75,18 @@ function start() {
     });
   });
 
-  watchImmediate(folder, load);
-
-  watchImmediate(kanjis, (_kanjis) => {
+  watchImmediate(kanjis, (entries) => {
     const char = currentKanji.value?.character;
-    if (char && _kanjis.every((kanji) => kanji.character !== char)) {
+    if (char && entries.every((kanji) => kanji.character !== char)) {
       currentKanji.value = null;
     }
 
-    currentKanji.value ??= _kanjis.at(0);
+    currentKanji.value ??= entries.at(0);
   });
 
   async function load() {
     await lock(async () => {
-      if (folder.value) {
-        raw.value = await commands.searchKanji(folder.value);
-      }
-      else if (raw.value.length > 0) {
-        raw.value = [];
-      }
+      raw.value = await commands.searchKanji();
     });
   }
 
@@ -115,12 +104,6 @@ function start() {
     go(currentIndex.value - 1);
   }
 
-  async function exportSet() {
-    if (folder.value) {
-      await commands.exportSet(folder.value);
-    }
-  }
-
   return {
     kanjis,
     raw,
@@ -129,6 +112,5 @@ function start() {
     load,
     next,
     previous,
-    exportSet,
   };
 }
