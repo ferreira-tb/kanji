@@ -9,14 +9,19 @@ export const router = createRouter({
       path: '/',
     },
     {
+      component: () => import('@/views/settings/index.vue'),
+      name: 'settings' satisfies Route,
+      path: '/settings',
+    },
+    {
       component: () => import('@/views/snippets/index.vue'),
       name: 'snippets' satisfies Route,
       path: '/snippets',
     },
     {
-      component: () => import('@/views/settings/index.vue'),
-      name: 'settings' satisfies Route,
-      path: '/settings',
+      component: () => import('@/views/sources/index.vue'),
+      name: 'sources' satisfies Route,
+      path: '/sources',
     },
   ],
 });

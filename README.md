@@ -4,5 +4,6 @@
 
 - `F1` - Home
 - `F2` - Snippets
-- `F3` - Settings
+- `F3` - Sources
+- `F5` - Settings
 - `Esc` - Exit

@@ -32,8 +32,10 @@ fn main() {
       command::create_source,
       command::create_tray_icon,
       command::export_set,
+      command::get_sources,
       command::open,
       command::pick_folders,
+      command::rename_source,
       command::search_kanji,
       command::search_snippets,
       command::show_window

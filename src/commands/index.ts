@@ -19,12 +19,20 @@ export function exportSet() {
   return invoke<nil>('export_set');
 }
 
+export function getSources() {
+  return invoke<readonly Source[]>('get_sources');
+}
+
 export async function open(path: string, line: number) {
   return invoke<nil>('open', { path, line });
 }
 
 export async function pickFolders() {
   return invoke<string[]>('pick_folders');
+}
+
+export async function renameSource(id: SourceId, name: string) {
+  return invoke<nil>('rename_source', { id, name });
 }
 
 export async function searchKanji() {

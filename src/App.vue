@@ -52,7 +52,8 @@ useColorMode({
 
 onKeyDown('F1', () => go('home'));
 onKeyDown('F2', () => go('snippets'));
-onKeyDown('F3', () => go('settings'));
+onKeyDown('F3', () => go('sources'));
+onKeyDown('F5', () => go('settings'));
 onKeyDown('Escape', () => exit(0).err());
 
 onBeforeMount(load);
@@ -105,7 +106,7 @@ function setCurrentSource(source: KanjiStatsSource) {
         >
           <ScrollArea :style="{ height: toPixel(listHeight - 50) }">
             <div id="source-grid" class="text-sidebar-accent-foreground text-sm pr-4">
-              <template v-for="source of currentKanji.sources" :key="source.name">
+              <template v-for="source of currentKanji.sources" :key="source.id">
                 <div class="cursor-pointer" @click="() => setCurrentSource(source)">
                   {{ source.name }}
                 </div>
@@ -150,6 +151,9 @@ function setCurrentSource(source: KanjiStatsSource) {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <RouterLink to="/snippets" class="w-full">Snippets</RouterLink>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <RouterLink to="/sources" class="w-full">Sources</RouterLink>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <RouterLink to="/settings" class="w-full">Settings</RouterLink>

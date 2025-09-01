@@ -5,7 +5,7 @@ pub mod sql_types;
 
 use crate::database::model::kanji::NewKanji;
 use crate::database::model::source::{NewSource, Source};
-use crate::database::sql_types::{KanjiChar, SourceId};
+use crate::database::sql_types::{KanjiChar, SourceId, Zoned};
 use anyhow::Result;
 use diesel::Connection;
 use diesel::prelude::*;
@@ -77,6 +77,15 @@ impl DatabaseHandle {
     source
       .select(Source::as_select())
       .load(&mut *self.conn())
+      .map_err(Into::into)
+  }
+
+  pub fn rename_source(&self, source_id: SourceId, new_name: &str) -> Result<()> {
+    use schema::source::dsl::*;
+    diesel::update(source.find(source_id))
+      .set((name.eq(new_name), updated_at.eq(Zoned::now())))
+      .execute(&mut *self.conn())
+      .map(drop)
       .map_err(Into::into)
   }
 }

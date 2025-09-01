@@ -87,6 +87,11 @@ function start() {
   async function load() {
     await lock(async () => {
       raw.value = await commands.searchKanji();
+      if (currentKanji.value) {
+        const char = currentKanji.value.character;
+        const kanji = raw.value.find((it) => it.character === char);
+        if (kanji) currentKanji.value = kanji;
+      }
     });
   }
 

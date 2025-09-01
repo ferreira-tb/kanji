@@ -79,6 +79,7 @@ function onCardDblClick() {
         </div>
       </div>
     </div>
+
     <div
       class="overflow-x-hidden overflow-y-auto pb-12"
       :style="{ height: toPixel(contentHeight) }"

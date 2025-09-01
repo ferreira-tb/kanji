@@ -1,7 +1,8 @@
-use crate::database::model::source::NewSource;
+use crate::database::model::source::{NewSource, Source};
 use crate::database::sql_types::{KanjiChar, Path, SourceId};
 use crate::error::{CResult, Error};
 use crate::kanji::{self, KanjiStats};
+use crate::manager::ManagerExt;
 use crate::settings::Settings;
 use crate::snippet::{self, Snippet};
 use crate::tray;
@@ -41,7 +42,7 @@ pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
 
 #[tauri::command]
 pub async fn export_set(app: AppHandle) -> CResult<()> {
-  if let Some(folder) = pick_folders(app.clone()).await?.get(0) {
+  if let Some(folder) = pick_folders(app.clone()).await?.first() {
     let mut kanji = search_kanji(app.clone()).await?;
     kanji.sort_by_key(KanjiStats::seen);
 
@@ -72,6 +73,18 @@ pub async fn export_set(app: AppHandle) -> CResult<()> {
   }
 
   Ok(())
+}
+
+#[tauri::command]
+pub async fn get_sources(app: AppHandle) -> CResult<Vec<Source>> {
+  let sources = app
+    .database()
+    .get_sources()?
+    .into_iter()
+    .sorted_unstable_by(|a, b| a.name.cmp(&b.name))
+    .collect_vec();
+
+  Ok(sources)
 }
 
 #[tauri::command]
@@ -114,6 +127,14 @@ pub async fn pick_folders(app: AppHandle) -> CResult<Vec<PathBuf>> {
   }
 
   Ok(folders)
+}
+
+#[tauri::command]
+pub async fn rename_source(app: AppHandle, id: SourceId, name: String) -> CResult<()> {
+  app
+    .database()
+    .rename_source(id, &name)
+    .map_err(Into::into)
 }
 
 #[tauri::command]
