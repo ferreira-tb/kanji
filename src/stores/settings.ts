@@ -10,6 +10,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const shuffleSnippets = ref(true);
 
   const setFileName = ref('Kanji Set.txt');
+  const setSize = ref(50);
 
   return {
     clipboard,
@@ -18,5 +19,6 @@ export const useSettingsStore = defineStore('settings', () => {
     snippetMinLen,
     shuffleSnippets,
     setFileName,
+    setSize,
   };
 });

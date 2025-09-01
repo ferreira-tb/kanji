@@ -42,15 +42,15 @@ pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
 
 #[tauri::command]
 pub async fn export_set(app: AppHandle) -> CResult<()> {
+  let settings = Settings::get(&app)?;
   if let Some(folder) = pick_folders(app.clone()).await?.first() {
-    let mut kanji = search_kanji(app.clone()).await?;
+    let mut kanji = search_kanji(app).await?;
     kanji.sort_by_key(KanjiStats::seen);
 
-    let chunk_size = 50;
     let capacity = kanji
       .len()
       .saturating_mul(2)
-      .saturating_add(chunk_size);
+      .saturating_add(settings.set_size);
 
     let mut set = Vec::with_capacity(capacity);
 
@@ -58,14 +58,13 @@ pub async fn export_set(app: AppHandle) -> CResult<()> {
       .iter()
       .map(KanjiStats::character)
       .rev()
-      .chunks(chunk_size)
+      .chunks(settings.set_size)
     {
       let chunk = chunk.join("");
       set.extend(chunk.bytes());
       set.push(b'\n');
     }
 
-    let settings = Settings::get(&app)?;
     let path = folder.join(settings.set_file_name.as_ref());
     let mut file = File::create(path).await?;
     file.write_all(&set).await?;

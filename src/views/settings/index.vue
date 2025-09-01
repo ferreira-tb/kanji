@@ -84,6 +84,23 @@ const settings = useSettingsStore();
         <span>File name</span>
         <Input v-model="settings.setFileName" type="text" />
       </Label>
+
+      <Label class="max-w-70">
+        <span>Size</span>
+        <NumberField
+          v-model="settings.setSize"
+          :min="10"
+          :max="100"
+          :step="1"
+          class="w-full"
+        >
+          <NumberFieldContent>
+            <NumberFieldDecrement />
+            <NumberFieldInput class="dark:bg-input/40" />
+            <NumberFieldIncrement />
+          </NumberFieldContent>
+        </NumberField>
+      </Label>
     </div>
   </div>
 </template>

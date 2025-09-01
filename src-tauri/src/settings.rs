@@ -11,6 +11,7 @@ pub struct Settings {
   pub snippet_min_len: usize,
   pub shuffle_snippets: bool,
   pub set_file_name: Box<str>,
+  pub set_size: usize,
 }
 
 impl Settings {
@@ -30,6 +31,7 @@ impl Default for Settings {
       snippet_min_len: 5,
       shuffle_snippets: true,
       set_file_name: Box::from("Kanji Set.txt"),
+      set_size: 50,
     }
   }
 }
