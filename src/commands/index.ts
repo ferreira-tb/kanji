@@ -15,8 +15,8 @@ export async function createTrayIcon() {
   return invoke<nil>('create_tray_icon');
 }
 
-export function exportSet() {
-  return invoke<nil>('export_set');
+export function exportSets() {
+  return invoke<nil>('export_sets');
 }
 
 export function getSources() {

@@ -72,7 +72,7 @@ function onCardDblClick() {
             size="sm"
             variant="secondary"
             :disabled="loading"
-            @click="() => commands.exportSet().err()"
+            @click="() => commands.exportSets().err()"
           >
             <span>Export</span>
           </Button>

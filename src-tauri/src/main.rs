@@ -7,6 +7,7 @@ mod error;
 mod kanji;
 mod manager;
 mod plugin;
+mod set;
 mod settings;
 mod snippet;
 mod tray;
@@ -31,7 +32,7 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       command::create_source,
       command::create_tray_icon,
-      command::export_set,
+      command::export_sets,
       command::get_sources,
       command::open,
       command::pick_folders,

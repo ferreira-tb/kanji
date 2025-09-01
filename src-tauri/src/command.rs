@@ -3,7 +3,7 @@ use crate::database::sql_types::{KanjiChar, Path, SourceId};
 use crate::error::{CResult, Error};
 use crate::kanji::{self, KanjiStats};
 use crate::manager::ManagerExt;
-use crate::settings::Settings;
+use crate::set::KanjiSet;
 use crate::snippet::{self, Snippet};
 use crate::tray;
 use itertools::Itertools;
@@ -12,8 +12,7 @@ use std::process::Stdio;
 use tauri::{AppHandle, WebviewWindow};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_fs::{FilePath, FsExt};
-use tokio::fs::File;
-use tokio::io::AsyncWriteExt;
+
 use tokio::process::Command;
 use tokio::sync::oneshot;
 use windows::Win32::System::Threading::{CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW};
@@ -41,34 +40,12 @@ pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
 }
 
 #[tauri::command]
-pub async fn export_set(app: AppHandle) -> CResult<()> {
-  let settings = Settings::get(&app)?;
+pub async fn export_sets(app: AppHandle) -> CResult<()> {
   if let Some(folder) = pick_folders(app.clone()).await?.first() {
-    let mut kanji = search_kanji(app).await?;
-    kanji.sort_by_key(KanjiStats::seen);
-
-    let capacity = kanji
-      .len()
-      .saturating_mul(2)
-      .saturating_add(settings.set_size);
-
-    let mut set = Vec::with_capacity(capacity);
-
-    for mut chunk in &kanji
-      .iter()
-      .map(KanjiStats::character)
-      .rev()
-      .chunks(settings.set_size)
-    {
-      let chunk = chunk.join("");
-      set.extend(chunk.bytes());
-      set.push(b'\n');
-    }
-
-    let path = folder.join(settings.set_file_name.as_ref());
-    let mut file = File::create(path).await?;
-    file.write_all(&set).await?;
-    file.flush().await?;
+    KanjiSet::load(app.clone())
+      .await?
+      .write(app, folder)
+      .await?;
   }
 
   Ok(())
