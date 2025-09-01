@@ -120,46 +120,9 @@
   --sidebar-ring: oklch(0.553 0.013 58.071);
 }
 
-* {
-  @apply border-border outline-ring/50;
-}
-
-body {
-  @apply bg-background text-foreground;
-}
-
-button {
-  @apply cursor-pointer select-none;
-}
-
-label:has(select),
-label:has(textarea),
-label:has(button[role="combobox"]),
-label:has(input[type="number"]),
-label:has(input[type="text"]),
-label:has(input[type="url"]) {
-  @apply flex w-full flex-col items-start justify-center gap-2 py-1 font-normal;
-
-  & > span {
-    @apply w-full;
-  }
-}
-
-label:has(button[role="checkbox"]),
-label:has(button[role="switch"]),
-label:has(input[type="checkbox"]),
-label:has(input[type="radio"]) {
-  @apply flex flex-row items-center justify-start gap-2 py-1 font-normal;
-
-  & > span {
-    @apply w-full;
-  }
-}
-
-[data-scrollbarimpl] {
-  @apply border-0!;
-}
-
-.ellipsis {
-  @apply inline-block overflow-hidden text-ellipsis whitespace-nowrap;
+@utility ellipsis {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
