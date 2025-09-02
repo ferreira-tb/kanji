@@ -1,16 +1,17 @@
-interface Kanji {
+type KanjiChar = string;
+
+interface KanjiStats {
   readonly character: KanjiChar;
   readonly seen: number;
   readonly ratio: number;
   readonly level: KanjiLevel;
-  readonly sources: KanjiSource[];
+  readonly sources: KanjiStatsSource[];
 }
 
-type KanjiChar = string;
-
-type KanjiLevel = 'common' | 'uncommon' | 'rare' | 'very-rare' | 'unknown';
-
-interface KanjiSource {
+interface KanjiStatsSource {
+  readonly id: SourceId;
   readonly name: string;
   readonly seen: number;
 }
+
+type KanjiLevel = 'common' | 'uncommon' | 'rare' | 'very-rare' | 'unknown';

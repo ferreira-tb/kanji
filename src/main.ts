@@ -1,11 +1,12 @@
-import '@/assets/style.css';
+import '@/assets/base.css';
+import '@/assets/main.css';
 import '@tb-dev/vue-components/style';
 import '@/lib/prototype';
 import App from '@/App.vue';
 import { createApp } from 'vue';
 import { router } from '@/router';
 import { createPinia } from 'pinia';
-import { onError } from '@/lib/error';
+import { handleError } from '@/lib/error';
 import { TauriPluginPinia } from '@tauri-store/pinia';
 import { setCurrentApp, setErrorHandler } from '@tb-dev/vue';
 
@@ -22,7 +23,7 @@ pinia.use(
 );
 
 setCurrentApp(app);
-setErrorHandler(onError, app);
+setErrorHandler(handleError, app);
 
 app.use(router);
 app.use(pinia);

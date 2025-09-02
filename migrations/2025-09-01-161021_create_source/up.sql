@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS source (
+  id INTEGER NOT NULL PRIMARY KEY,
+  path TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+)

@@ -5,13 +5,7 @@ interface Snippet {
 }
 
 interface SnippetSource {
+  readonly name: string;
   readonly path: string;
   readonly line: number;
-}
-
-interface SnippetSearch {
-  readonly dir: string;
-  readonly kanji: KanjiChar;
-  readonly limit: number;
-  readonly minLen: number;
 }

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { go } from '@/router';
 import { storeToRefs } from 'pinia';
+import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
+import { handleError } from '@/lib/error';
 import { useHeightDiff } from '@tb-dev/vue';
 import Search from '@/components/Search.vue';
 import { useKanjiStore } from '@/stores/kanji';
@@ -12,16 +14,26 @@ import { type DeepReadonly, nextTick, useTemplateRef } from 'vue';
 import { Button, Card, CardContent } from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
-const { folder, search, currentKanji } = storeToRefs(store);
+const { search, currentKanji } = storeToRefs(store);
 
 const settings = useSettingsStore();
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
-const { kanjis, loading, load, exportSet } = useKanjis();
+const { kanjis, loading, load } = useKanjis();
 
-function onCardClick(kanji: DeepReadonly<Kanji>) {
+async function addSource() {
+  try {
+    await commands.createSource();
+    await load();
+  }
+  catch (err) {
+    handleError(err);
+  }
+}
+
+function onCardClick(kanji: DeepReadonly<KanjiStats>) {
   currentKanji.value = kanji;
   if (settings.clipboard) {
     writeText(kanji.character).err();
@@ -40,21 +52,18 @@ function onCardDblClick() {
         <Search v-model="search" class="hidden lg:block" />
       </div>
       <div class="flex items-center justify-center gap-4">
-        <span v-if="folder" class="text-muted-foreground text-xs">
-          {{ folder }}
-        </span>
         <div class="flex items-center justify-center gap-2">
           <Button
             size="sm"
             :disabled="loading"
-            @click="() => store.setFolder()"
+            @click="addSource"
           >
-            <span>Select Folder</span>
+            <span>Add Source</span>
           </Button>
           <Button
             size="sm"
             variant="secondary"
-            :disabled="loading || !folder"
+            :disabled="loading"
             @click="load"
           >
             <span>Reload</span>
@@ -62,14 +71,15 @@ function onCardDblClick() {
           <Button
             size="sm"
             variant="secondary"
-            :disabled="!folder"
-            @click="exportSet"
+            :disabled="loading"
+            @click="() => commands.exportSet().err()"
           >
             <span>Export</span>
           </Button>
         </div>
       </div>
     </div>
+
     <div
       class="overflow-x-hidden overflow-y-auto pb-12"
       :style="{ height: toPixel(contentHeight) }"

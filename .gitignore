@@ -17,8 +17,8 @@ pnpm-debug.log*
 **/dist
 
 # Rust
-debug/
-target/
+debug
+target
 **/*.rs.bk
 *.pdb
 rustc-ice-*.txt
@@ -27,10 +27,10 @@ rustc-ice-*.txt
 **/gen
 
 # Others
-.temp/
+.temp
 **/*vite*timestamp*
-**/.vitepress/temp
-**/.vitepress/cache
 .eslintcache
 
+**/*.db
+.env
 workspace.md

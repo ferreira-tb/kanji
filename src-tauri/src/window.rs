@@ -1,3 +1,4 @@
+use crate::settings::Settings;
 use anyhow::Result;
 use tauri::{
   AppHandle,
@@ -8,7 +9,6 @@ use tauri::{
   WindowEvent,
   Wry,
 };
-use tauri_plugin_pinia::ManagerExt as _;
 
 pub trait WindowExt: Manager<Wry> {
   fn main_window(&self) -> WebviewWindow<Wry> {
@@ -40,9 +40,8 @@ fn on_window_event(app: &AppHandle) -> impl Fn(&WindowEvent) + use<> {
   let app = app.clone();
   move |event| {
     if let WindowEvent::CloseRequested { api, .. } = event
-      && app
-        .pinia()
-        .try_get_or_default("settings", "hideOnClose")
+      && let Ok(settings) = Settings::get(&app)
+      && settings.hide_on_close
     {
       api.prevent_close();
       app.main_window().hide().unwrap();

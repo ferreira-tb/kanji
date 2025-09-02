@@ -2,32 +2,21 @@ import { watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { asyncRef } from '@tb-dev/vue';
 import { searchSnippets } from '@/commands';
-import { join } from '@tauri-apps/api/path';
 import { useKanjiStore } from '@/stores/kanji';
 import { useSettingsStore } from '@/stores/settings';
 
 export function useSnippets() {
   const store = useKanjiStore();
-  const { folder, currentSource, currentKanji } = storeToRefs(store);
+  const { currentSource, currentKanji } = storeToRefs(store);
 
   const settings = useSettingsStore();
   const { snippetLimit, snippetMinLen } = storeToRefs(settings);
 
   const snippets = asyncRef([], async () => {
     let result: Snippet[] = [];
-    if (folder.value && currentKanji.value) {
-      let dir = folder.value;
-      if (currentSource.value?.name) {
-        dir = await join(dir, currentSource.value.name);
-      }
-
+    if (currentKanji.value) {
       const kanji = currentKanji.value.character;
-      result = await searchSnippets({
-        dir,
-        kanji,
-        limit: snippetLimit.value,
-        minLen: snippetMinLen.value,
-      });
+      result = await searchSnippets(kanji, currentSource.value?.id);
     }
 
     return result as readonly Snippet[];
