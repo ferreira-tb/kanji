@@ -6,6 +6,9 @@ on:
     branches:
       - release
 
+env:
+  KANJI_DATABASE_URL: ${{ secrets.KANJI_DATABASE_URL }}
+
 jobs:
   publish-tauri:
     permissions:
