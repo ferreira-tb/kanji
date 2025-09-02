@@ -106,4 +106,25 @@ impl DatabaseHandle {
       .map(drop)
       .map_err(Into::into)
   }
+
+  pub fn count_quizzes(&self, kanji_char: KanjiChar) -> Result<u64> {
+    use schema::quiz_answer::dsl::*;
+    quiz_answer
+      .filter(question.eq(kanji_char))
+      .count()
+      .get_result::<i64>(&mut *self.conn())
+      .map(u64::try_from)?
+      .map_err(Into::into)
+  }
+
+  pub fn count_correct_quiz_answers(&self, kanji_char: KanjiChar) -> Result<u64> {
+    use schema::quiz_answer::dsl::*;
+    quiz_answer
+      .filter(question.eq(kanji_char))
+      .filter(answer.eq(kanji_char))
+      .count()
+      .get_result::<i64>(&mut *self.conn())
+      .map(u64::try_from)?
+      .map_err(Into::into)
+  }
 }

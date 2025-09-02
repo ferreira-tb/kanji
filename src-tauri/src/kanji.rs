@@ -22,6 +22,8 @@ pub struct KanjiStats {
   ratio: f64,
   level: Level,
   sources: Vec<KanjiStatsSource>,
+  quizzes: u64,
+  accuracy: f64,
 }
 
 impl KanjiStats {
@@ -32,6 +34,8 @@ impl KanjiStats {
       ratio: 0.0,
       level: Level::Unknown,
       sources: Vec::default(),
+      quizzes: 0,
+      accuracy: 0.0,
     }
   }
 
@@ -84,8 +88,8 @@ pub async fn search(app: AppHandle) -> Result<Vec<KanjiStats>> {
 }
 
 fn blocking_search(app: &AppHandle) -> Result<Vec<KanjiStats>> {
-  let db = app.database();
-  let sources = db.get_sources()?;
+  let database = app.database();
+  let sources = database.get_sources()?;
   let mut kanjis: HashMap<KanjiChar, KanjiStats> = HashMap::new();
 
   for source in sources {
@@ -123,10 +127,17 @@ fn blocking_search(app: &AppHandle) -> Result<Vec<KanjiStats>> {
     .map(|kanji| u64::from(kanji.seen))
     .fold(0u64, u64::saturating_add) as f64;
 
-  if total.is_normal() {
-    for kanji in kanjis.values_mut() {
+  for kanji in kanjis.values_mut() {
+    if total.is_normal() {
       kanji.ratio = f64::from(kanji.seen) / total;
       kanji.level = Level::from_ratio(kanji.ratio);
+    }
+
+    kanji.quizzes = database.count_quizzes(kanji.character)?;
+
+    if kanji.quizzes > 0 {
+      let correct = database.count_correct_quiz_answers(kanji.character)?;
+      kanji.accuracy = (correct as f64) / (kanji.quizzes as f64);
     }
   }
 
@@ -134,7 +145,7 @@ fn blocking_search(app: &AppHandle) -> Result<Vec<KanjiStats>> {
   if IS_FIRST_SEARCH.load(Relaxed) {
     IS_FIRST_SEARCH.store(false, Relaxed);
     for kanji in &kanjis {
-      if !db.has_kanji(kanji.character)? {
+      if !database.has_kanji(kanji.character)? {
         NewKanji::builder(kanji.character)
           .build()
           .create(app)?;

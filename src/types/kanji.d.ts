@@ -6,6 +6,8 @@ interface KanjiStats {
   readonly ratio: number;
   readonly level: KanjiLevel;
   readonly sources: KanjiStatsSource[];
+  readonly quizzes: number;
+  readonly accuracy: number;
 }
 
 interface KanjiStatsSource {

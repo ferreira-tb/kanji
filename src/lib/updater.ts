@@ -6,7 +6,7 @@ export async function checkForUpdates() {
   if (!__DEBUG_ASSERTIONS__) {
     const update = await check();
     if (update) {
-      const result = await message(`Update found: ${update.version}`, {
+      const result = await message(`New version available: ${update.version}.`, {
         title: `Kanji ${update.currentVersion}`,
         buttons: { ok: 'Update', cancel: 'Cancel' },
       });

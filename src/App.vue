@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia';
 import { useRoute } from 'vue-router';
 import { toPixel } from '@tb-dev/utils';
 import { capitalCase } from 'change-case';
+import { formatPercent } from '@/lib/intl';
 import { useKanjiStore } from '@/stores/kanji';
 import { ChevronUpIcon } from 'lucide-vue-next';
 import { useKanjis } from '@/composables/kanji';
@@ -16,6 +17,7 @@ import { computed, onBeforeMount, onMounted, useTemplateRef } from 'vue';
 import {
   Badge,
   Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -86,7 +88,7 @@ function setCurrentSource(source: KanjiStatsSource) {
             <span class="text-9xl">{{ currentKanji.character }}</span>
             <Badge>{{ capitalCase(currentKanji.level) }}</Badge>
           </div>
-          <div class="grid grid-cols-2 gap-4 px-4">
+          <div :class="cn('grid gap-4 px-4', currentKanji.quizzes > 0 ? 'grid-cols-4' : 'grid-cols-2')">
             <div class="flex h-16 flex-col items-center justify-center">
               <span class="text-muted-foreground text-sm">Rank</span>
               <span class="text-lg font-semibold">{{ ranking ? ranking : '?' }}</span>
@@ -95,6 +97,16 @@ function setCurrentSource(source: KanjiStatsSource) {
               <span class="text-muted-foreground text-sm">Total</span>
               <span class="text-lg font-semibold">{{ currentKanji.seen }}</span>
             </div>
+            <template v-if="currentKanji.quizzes > 0">
+              <div class="flex h-16 flex-col items-center justify-center">
+                <span class="text-muted-foreground text-sm">Quiz</span>
+                <span class="text-lg font-semibold">{{ currentKanji.quizzes }}</span>
+              </div>
+              <div class="flex h-16 flex-col items-center justify-center">
+                <span class="text-muted-foreground text-sm">Accuracy</span>
+                <span class="text-lg font-semibold">{{ formatPercent(currentKanji.accuracy) }}</span>
+              </div>
+            </template>
           </div>
         </div>
       </SidebarHeader>
