@@ -7,7 +7,8 @@ interface KanjiStats {
   readonly level: KanjiLevel;
   readonly sources: KanjiStatsSource[];
   readonly quizzes: number;
-  readonly accuracy: number;
+  readonly correctQuizAnswers: number;
+  readonly quizAccuracy: number;
 }
 
 interface KanjiStatsSource {

@@ -12,7 +12,7 @@ const {
   state: set,
   execute: loadSet,
   isLoading: isLoadingSet,
-} = asyncRef([], getSet);
+} = asyncRef(null, getSet);
 
 const {
   current,
@@ -53,7 +53,7 @@ async function load() {
         <Loading />
       </div>
       <Set
-        v-else-if="!active"
+        v-else-if="set && !active"
         :set
         :disabled="isLoadingSet || isLoadingQuiz"
         @quiz="(chunk) => start(chunk.kanjis)"

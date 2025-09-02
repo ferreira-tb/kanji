@@ -117,6 +117,16 @@ impl DatabaseHandle {
       .map_err(Into::into)
   }
 
+  pub fn count_quizzes_in(&self, kanji_chars: &[KanjiChar]) -> Result<u64> {
+    use schema::quiz_answer::dsl::*;
+    quiz_answer
+      .filter(question.eq_any(kanji_chars))
+      .count()
+      .get_result::<i64>(&mut *self.conn())
+      .map(u64::try_from)?
+      .map_err(Into::into)
+  }
+
   pub fn count_correct_quiz_answers(&self, kanji_char: KanjiChar) -> Result<u64> {
     use schema::quiz_answer::dsl::*;
     quiz_answer
@@ -126,5 +136,15 @@ impl DatabaseHandle {
       .get_result::<i64>(&mut *self.conn())
       .map(u64::try_from)?
       .map_err(Into::into)
+  }
+
+  pub fn count_correct_quiz_answers_in(&self, kanji_chars: &[KanjiChar]) -> Result<u64> {
+    let mut count = 0u64;
+    for kanji_char in kanji_chars {
+      let correct = self.count_correct_quiz_answers(*kanji_char)?;
+      count = count.saturating_add(correct)
+    }
+
+    Ok(count)
   }
 }

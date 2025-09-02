@@ -23,7 +23,8 @@ pub struct KanjiStats {
   level: Level,
   sources: Vec<KanjiStatsSource>,
   quizzes: u64,
-  accuracy: f64,
+  correct_quiz_answers: u64,
+  quiz_accuracy: f64,
 }
 
 impl KanjiStats {
@@ -35,7 +36,8 @@ impl KanjiStats {
       level: Level::Unknown,
       sources: Vec::default(),
       quizzes: 0,
-      accuracy: 0.0,
+      correct_quiz_answers: 0,
+      quiz_accuracy: 0.0,
     }
   }
 
@@ -136,8 +138,8 @@ fn blocking_search(app: &AppHandle) -> Result<Vec<KanjiStats>> {
     kanji.quizzes = database.count_quizzes(kanji.character)?;
 
     if kanji.quizzes > 0 {
-      let correct = database.count_correct_quiz_answers(kanji.character)?;
-      kanji.accuracy = (correct as f64) / (kanji.quizzes as f64);
+      kanji.correct_quiz_answers = database.count_correct_quiz_answers(kanji.character)?;
+      kanji.quiz_accuracy = (kanji.correct_quiz_answers as f64) / (kanji.quizzes as f64);
     }
   }
 

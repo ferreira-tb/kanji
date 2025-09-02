@@ -102,9 +102,14 @@ function setCurrentSource(source: KanjiStatsSource) {
                 <span class="text-muted-foreground text-sm">Quiz</span>
                 <span class="text-lg font-semibold">{{ currentKanji.quizzes }}</span>
               </div>
-              <div class="flex h-16 flex-col items-center justify-center">
+              <div
+                v-if="Number.isFinite(currentKanji.quizAccuracy)"
+                class="flex h-16 flex-col items-center justify-center"
+              >
                 <span class="text-muted-foreground text-sm">Accuracy</span>
-                <span class="text-lg font-semibold">{{ formatPercent(currentKanji.accuracy) }}</span>
+                <span class="text-lg font-semibold">
+                  {{ formatPercent(currentKanji.quizAccuracy) }}
+                </span>
               </div>
             </template>
           </div>

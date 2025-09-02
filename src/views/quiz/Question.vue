@@ -69,7 +69,7 @@ function getCardClass(option: KanjiChar) {
       >
         {{ source.name }}
       </span>
-      <span>{{ question }}</span>
+      <span class="select-text">{{ question }}</span>
     </div>
 
     <div class="flex flex-col gap-8">
