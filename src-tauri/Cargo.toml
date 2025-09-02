@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "4.0.0"
+version = "4.0.1"
 publish = false
 
 [package.edition]
@@ -20,7 +20,7 @@ itertools = "0.14"
 memchr = "2.7"
 rand = "0.9"
 tauri-plugin-clipboard-manager = "2.3"
-tauri-plugin-dialog = "2.3"
+tauri-plugin-dialog = "2.4"
 tauri-plugin-fs = "2.4"
 tauri-plugin-persisted-scope = "2.3"
 tauri-plugin-pinia = "3.7"
