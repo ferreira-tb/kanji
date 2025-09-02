@@ -7,6 +7,7 @@ mod error;
 mod kanji;
 mod manager;
 mod plugin;
+mod quiz;
 mod set;
 mod settings;
 mod snippet;
@@ -30,16 +31,19 @@ fn main() {
     .plugin(tauri_plugin_process::init())
     .setup(|app| setup(app.app_handle()))
     .invoke_handler(tauri::generate_handler![
+      command::create_quiz_answer,
       command::create_source,
       command::create_tray_icon,
-      command::export_sets,
+      command::export_set,
+      command::get_set,
       command::get_sources,
       command::open,
       command::pick_folders,
       command::rename_source,
       command::search_kanji,
       command::search_snippets,
-      command::show_window
+      command::show_window,
+      command::start_quiz
     ])
     .run(tauri::generate_context!())
     .expect("failed to start tauri app");

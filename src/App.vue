@@ -52,8 +52,9 @@ useColorMode({
 
 onKeyDown('F1', () => go('home'));
 onKeyDown('F2', () => go('snippets'));
-onKeyDown('F3', () => go('sources'));
-onKeyDown('F5', () => go('settings'));
+onKeyDown('F3', () => go('quiz'));
+onKeyDown('F4', () => go('sources'));
+onKeyDown('F7', () => go('settings'));
 onKeyDown('Escape', () => exit(0).err());
 
 onBeforeMount(load);
@@ -151,6 +152,9 @@ function setCurrentSource(source: KanjiStatsSource) {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <RouterLink to="/snippets" class="w-full">Snippets</RouterLink>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <RouterLink to="/quiz" class="w-full">Quiz</RouterLink>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <RouterLink to="/sources" class="w-full">Sources</RouterLink>

@@ -4,12 +4,13 @@ use crate::settings::Settings;
 use anyhow::Result;
 use derive_more::Deref;
 use itertools::Itertools;
+use serde::Serialize;
 use std::path::Path as StdPath;
 use tauri::AppHandle;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
-#[derive(Debug, Deref)]
+#[derive(Debug, Deref, Serialize)]
 pub struct KanjiSet(Box<[KanjiSetChunk]>);
 
 impl KanjiSet {
@@ -19,29 +20,36 @@ impl KanjiSet {
     kanjis.sort_by_key(KanjiStats::seen);
 
     let mut sets = Vec::new();
-    for chunk in &kanjis
+    let chunks = kanjis
       .iter()
       .map(KanjiStats::character)
       .rev()
-      .chunks(settings.set_size)
-    {
-      sets.push(chunk.collect());
+      .chunks(settings.set_size);
+
+    for (id, chunk) in (1u32..).zip(&chunks) {
+      let id = KanjiSetChunkId(id);
+      let kanjis = chunk
+        .into_iter()
+        .collect_vec()
+        .into_boxed_slice();
+
+      sets.push(KanjiSetChunk { id, kanjis });
     }
 
     Ok(Self(sets.into_boxed_slice()))
   }
 
-  pub async fn write(self, app: AppHandle, folder: &StdPath) -> Result<()> {
+  pub async fn export(self, app: AppHandle, folder: &StdPath) -> Result<()> {
     let settings = Settings::get(&app)?;
     let sets = KanjiSet::load(app).await?;
     let path = folder.join(settings.set_file_name.as_ref());
     let mut file = File::create(path).await?;
 
-    for chunk in &*sets {
-      let chunk = chunk.iter().join("");
-      let bytes = Vec::from_iter(chunk.bytes());
-      file.write(&bytes).await?;
-      file.write(&[b'\n']).await?;
+    for chunk in &sets.0 {
+      let chunk = chunk.kanjis.iter().join("");
+      let bytes = chunk.bytes().collect_vec();
+      file.write_all(&bytes).await?;
+      file.write_all(b"\n").await?;
     }
 
     file.flush().await?;
@@ -50,19 +58,12 @@ impl KanjiSet {
   }
 }
 
-#[derive(Debug, Deref)]
-pub struct KanjiSetChunk(Box<[KanjiChar]>);
-
-impl FromIterator<KanjiChar> for KanjiSetChunk {
-  fn from_iter<T>(iter: T) -> Self
-  where
-    T: IntoIterator<Item = KanjiChar>,
-  {
-    let chunk = iter
-      .into_iter()
-      .collect_vec()
-      .into_boxed_slice();
-
-    Self(chunk)
-  }
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct KanjiSetChunk {
+  id: KanjiSetChunkId,
+  kanjis: Box<[KanjiChar]>,
 }
+
+#[derive(Debug, Serialize)]
+pub struct KanjiSetChunkId(u32);

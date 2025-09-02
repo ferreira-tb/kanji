@@ -7,8 +7,12 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::fs;
 use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering::Relaxed;
 use tauri::AppHandle;
 use tauri::async_runtime::spawn_blocking;
+
+static IS_FIRST_SEARCH: AtomicBool = AtomicBool::new(true);
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -127,11 +131,14 @@ fn blocking_search(app: &AppHandle) -> Result<Vec<KanjiStats>> {
   }
 
   let kanjis = kanjis.into_values().collect_vec();
-  for kanji in &kanjis {
-    if !db.has_kanji(kanji.character)? {
-      NewKanji::builder(kanji.character)
-        .build()
-        .create(app)?;
+  if IS_FIRST_SEARCH.load(Relaxed) {
+    IS_FIRST_SEARCH.store(false, Relaxed);
+    for kanji in &kanjis {
+      if !db.has_kanji(kanji.character)? {
+        NewKanji::builder(kanji.character)
+          .build()
+          .create(app)?;
+      }
     }
   }
 

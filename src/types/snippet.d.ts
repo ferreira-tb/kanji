@@ -5,6 +5,7 @@ interface Snippet {
 }
 
 interface SnippetSource {
+  readonly name: string;
   readonly path: string;
   readonly line: number;
 }

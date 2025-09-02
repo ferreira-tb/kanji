@@ -1,8 +1,10 @@
+use crate::database::model::quiz_answer::NewQuizAnswer;
 use crate::database::model::source::{NewSource, Source};
 use crate::database::sql_types::{KanjiChar, Path, SourceId};
 use crate::error::{CResult, Error};
 use crate::kanji::{self, KanjiStats};
 use crate::manager::ManagerExt;
+use crate::quiz::Quiz;
 use crate::set::KanjiSet;
 use crate::snippet::{self, Snippet};
 use crate::tray;
@@ -16,6 +18,22 @@ use tauri_plugin_fs::{FilePath, FsExt};
 use tokio::process::Command;
 use tokio::sync::oneshot;
 use windows::Win32::System::Threading::{CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW};
+
+#[tauri::command]
+pub async fn create_quiz_answer(
+  app: AppHandle,
+  question: KanjiChar,
+  answer: KanjiChar,
+  duration: u32,
+) -> CResult<()> {
+  NewQuizAnswer::builder()
+    .question(question)
+    .answer(answer)
+    .duration(i32::try_from(duration)?)
+    .build()
+    .create(&app)
+    .map_err(Into::into)
+}
 
 #[tauri::command]
 pub async fn create_source(app: AppHandle, source: Path) -> CResult<SourceId> {
@@ -40,15 +58,20 @@ pub async fn create_tray_icon(app: AppHandle) -> CResult<()> {
 }
 
 #[tauri::command]
-pub async fn export_sets(app: AppHandle) -> CResult<()> {
+pub async fn export_set(app: AppHandle) -> CResult<()> {
   if let Some(folder) = pick_folders(app.clone()).await?.first() {
     KanjiSet::load(app.clone())
       .await?
-      .write(app, folder)
+      .export(app, folder)
       .await?;
   }
 
   Ok(())
+}
+
+#[tauri::command]
+pub async fn get_set(app: AppHandle) -> CResult<KanjiSet> {
+  KanjiSet::load(app).await.map_err(Into::into)
 }
 
 #[tauri::command]
@@ -135,5 +158,12 @@ pub async fn show_window(window: WebviewWindow) -> CResult<()> {
     .show()
     .and_then(|()| window.unminimize())
     .and_then(|()| window.set_focus())
+    .map_err(Into::into)
+}
+
+#[tauri::command]
+pub async fn start_quiz(app: AppHandle, kanjis: Vec<KanjiChar>) -> CResult<Quiz> {
+  Quiz::new(app, kanjis)
+    .await
     .map_err(Into::into)
 }

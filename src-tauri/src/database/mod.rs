@@ -4,6 +4,7 @@ pub mod schema;
 pub mod sql_types;
 
 use crate::database::model::kanji::NewKanji;
+use crate::database::model::quiz_answer::NewQuizAnswer;
 use crate::database::model::source::{NewSource, Source};
 use crate::database::sql_types::{KanjiChar, SourceId, Zoned};
 use anyhow::Result;
@@ -40,6 +41,14 @@ impl DatabaseHandle {
       .values(new)
       .execute(&mut *self.conn())
       .map(drop)
+      .map_err(Into::into)
+  }
+
+  pub fn get_kanji_chars(&self) -> Result<Vec<KanjiChar>> {
+    use schema::kanji::dsl::*;
+    kanji
+      .select(id)
+      .load(&mut *self.conn())
       .map_err(Into::into)
   }
 
@@ -84,6 +93,15 @@ impl DatabaseHandle {
     use schema::source::dsl::*;
     diesel::update(source.find(source_id))
       .set((name.eq(new_name), updated_at.eq(Zoned::now())))
+      .execute(&mut *self.conn())
+      .map(drop)
+      .map_err(Into::into)
+  }
+
+  pub fn create_quiz_answer(&self, new: &NewQuizAnswer) -> Result<()> {
+    use schema::quiz_answer::dsl::*;
+    diesel::insert_into(quiz_answer)
+      .values(new)
       .execute(&mut *self.conn())
       .map(drop)
       .map_err(Into::into)

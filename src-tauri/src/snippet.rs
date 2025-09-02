@@ -1,3 +1,4 @@
+use crate::database::model::source::Source;
 use crate::database::sql_types::{KanjiChar, SourceId};
 use crate::kanji::is_kanji;
 use crate::manager::ManagerExt;
@@ -18,7 +19,7 @@ use tauri::async_runtime::spawn_blocking;
 
 static ID: AtomicU64 = AtomicU64::new(0);
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Snippet {
   id: SnippetId,
@@ -26,7 +27,13 @@ pub struct Snippet {
   source: SnippetSource,
 }
 
-#[derive(Clone, Copy)]
+impl Snippet {
+  pub fn content(&self) -> &str {
+    &self.content
+  }
+}
+
+#[derive(Clone, Copy, Debug)]
 pub struct SnippetId(u64);
 
 impl SnippetId {
@@ -44,9 +51,10 @@ impl Serialize for SnippetId {
   }
 }
 
-#[derive(Serialize)]
+#[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct SnippetSource {
+  name: Arc<str>,
   path: Arc<StdPath>,
   line: usize,
 }
@@ -59,7 +67,7 @@ pub async fn search(
   spawn_blocking(move || blocking_search(&app, kanji, source)).await?
 }
 
-fn blocking_search(
+pub fn blocking_search(
   app: &AppHandle,
   kanji: KanjiChar,
   source: Option<SourceId>,
@@ -71,25 +79,45 @@ fn blocking_search(
     app.database().get_sources()?
   };
 
+  blocking_search_with_options(kanji)
+    .sources(&sources)
+    .min_len(settings.snippet_min_len)
+    .limit(settings.snippet_limit)
+    .shuffle(settings.shuffle_snippets)
+    .call()
+}
+
+#[bon::builder]
+pub fn blocking_search_with_options(
+  #[builder(start_fn)] kanji: KanjiChar,
+  #[builder(default)] sources: &[Source],
+  #[builder(default = 5)] min_len: usize,
+  #[builder(default = 1000)] limit: usize,
+  #[builder(default = true)] shuffle: bool,
+) -> Result<Vec<Snippet>> {
   let mut snippets = Vec::new();
   let mut buf = [0u8; 4];
   let finder = Finder::new(kanji.encode_utf8(&mut buf));
 
   for source in sources {
+    let name = Arc::from(source.name.as_str());
     for path in source.walk() {
       let path = Arc::from(path);
       let file = File::open_buffered(&path)?;
+
       for (line, text) in file.lines().enumerate() {
         let Ok(text) = text else { continue };
-        if !should_skip(&text) && has_min_len(&text, settings.snippet_min_len) {
+        if !should_skip(&text) && has_min_len(&text, min_len) {
           let bytes = text.as_bytes();
           if finder.find(bytes).is_some() {
+            let name = Arc::clone(&name);
             let path = Arc::clone(&path);
             let line = line.saturating_add(1);
+
             snippets.push(Snippet {
               id: SnippetId::next(),
               content: Arc::from(text),
-              source: SnippetSource { path, line },
+              source: SnippetSource { name, path, line },
             });
           }
         }
@@ -102,17 +130,12 @@ fn blocking_search(
     .unique_by(|snippet: &Snippet| Arc::clone(&snippet.content))
     .collect();
 
-  if settings.shuffle_snippets {
+  if shuffle {
     let mut rng = rand::rng();
     snippets.shuffle(&mut rng);
   }
 
-  snippets = snippets
-    .into_iter()
-    .take(settings.snippet_limit)
-    .collect();
-
-  Ok(snippets)
+  Ok(snippets.into_iter().take(limit).collect())
 }
 
 fn should_skip(text: &str) -> bool {

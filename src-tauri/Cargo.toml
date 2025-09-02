@@ -66,6 +66,10 @@ features = ["platform-windows"]
 version = "1.47"
 features = ["full"]
 
+[dependencies.uuid]
+version = "1.18"
+features = ["serde", "v4"]
+
 [dependencies.windows]
 version = "0.61"
 features = ["Win32_System_Threading"]

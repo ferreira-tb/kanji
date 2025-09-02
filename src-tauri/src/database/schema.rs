@@ -9,6 +9,16 @@ diesel::table! {
 }
 
 diesel::table! {
+    quiz_answer (id) {
+        id -> Text,
+        question -> Text,
+        answer -> Text,
+        duration -> Integer,
+        created_at -> Text,
+    }
+}
+
+diesel::table! {
     source (id) {
         id -> Integer,
         path -> Text,
@@ -18,4 +28,4 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(kanji, source,);
+diesel::allow_tables_to_appear_in_same_query!(kanji, quiz_answer, source,);
