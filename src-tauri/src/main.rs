@@ -29,6 +29,7 @@ fn main() {
     .plugin(tauri_plugin_persisted_scope::init())
     .plugin(tauri_plugin_pinia::init())
     .plugin(tauri_plugin_process::init())
+    .plugin(tauri_plugin_updater::Builder::new().build())
     .setup(|app| setup(app.app_handle()))
     .invoke_handler(tauri::generate_handler![
       command::create_quiz_answer,

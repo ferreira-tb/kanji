@@ -9,8 +9,12 @@
     "core:path:allow-join",
     "clipboard-manager:allow-write-text",
     "dialog:allow-message",
+    "pinia:default",
     "process:allow-exit",
-
-    "pinia:default"
+    "process:allow-restart",
+    "updater:allow-check",
+    "updater:allow-download",
+    "updater:allow-download-and-install",
+    "updater:allow-install"
   ]
 }

@@ -23,6 +23,7 @@
     "@tauri-apps/plugin-dialog": "^2.4.0",
     "@tauri-apps/plugin-fs": "^2.4.2",
     "@tauri-apps/plugin-process": "^2.3.0",
+    "@tauri-apps/plugin-updater": "^2.9.0",
     "@tauri-store/pinia": "^3.7.1",
     "@tb-dev/utils": "^7.0.13",
     "@tb-dev/vue": "^3.2.3",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.12",
+    "@tauri-apps/cli": "^2.8.4",
     "@tb-dev/eslint-config": "^8.0.7",
     "@types/node": "^24.3.0",
     "@vitejs/plugin-vue": "^6.0.1",

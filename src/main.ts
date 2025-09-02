@@ -4,9 +4,10 @@ import '@tb-dev/vue-components/style';
 import '@/lib/prototype';
 import App from '@/App.vue';
 import { createApp } from 'vue';
-import { router } from '@/router';
 import { createPinia } from 'pinia';
+import { go, router } from '@/router';
 import { handleError } from '@/lib/error';
+import { checkForUpdates } from '@/lib/updater';
 import { TauriPluginPinia } from '@tauri-store/pinia';
 import { setCurrentApp, setErrorHandler } from '@tb-dev/vue';
 
@@ -28,6 +29,7 @@ setErrorHandler(handleError, app);
 app.use(router);
 app.use(pinia);
 
-void router
-  .push({ name: 'home' satisfies Route })
-  .then(() => app.mount('#app'));
+checkForUpdates()
+  .then(() => go('home'))
+  .then(() => app.mount('#app'))
+  .err();
