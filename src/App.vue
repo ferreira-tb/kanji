@@ -6,7 +6,6 @@ import { toPixel } from '@tb-dev/utils';
 import { capitalCase } from 'change-case';
 import { formatPercent } from '@/lib/intl';
 import { useKanjiStore } from '@/stores/kanji';
-import { ChevronUpIcon } from 'lucide-vue-next';
 import { useKanjis } from '@/composables/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
@@ -18,14 +17,9 @@ import {
   Badge,
   Button,
   cn,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   ScrollArea,
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarProvider,
 } from '@tb-dev/vue-components';
@@ -125,7 +119,7 @@ function setCurrentSource(source: KanjiStatsSource) {
           <ScrollArea :style="{ height: toPixel(listHeight - 50) }">
             <div id="source-grid" class="text-sidebar-accent-foreground text-sm pr-4">
               <template v-for="source of currentKanji.sources" :key="source.id">
-                <div class="cursor-pointer" @click="() => setCurrentSource(source)">
+                <div class="ellipsis cursor-pointer" @click="() => setCurrentSource(source)">
                   {{ source.name }}
                 </div>
                 <div class="text-end">{{ source.seen }}</div>
@@ -153,35 +147,6 @@ function setCurrentSource(source: KanjiStatsSource) {
           </div>
         </div>
       </SidebarContent>
-
-      <SidebarFooter>
-        <DropdownMenu>
-          <DropdownMenuTrigger as-child>
-            <Button v-if="typeof route.name === 'string'" variant="outline">
-              <span>{{ capitalCase(route.name) }}</span>
-              <ChevronUpIcon class="ml-auto" />
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent side="top" class="w-[var(--reka-dropdown-menu-trigger-width)]">
-            <DropdownMenuItem>
-              <RouterLink to="/" class="w-full">Home</RouterLink>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <RouterLink to="/snippets" class="w-full">Snippets</RouterLink>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <RouterLink to="/quiz" class="w-full">Quiz</RouterLink>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <RouterLink to="/sources" class="w-full">Sources</RouterLink>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <RouterLink to="/settings" class="w-full">Settings</RouterLink>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarFooter>
     </Sidebar>
 
     <main class="h-screen w-full select-none">

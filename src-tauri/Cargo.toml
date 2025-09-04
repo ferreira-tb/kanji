@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "4.2.0"
+version = "4.2.1"
 publish = false
 
 [package.edition]
@@ -73,7 +73,7 @@ version = "1.18"
 features = ["serde", "v4"]
 
 [dependencies.windows]
-version = "0.61"
+version = "0.62"
 features = ["Win32_System_Threading"]
 
 [build-dependencies.tauri-build]
