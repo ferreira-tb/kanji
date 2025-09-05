@@ -27,8 +27,13 @@ const {
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
-async function load() {
+async function onLoad() {
   await loadSet();
+}
+
+async function onLeave() {
+  leave();
+  await onLoad();
 }
 </script>
 
@@ -39,7 +44,7 @@ async function load() {
         size="sm"
         variant="secondary"
         :disabled="isLoadingSet || isLoadingQuiz"
-        @click="load"
+        @click="onLoad"
       >
         <span>Reload</span>
       </Button>
@@ -64,7 +69,7 @@ async function load() {
         :disabled="isLoadingSet || isLoadingQuiz"
         @answer="(chosen) => answer(chosen)"
         @next="next"
-        @leave="leave"
+        @leave="onLeave"
       />
     </div>
   </div>

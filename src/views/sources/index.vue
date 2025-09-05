@@ -1,16 +1,41 @@
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
 import { toPixel } from '@tb-dev/utils';
+import { computed, useTemplateRef } from 'vue';
 import { useKanjis } from '@/composables/kanji';
 import { asyncRef, handleError, useHeightDiff } from '@tb-dev/vue';
-import { createSource, getSources, renameSource } from '@/commands';
-import { Button, Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@tb-dev/vue-components';
+import { createSource, getSources, renameSource, toggleSource } from '@/commands';
+import {
+  Button,
+  Checkbox,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  toBooleanCheckboxValue,
+} from '@tb-dev/vue-components';
 
-const { load: loadKanjis, loading } = useKanjis();
-const { state: sources, execute: loadSources } = asyncRef([], getSources);
+const { load: loadKanjis, loading: isLoadingKanjis } = useKanjis();
+
+const {
+  state: sources,
+  execute: loadSources,
+  isLoading: isLoadingSources,
+} = asyncRef([], getSources);
+
+const loading = computed(() => {
+  return isLoadingKanjis.value || isLoadingSources.value;
+});
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
+
+async function load() {
+  await loadSources();
+  await loadKanjis();
+}
 
 async function addSource() {
   try {
@@ -32,9 +57,14 @@ async function rename(source: Source) {
   }
 }
 
-async function load() {
-  await loadSources();
-  await loadKanjis();
+async function toggle(source: Source, enabled: boolean) {
+  try {
+    await toggleSource(source.id, enabled);
+    await load();
+  }
+  catch (err) {
+    handleError(err);
+  }
 }
 </script>
 
@@ -65,6 +95,7 @@ async function load() {
       <Table v-if="sources.length > 0">
         <TableHeader>
           <TableRow>
+            <TableHead></TableHead>
             <TableHead>Path</TableHead>
             <TableHead>Name</TableHead>
           </TableRow>
@@ -72,6 +103,13 @@ async function load() {
 
         <TableBody>
           <TableRow v-for="source of sources" :key="source.id">
+            <TableCell>
+              <Checkbox
+                v-model="source.enabled"
+                :disabled="loading"
+                @update:model-value="(value) => toggle(source, toBooleanCheckboxValue(value))"
+              />
+            </TableCell>
             <TableCell>
               <span>{{ source.path }}</span>
             </TableCell>

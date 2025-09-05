@@ -28,6 +28,7 @@ pub struct Source {
   pub name: String,
   pub created_at: Zoned,
   pub updated_at: Zoned,
+  pub enabled: bool,
 }
 
 impl Source {

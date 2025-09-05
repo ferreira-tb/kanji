@@ -167,3 +167,11 @@ pub async fn start_quiz(app: AppHandle, kanjis: Vec<KanjiChar>) -> CResult<Quiz>
     .await
     .map_err(Into::into)
 }
+
+#[tauri::command]
+pub async fn toggle_source(app: AppHandle, id: SourceId, enabled: bool) -> CResult<()> {
+  app
+    .database()
+    .toggle_source(id, enabled)
+    .map_err(Into::into)
+}

@@ -44,7 +44,8 @@ fn main() {
       command::search_kanji,
       command::search_snippets,
       command::show_window,
-      command::start_quiz
+      command::start_quiz,
+      command::toggle_source
     ])
     .run(tauri::generate_context!())
     .expect("failed to start tauri app");

@@ -89,10 +89,28 @@ impl DatabaseHandle {
       .map_err(Into::into)
   }
 
+  pub fn get_enabled_sources(&self) -> Result<Vec<Source>> {
+    use schema::source::dsl::*;
+    source
+      .filter(enabled.eq(true))
+      .select(Source::as_select())
+      .load(&mut *self.conn())
+      .map_err(Into::into)
+  }
+
   pub fn rename_source(&self, source_id: SourceId, new_name: &str) -> Result<()> {
     use schema::source::dsl::*;
     diesel::update(source.find(source_id))
       .set((name.eq(new_name), updated_at.eq(Zoned::now())))
+      .execute(&mut *self.conn())
+      .map(drop)
+      .map_err(Into::into)
+  }
+
+  pub fn toggle_source(&self, source_id: SourceId, yes: bool) -> Result<()> {
+    use schema::source::dsl::*;
+    diesel::update(source.find(source_id))
+      .set((enabled.eq(yes), updated_at.eq(Zoned::now())))
       .execute(&mut *self.conn())
       .map(drop)
       .map_err(Into::into)

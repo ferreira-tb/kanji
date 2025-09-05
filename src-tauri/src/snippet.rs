@@ -76,7 +76,7 @@ pub fn blocking_search(
   let sources = if let Some(id) = source {
     vec![app.database().get_source(id)?]
   } else {
-    app.database().get_sources()?
+    app.database().get_enabled_sources()?
   };
 
   blocking_search_with_options(kanji)

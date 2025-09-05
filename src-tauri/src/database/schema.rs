@@ -25,6 +25,7 @@ diesel::table! {
         name -> Text,
         created_at -> Text,
         updated_at -> Text,
+        enabled -> Bool,
     }
 }
 

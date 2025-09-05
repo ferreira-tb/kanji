@@ -91,7 +91,7 @@ pub async fn search(app: AppHandle) -> Result<Vec<KanjiStats>> {
 
 fn blocking_search(app: &AppHandle) -> Result<Vec<KanjiStats>> {
   let database = app.database();
-  let sources = database.get_sources()?;
+  let sources = database.get_enabled_sources()?;
   let mut kanjis: HashMap<KanjiChar, KanjiStats> = HashMap::new();
 
   for source in sources {

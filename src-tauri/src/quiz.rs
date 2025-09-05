@@ -23,7 +23,7 @@ impl Quiz {
   {
     let db = app.database();
     let chars = Arc::from(db.get_kanji_chars()?);
-    let sources = Arc::from(db.get_sources()?);
+    let sources = Arc::from(db.get_enabled_sources()?);
     let questions = Arc::new(Mutex::new(Vec::new()));
     let semaphore = Arc::new(Semaphore::new(100));
 

@@ -59,3 +59,7 @@ export async function showWindow() {
 export async function startQuiz(kanjis: readonly KanjiChar[]) {
   return invoke<Quiz>('start_quiz', { kanjis });
 }
+
+export async function toggleSource(id: SourceId, enabled: boolean) {
+  return invoke<nil>('toggle_source', { id, enabled });
+}
