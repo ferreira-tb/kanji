@@ -26,6 +26,7 @@ diesel::table! {
         created_at -> Text,
         updated_at -> Text,
         enabled -> Bool,
+        weight -> Integer,
     }
 }
 

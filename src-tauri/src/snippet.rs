@@ -1,13 +1,14 @@
 use crate::database::model::source::Source;
-use crate::database::sql_types::{KanjiChar, SourceId};
+use crate::database::sql_types::{KanjiChar, SourceId, SourceWeight};
 use crate::kanji::is_kanji;
 use crate::manager::ManagerExt;
 use crate::settings::Settings;
 use anyhow::Result;
 use itertools::Itertools;
 use memchr::memmem::Finder;
-use rand::seq::SliceRandom;
+use rand::seq::{IndexedRandom, SliceRandom};
 use serde::{Serialize, Serializer};
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::BufRead;
 use std::path::Path as StdPath;
@@ -33,12 +34,18 @@ impl Snippet {
   }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct SnippetId(u64);
 
 impl SnippetId {
-  fn next() -> Self {
+  fn new() -> Self {
     Self(ID.fetch_add(1, Relaxed))
+  }
+}
+
+impl Default for SnippetId {
+  fn default() -> Self {
+    Self::new()
   }
 }
 
@@ -56,6 +63,7 @@ impl Serialize for SnippetId {
 struct SnippetSource {
   name: Arc<str>,
   path: Arc<StdPath>,
+  weight: SourceWeight,
   line: usize,
 }
 
@@ -101,6 +109,8 @@ pub fn blocking_search_with_options(
 
   for source in sources {
     let name = Arc::from(source.name.as_str());
+    let weight = source.weight;
+
     for path in source.walk() {
       let path = Arc::from(path);
       let file = File::open_buffered(&path)?;
@@ -115,9 +125,9 @@ pub fn blocking_search_with_options(
             let line = line.saturating_add(1);
 
             snippets.push(Snippet {
-              id: SnippetId::next(),
+              id: SnippetId::new(),
               content: Arc::from(text),
-              source: SnippetSource { name, path, line },
+              source: SnippetSource { name, path, weight, line },
             });
           }
         }
@@ -130,12 +140,22 @@ pub fn blocking_search_with_options(
     .unique_by(|snippet: &Snippet| Arc::clone(&snippet.content))
     .collect();
 
+  let mut rng = rand::rng();
+  let chosen = snippets
+    .iter()
+    .map(|snippet| (snippet.id, snippet.source.weight))
+    .collect_vec()
+    .choose_multiple_weighted(&mut rng, limit, |(_, weight)| *weight)?
+    .map(|(id, _)| *id)
+    .collect::<HashSet<_>>();
+
+  snippets.retain(|snippet| chosen.contains(&snippet.id));
+
   if shuffle {
-    let mut rng = rand::rng();
     snippets.shuffle(&mut rng);
   }
 
-  Ok(snippets.into_iter().take(limit).collect())
+  Ok(snippets)
 }
 
 fn should_skip(text: &str) -> bool {

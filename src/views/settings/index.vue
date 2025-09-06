@@ -45,7 +45,7 @@ const { state: server } = asyncRef(null, getServerAddr);
       <h2 class="text-xl">Snippets</h2>
       <Label>
         <Checkbox v-model="settings.shuffleSnippets" />
-        <span>Shuffle Snippets</span>
+        <span>Shuffle snippets</span>
       </Label>
 
       <Label class="max-w-70">

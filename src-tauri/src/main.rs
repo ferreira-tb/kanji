@@ -47,6 +47,7 @@ fn main() {
       command::rename_source,
       command::search_kanji,
       command::search_snippets,
+      command::set_source_weight,
       command::show_window,
       command::toggle_source
     ])

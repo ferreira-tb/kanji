@@ -6,7 +6,7 @@ pub mod sql_types;
 use crate::database::model::kanji::NewKanji;
 use crate::database::model::quiz_answer::NewQuizAnswer;
 use crate::database::model::source::{NewSource, Source};
-use crate::database::sql_types::{KanjiChar, SourceId, Zoned};
+use crate::database::sql_types::{KanjiChar, SourceId, SourceWeight, Zoned};
 use anyhow::Result;
 use diesel::Connection;
 use diesel::prelude::*;
@@ -103,6 +103,15 @@ impl DatabaseHandle {
     use schema::source::dsl::*;
     diesel::update(source.find(source_id))
       .set((name.eq(new_name), updated_at.eq(Zoned::now())))
+      .execute(&mut *self.conn())
+      .map(drop)
+      .map_err(Into::into)
+  }
+
+  pub fn set_source_weight(&self, source_id: SourceId, new_weight: SourceWeight) -> Result<()> {
+    use schema::source::dsl::*;
+    diesel::update(source.find(source_id))
+      .set((weight.eq(new_weight), updated_at.eq(Zoned::now())))
       .execute(&mut *self.conn())
       .map(drop)
       .map_err(Into::into)

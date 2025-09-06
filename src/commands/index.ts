@@ -1,3 +1,4 @@
+import { clamp } from 'es-toolkit';
 import { invoke } from '@tauri-apps/api/core';
 import type { nil, Option } from '@tb-dev/utils';
 
@@ -58,6 +59,11 @@ export async function searchKanji() {
 export async function searchSnippets(kanji: KanjiChar, source?: Option<SourceId>) {
   source ??= null;
   return invoke<Snippet[]>('search_snippets', { kanji, source });
+}
+
+export async function setSourceWeight(id: SourceId, weight: SourceWeight) {
+  weight = clamp(Math.trunc(weight), 1, 5);
+  return invoke<nil>('set_source_weight', { id, weight });
 }
 
 export async function showWindow() {

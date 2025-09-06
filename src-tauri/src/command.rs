@@ -1,6 +1,6 @@
 use crate::database::model::quiz_answer::NewQuizAnswer;
 use crate::database::model::source::{NewSource, Source};
-use crate::database::sql_types::{KanjiChar, Path, SourceId};
+use crate::database::sql_types::{KanjiChar, Path, SourceId, SourceWeight};
 use crate::error::{CResult, Error};
 use crate::kanji::{self, KanjiStats};
 use crate::manager::ManagerExt;
@@ -162,6 +162,14 @@ pub async fn search_snippets(
 ) -> CResult<Vec<Snippet>> {
   snippet::search(app, kanji, source)
     .await
+    .map_err(Into::into)
+}
+
+#[tauri::command]
+pub async fn set_source_weight(app: AppHandle, id: SourceId, weight: SourceWeight) -> CResult<()> {
+  app
+    .database()
+    .set_source_weight(id, weight)
     .map_err(Into::into)
 }
 

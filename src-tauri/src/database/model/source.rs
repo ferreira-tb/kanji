@@ -1,4 +1,4 @@
-use crate::database::sql_types::{Path, SourceId, Zoned};
+use crate::database::sql_types::{Path, SourceId, SourceWeight, Zoned};
 use crate::manager::ManagerExt;
 use anyhow::Result;
 use bon::Builder;
@@ -29,6 +29,7 @@ pub struct Source {
   pub created_at: Zoned,
   pub updated_at: Zoned,
   pub enabled: bool,
+  pub weight: SourceWeight,
 }
 
 impl Source {
@@ -58,6 +59,9 @@ pub struct NewSource<'a> {
 
   #[builder(skip = Zoned::now())]
   updated_at: Zoned,
+
+  #[builder(default = SourceWeight::new(3), into)]
+  weight: SourceWeight,
 }
 
 impl NewSource<'_> {

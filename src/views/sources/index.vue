@@ -1,29 +1,29 @@
 <script setup lang="ts">
+import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
+import { useHeightDiff } from '@tb-dev/vue';
 import { computed, useTemplateRef } from 'vue';
 import { useKanjis } from '@/composables/kanji';
-import { asyncRef, handleError, useHeightDiff } from '@tb-dev/vue';
-import { createSource, getSources, renameSource, toggleSource } from '@/commands';
+import { useSources } from '@/composables/source';
 import {
   Button,
   Checkbox,
   Input,
+  NumberField,
+  NumberFieldContent,
+  NumberFieldDecrement,
+  NumberFieldIncrement,
+  NumberFieldInput,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  toBooleanCheckboxValue,
 } from '@tb-dev/vue-components';
 
 const { load: loadKanjis, loading: isLoadingKanjis } = useKanjis();
-
-const {
-  state: sources,
-  execute: loadSources,
-  isLoading: isLoadingSources,
-} = asyncRef([], getSources);
+const { sources, loadSources, loading: isLoadingSources } = useSources();
 
 const loading = computed(() => {
   return isLoadingKanjis.value || isLoadingSources.value;
@@ -37,34 +37,20 @@ async function load() {
   await loadKanjis();
 }
 
-async function addSource() {
-  try {
-    await createSource();
-    await load();
-  }
-  catch (err) {
-    handleError(err);
-  }
+function create() {
+  commands.createSource().then(load).err();
 }
 
-async function rename(source: Source) {
-  try {
-    await renameSource(source.id, source.name);
-    await load();
-  }
-  catch (err) {
-    handleError(err);
-  }
+function rename(source: Source) {
+  commands.renameSource(source.id, source.name).then(load).err();
 }
 
-async function toggle(source: Source, enabled: boolean) {
-  try {
-    await toggleSource(source.id, enabled);
-    await load();
-  }
-  catch (err) {
-    handleError(err);
-  }
+function setWeight(source: Source) {
+  commands.setSourceWeight(source.id, source.weight).then(load).err();
+}
+
+function toggle(source: Source) {
+  commands.toggleSource(source.id, source.enabled).then(load).err();
 }
 </script>
 
@@ -74,7 +60,7 @@ async function toggle(source: Source, enabled: boolean) {
       <Button
         size="sm"
         :disabled="loading"
-        @click="addSource"
+        @click="create"
       >
         <span>Add Source</span>
       </Button>
@@ -98,6 +84,7 @@ async function toggle(source: Source, enabled: boolean) {
             <TableHead></TableHead>
             <TableHead>Path</TableHead>
             <TableHead>Name</TableHead>
+            <TableHead>Weight</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -107,24 +94,41 @@ async function toggle(source: Source, enabled: boolean) {
               <Checkbox
                 v-model="source.enabled"
                 :disabled="loading"
-                @update:model-value="(value) => toggle(source, toBooleanCheckboxValue(value))"
+                @update:model-value="() => toggle(source)"
               />
             </TableCell>
+
             <TableCell>
               <span>{{ source.path }}</span>
             </TableCell>
+
             <TableCell>
               <div class="flex justify-start items-center gap-2">
-                <Input v-model="source.name" type="text" />
-                <Button
-                  size="sm"
-                  variant="secondary"
+                <Input
+                  v-model="source.name"
+                  type="text"
                   :disabled="loading"
-                  @click="() => rename(source)"
-                >
-                  <span>Rename</span>
-                </Button>
+                  @blur="() => rename(source)"
+                />
               </div>
+            </TableCell>
+
+            <TableCell>
+              <NumberField
+                v-model="source.weight"
+                :min="1"
+                :max="5"
+                :step="1"
+                :disabled="loading"
+                class="max-w-28"
+                @update:model-value="() => setWeight(source)"
+              >
+                <NumberFieldContent>
+                  <NumberFieldDecrement />
+                  <NumberFieldInput class="dark:bg-input/40" />
+                  <NumberFieldIncrement />
+                </NumberFieldContent>
+              </NumberField>
             </TableCell>
           </TableRow>
         </TableBody>
