@@ -8,6 +8,7 @@ mod kanji;
 mod manager;
 mod plugin;
 mod quiz;
+mod server;
 mod set;
 mod settings;
 mod snippet;
@@ -16,6 +17,7 @@ mod window;
 
 use crate::database::DatabaseHandle;
 use error::BoxResult;
+use server::Server;
 use tauri::{AppHandle, Manager};
 
 fn main() {
@@ -32,10 +34,12 @@ fn main() {
     .plugin(tauri_plugin_updater::Builder::new().build())
     .setup(|app| setup(app.app_handle()))
     .invoke_handler(tauri::generate_handler![
+      command::create_quiz,
       command::create_quiz_answer,
       command::create_source,
       command::create_tray_icon,
       command::export_set,
+      command::get_server_addr,
       command::get_set,
       command::get_sources,
       command::open,
@@ -44,7 +48,6 @@ fn main() {
       command::search_kanji,
       command::search_snippets,
       command::show_window,
-      command::start_quiz,
       command::toggle_source
     ])
     .run(tauri::generate_context!())
@@ -53,6 +56,7 @@ fn main() {
 
 fn setup(app: &AppHandle) -> BoxResult<()> {
   app.manage(DatabaseHandle::new()?);
+  app.manage(Server::serve(app)?);
   window::open(app)?;
   Ok(())
 }

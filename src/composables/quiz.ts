@@ -1,7 +1,7 @@
 import { useMutex } from '@tb-dev/vue';
 import { handleError } from '@/lib/error';
 import type { Option } from '@tb-dev/utils';
-import { createQuizAnswer, startQuiz } from '@/commands';
+import { createQuiz, createQuizAnswer } from '@/commands';
 import { onActivated, readonly, ref, shallowRef, watch } from 'vue';
 
 export function useQuiz() {
@@ -26,7 +26,7 @@ export function useQuiz() {
     if (!active.value && kanjis.length > 0) {
       await mutex.acquire();
       try {
-        quiz.value = await startQuiz(kanjis);
+        quiz.value = await createQuiz(kanjis);
         current.value = quiz.value.at(0);
         active.value = true;
         resetTimer();

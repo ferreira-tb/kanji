@@ -18,6 +18,7 @@ const URL: &str = env!("KANJI_DATABASE_URL_DEBUG");
 #[cfg(not(debug_assertions))]
 const URL: &str = env!("KANJI_DATABASE_URL");
 
+#[must_use]
 #[derive(Clone)]
 pub struct DatabaseHandle(Arc<Mutex<SqliteConnection>>);
 
@@ -160,7 +161,7 @@ impl DatabaseHandle {
     let mut count = 0u64;
     for kanji_char in kanji_chars {
       let correct = self.count_correct_quiz_answers(*kanji_char)?;
-      count = count.saturating_add(correct)
+      count = count.saturating_add(correct);
     }
 
     Ok(count)

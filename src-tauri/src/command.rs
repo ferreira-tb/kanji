@@ -9,6 +9,7 @@ use crate::set::KanjiSet;
 use crate::snippet::{self, Snippet};
 use crate::tray;
 use itertools::Itertools;
+use std::net::SocketAddrV4;
 use std::path::PathBuf;
 use std::process::Stdio;
 use tauri::{AppHandle, WebviewWindow};
@@ -18,6 +19,13 @@ use tauri_plugin_fs::{FilePath, FsExt};
 use tokio::process::Command;
 use tokio::sync::oneshot;
 use windows::Win32::System::Threading::{CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW};
+
+#[tauri::command]
+pub async fn create_quiz(app: AppHandle, kanjis: Vec<KanjiChar>) -> CResult<Quiz> {
+  Quiz::new(app, kanjis)
+    .await
+    .map_err(Into::into)
+}
 
 #[tauri::command]
 pub async fn create_quiz_answer(
@@ -67,6 +75,11 @@ pub async fn export_set(app: AppHandle) -> CResult<()> {
   }
 
   Ok(())
+}
+
+#[tauri::command]
+pub async fn get_server_addr(app: AppHandle) -> SocketAddrV4 {
+  app.server().addr()
 }
 
 #[tauri::command]
@@ -158,13 +171,6 @@ pub async fn show_window(window: WebviewWindow) -> CResult<()> {
     .show()
     .and_then(|()| window.unminimize())
     .and_then(|()| window.set_focus())
-    .map_err(Into::into)
-}
-
-#[tauri::command]
-pub async fn start_quiz(app: AppHandle, kanjis: Vec<KanjiChar>) -> CResult<Quiz> {
-  Quiz::new(app, kanjis)
-    .await
     .map_err(Into::into)
 }
 

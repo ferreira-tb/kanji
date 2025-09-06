@@ -1,3 +1,5 @@
+use crate::res;
+use axum::response::Response;
 use serde::Serialize;
 use std::fmt::Display;
 
@@ -13,5 +15,11 @@ pub struct Error(String);
 impl<T: Display> From<T> for Error {
   fn from(value: T) -> Self {
     Self(value.to_string())
+  }
+}
+
+impl From<Error> for Response {
+  fn from(err: Error) -> Self {
+    res!(INTERNAL_SERVER_ERROR, err.0)
   }
 }

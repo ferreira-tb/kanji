@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { asyncRef } from '@tb-dev/vue';
+import { getServerAddr } from '@/commands';
 import { useSettingsStore } from '@/stores/settings';
 import {
   Checkbox,
@@ -13,10 +15,15 @@ import {
 } from '@tb-dev/vue-components';
 
 const settings = useSettingsStore();
+const { state: server } = asyncRef(null, getServerAddr);
 </script>
 
 <template>
-  <div class="flex size-full flex-col gap-6 p-4">
+  <div class="relative flex size-full flex-col gap-6 p-4">
+    <div v-if="server" class="absolute right-4 bottom-2">
+      <span class="text-muted-foreground text-sm">{{ server }}</span>
+    </div>
+
     <h1 class="text-2xl font-semibold">Settings</h1>
     <div class="flex flex-col gap-4">
       <h2 class="text-xl">General</h2>

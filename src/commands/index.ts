@@ -1,6 +1,10 @@
 import { invoke } from '@tauri-apps/api/core';
 import type { nil, Option } from '@tb-dev/utils';
 
+export async function createQuiz(kanjis: readonly KanjiChar[]) {
+  return invoke<Quiz>('create_quiz', { kanjis });
+}
+
 export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, duration: number) {
   return invoke<nil>('create_quiz_answer', { question, answer, duration });
 }
@@ -19,15 +23,19 @@ export async function createTrayIcon() {
   return invoke<nil>('create_tray_icon');
 }
 
-export function exportSet() {
+export async function exportSet() {
   return invoke<nil>('export_set');
 }
 
-export function getSet() {
+export async function getServerAddr() {
+  return invoke<string>('get_server_addr');
+}
+
+export async function getSet() {
   return invoke<KanjiSet>('get_set');
 }
 
-export function getSources() {
+export async function getSources() {
   return invoke<readonly Source[]>('get_sources');
 }
 
@@ -54,10 +62,6 @@ export async function searchSnippets(kanji: KanjiChar, source?: Option<SourceId>
 
 export async function showWindow() {
   return invoke<nil>('show_window');
-}
-
-export async function startQuiz(kanjis: readonly KanjiChar[]) {
-  return invoke<Quiz>('start_quiz', { kanjis });
 }
 
 export async function toggleSource(id: SourceId, enabled: boolean) {

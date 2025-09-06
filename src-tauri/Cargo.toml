@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "4.3.0"
+version = "4.4.0"
 publish = false
 
 [package.edition]
@@ -15,8 +15,10 @@ workspace = true
 [dependencies]
 anyhow = "1.0"
 bon = "3.7"
+futures = "0.3"
 globset = "0.4"
 itertools = "0.14"
+local-ip-address = "=0.6.5"
 memchr = "2.7"
 rand = "0.9"
 serde_json = "1.0"
@@ -30,6 +32,10 @@ tauri-plugin-single-instance = "2.3"
 tauri-plugin-updater = "2.9"
 tauri-plugin-window-state = "2.4"
 walkdir = "2.5"
+
+[dependencies.axum]
+version = "0.8"
+features = ["macros"]
 
 [dependencies.derive_more]
 version = "2.0"
