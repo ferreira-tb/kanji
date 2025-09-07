@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref, watchEffect } from 'vue';
-import type { Option } from '@tb-dev/utils';
 import { isTauri } from '@tauri-apps/api/core';
 
 export const BASE_URL_KEY = 'kanji:base-url';
 
 export const useSettingsStore = defineStore('settings', () => {
-  const baseUrl = ref<Option<string>>(null);
+  const baseUrl = ref(localStorage.getItem(BASE_URL_KEY));
 
   const clipboard = ref(true);
   const hideOnClose = ref(false);
