@@ -42,7 +42,7 @@ function leave() {
 }
 
 function getCardClass(option: KanjiChar) {
-  let classList = 'p-4';
+  let classList = 'p0 md:p-4';
   if (ready.value && !props.disabled) {
     classList += ' cursor-pointer hover:bg-accent';
   }
@@ -62,23 +62,25 @@ function getCardClass(option: KanjiChar) {
 
 <template>
   <div class="size-full flex flex-col justify-center items-center p-6">
-    <div class="h-full flex flex-col justify-center items-center text-2xl text-center gap-2">
+    <div class="h-full flex flex-col justify-center items-center text-center gap-2">
       <span
         class="cursor-pointer text-muted-foreground text-sm"
         @click="() => commands.open(source.path, source.line)"
       >
         {{ source.name }}
       </span>
-      <span class="select-text">{{ question }}</span>
+      <span class="text-xl md:text-2xl select-text">
+        {{ question }}
+      </span>
     </div>
 
     <div class="flex flex-col gap-8">
       <div class="grid grid-cols-5 gap-4">
         <div v-for="option of current.options" :key="option">
-          <Card :class="getCardClass(option)" @click="() => answer(option)">
-            <CardContent>
+          <Card :class="getCardClass(option)" class="p-2" @click="() => answer(option)">
+            <CardContent class="p-2 md:p-4">
               <div class="flex justify-center items-center">
-                <span class="text-4xl font-bold">{{ option }}</span>
+                <span class="text-xl md:text-4xl font-bold">{{ option }}</span>
               </div>
             </CardContent>
           </Card>
