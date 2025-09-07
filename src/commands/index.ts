@@ -12,12 +12,12 @@ export async function createQuiz(kanjis: readonly KanjiChar[]) {
   }
 }
 
-export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, duration: number) {
+export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar) {
   if (isTauri()) {
-    return invoke<nil>('create_quiz_answer', { question, answer, duration });
+    return invoke<nil>('create_quiz_answer', { question, answer });
   }
   else {
-    return api.createQuizAnswer(question, answer, duration);
+    return api.createQuizAnswer(question, answer);
   }
 }
 

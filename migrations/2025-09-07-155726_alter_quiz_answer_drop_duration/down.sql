@@ -1,0 +1,1 @@
+ALTER TABLE quiz_answer ADD COLUMN duration INTEGER;

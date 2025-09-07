@@ -14,7 +14,6 @@ pub struct QuizAnswer {
   pub id: QuizAnswerId,
   pub question: KanjiChar,
   pub answer: KanjiChar,
-  pub duration: i32,
   pub created_at: Zoned,
 }
 
@@ -29,9 +28,6 @@ pub struct NewQuizAnswer {
 
   #[builder(into)]
   answer: KanjiChar,
-
-  #[builder(into)]
-  duration: i32,
 
   #[builder(skip = Zoned::now())]
   created_at: Zoned,

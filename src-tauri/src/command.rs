@@ -32,12 +32,10 @@ pub async fn create_quiz_answer(
   app: AppHandle,
   question: KanjiChar,
   answer: KanjiChar,
-  duration: u32,
 ) -> CResult<()> {
   NewQuizAnswer::builder()
     .question(question)
     .answer(answer)
-    .duration(i32::try_from(duration)?)
     .build()
     .create(&app)
     .map_err(Into::into)

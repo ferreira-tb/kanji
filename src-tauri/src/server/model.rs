@@ -12,7 +12,6 @@ pub struct CreateQuizRequest {
 pub struct CreateQuizAnswerRequest {
   pub question: KanjiChar,
   pub answer: KanjiChar,
-  pub duration: u32,
 }
 
 #[derive(Debug, Deserialize)]

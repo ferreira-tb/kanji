@@ -13,7 +13,6 @@ diesel::table! {
         id -> Text,
         question -> Text,
         answer -> Text,
-        duration -> Integer,
         created_at -> Text,
     }
 }

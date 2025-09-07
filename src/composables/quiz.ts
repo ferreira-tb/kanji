@@ -4,22 +4,18 @@ import { handleError } from '@/lib/error';
 import type { Option } from '@tb-dev/utils';
 import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
+import { readonly, ref, shallowRef, watch } from 'vue';
 import { createQuiz, createQuizAnswer } from '@/commands';
-import { onActivated, readonly, ref, shallowRef, watch } from 'vue';
 
 export function useQuiz() {
   const quiz = shallowRef<Option<Quiz>>();
   const current = shallowRef<Option<QuizQuestion>>();
-
   const active = ref(false);
-  const instant = ref(0);
 
   const settings = useSettingsStore();
   const { baseUrl } = storeToRefs(settings);
 
   const { locked, ...mutex } = useMutex();
-
-  onActivated(resetTimer);
 
   watch(active, (isActive) => {
     if (!isActive) {
@@ -42,7 +38,6 @@ export function useQuiz() {
         if (quiz.value) {
           current.value = quiz.value.at(0);
           active.value = true;
-          resetTimer();
         }
       }
       catch (err) {
@@ -58,10 +53,9 @@ export function useQuiz() {
 
   async function answer(chosen: KanjiChar) {
     if (active.value && quiz.value && current.value) {
-      const duration = Date.now() - instant.value;
       await mutex.acquire();
       try {
-        await createQuizAnswer(current.value.answer, chosen, duration);
+        await createQuizAnswer(current.value.answer, chosen);
         quiz.value = quiz.value.filter((it) => {
           return it.answer !== current.value?.answer;
         });
@@ -73,8 +67,6 @@ export function useQuiz() {
         mutex.release();
       }
     }
-
-    resetTimer();
   }
 
   function next() {
@@ -90,10 +82,6 @@ export function useQuiz() {
 
   function leave() {
     active.value = false;
-  }
-
-  function resetTimer() {
-    instant.value = Date.now();
   }
 
   return {

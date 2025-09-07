@@ -39,7 +39,7 @@ async fn create_quiz_answer(
   State(app): State<AppHandle>,
   Json(req): Json<CreateQuizAnswerRequest>,
 ) -> Response {
-  command::create_quiz_answer(app, req.question, req.answer, req.duration)
+  command::create_quiz_answer(app, req.question, req.answer)
     .map_ok(|()| res!(OK))
     .unwrap_or_else(Response::from)
     .await
