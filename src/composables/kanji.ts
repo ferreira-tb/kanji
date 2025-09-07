@@ -2,6 +2,8 @@ import { storeToRefs } from 'pinia';
 import * as commands from '@/commands';
 import { watchImmediate } from '@vueuse/core';
 import { useKanjiStore } from '@/stores/kanji';
+import { isTauri } from '@tauri-apps/api/core';
+import { useSettingsStore } from '@/stores/settings';
 import { tryInjectOrElse, useMutex } from '@tb-dev/vue';
 import {
   computed,
@@ -45,6 +47,9 @@ function start() {
   const store = useKanjiStore();
   const { sorting, search, currentKanji } = storeToRefs(store);
 
+  const settings = useSettingsStore();
+  const { baseUrl } = storeToRefs(settings);
+
   const { locked, lock } = useMutex();
   const raw = shallowRef<KanjiStats[]>([]);
 
@@ -86,7 +91,13 @@ function start() {
 
   async function load() {
     await lock(async () => {
-      raw.value = await commands.searchKanji();
+      if (isTauri() || baseUrl.value) {
+        raw.value = await commands.searchKanji();
+      }
+      else {
+        raw.value = [];
+      }
+
       if (currentKanji.value) {
         const char = currentKanji.value.character;
         const kanji = raw.value.find((it) => it.character === char);

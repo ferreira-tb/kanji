@@ -1,7 +1,8 @@
 import { panic } from '@tb-dev/utils';
+import { BASE_URL_KEY } from '@/stores/settings';
 
 function url(endpoint: string) {
-  const base = localStorage.getItem('kanji:api-url');
+  const base = localStorage.getItem(BASE_URL_KEY);
   return base ? `http://${base}/${endpoint}` : panic('Missing API url.');
 }
 

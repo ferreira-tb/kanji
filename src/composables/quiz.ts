@@ -1,6 +1,9 @@
+import { storeToRefs } from 'pinia';
 import { useMutex } from '@tb-dev/vue';
 import { handleError } from '@/lib/error';
 import type { Option } from '@tb-dev/utils';
+import { isTauri } from '@tauri-apps/api/core';
+import { useSettingsStore } from '@/stores/settings';
 import { createQuiz, createQuizAnswer } from '@/commands';
 import { onActivated, readonly, ref, shallowRef, watch } from 'vue';
 
@@ -10,6 +13,9 @@ export function useQuiz() {
 
   const active = ref(false);
   const instant = ref(0);
+
+  const settings = useSettingsStore();
+  const { baseUrl } = storeToRefs(settings);
 
   const { locked, ...mutex } = useMutex();
 
@@ -26,10 +32,18 @@ export function useQuiz() {
     if (!active.value && kanjis.length > 0) {
       await mutex.acquire();
       try {
-        quiz.value = await createQuiz(kanjis);
-        current.value = quiz.value.at(0);
-        active.value = true;
-        resetTimer();
+        if (isTauri() || baseUrl.value) {
+          quiz.value = await createQuiz(kanjis);
+        }
+        else {
+          quiz.value = null;
+        }
+
+        if (quiz.value) {
+          current.value = quiz.value.at(0);
+          active.value = true;
+          resetTimer();
+        }
       }
       catch (err) {
         quiz.value = null;
