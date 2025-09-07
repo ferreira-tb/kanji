@@ -1,16 +1,12 @@
-import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { localRef } from '@tb-dev/vue';
+import { ref, watchEffect } from 'vue';
 import type { Option } from '@tb-dev/utils';
+import { isTauri } from '@tauri-apps/api/core';
 
 export const BASE_URL_KEY = 'kanji:base-url';
 
 export const useSettingsStore = defineStore('settings', () => {
-  const baseUrl = localRef<Option<string>>(BASE_URL_KEY, null, {
-    initOnMounted: false,
-    listenToStorageChanges: true,
-    writeDefaults: true,
-  });
+  const baseUrl = ref<Option<string>>(null);
 
   const clipboard = ref(true);
   const hideOnClose = ref(false);
@@ -21,6 +17,12 @@ export const useSettingsStore = defineStore('settings', () => {
 
   const setFileName = ref('Kanji Set.txt');
   const setSize = ref(50);
+
+  if (!isTauri()) {
+    watchEffect(() => {
+      localStorage.setItem(BASE_URL_KEY, baseUrl.value ?? '');
+    });
+  }
 
   return {
     clipboard,
