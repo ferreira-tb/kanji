@@ -5,7 +5,11 @@ import tailwind from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
-  plugins: [vue(), tailwind()],
+  plugins: [
+    tailwind(),
+    vue({ features: { optionsAPI: false } }),
+  ],
+  base: env.KANJI_WEBSITE ? '/kanji/' : undefined,
   clearScreen: false,
   resolve: {
     alias: {
@@ -15,7 +19,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     minify: true,
-    target: 'esnext',
+    target: env.KANJI_WEBSITE ? 'baseline-widely-available' : 'esnext',
     sourcemap: Boolean(env.TAURI_ENV_DEBUG),
   },
   server: {
