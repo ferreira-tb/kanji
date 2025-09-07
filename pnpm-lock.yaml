@@ -70,8 +70,8 @@ importers:
         specifier: ^2.8.4
         version: 2.8.4
       '@tb-dev/eslint-config':
-        specifier: ^8.0.10
-        version: 8.0.10(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2)
+        specifier: ^8.0.11
+        version: 8.0.11(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2)
       '@types/node':
         specifier: ^24.3.1
         version: 24.3.1
@@ -1537,8 +1537,8 @@ packages:
   '@tauri-store/shared@0.9.1':
     resolution: {integrity: sha512-WbX/JnvDxgII0Oiz+31wwc3uTCNqKSk82/ThLQLjeXx3adn6aV2EOh/dCv6ejA9QKAhwV/Nldwyplrk3Deekzg==}
 
-  '@tb-dev/eslint-config@8.0.10':
-    resolution: {integrity: sha512-/aVMyMhyonstrMwuJu0wQKBm54tWvxeRTh9Vqtqed4UAO9cfWEWAE1U5zREtTziLWRL82GQKExJa3XViHEO6wA==}
+  '@tb-dev/eslint-config@8.0.11':
+    resolution: {integrity: sha512-2j1K/5xYg3JvQsKKsf+vmS7JZsLZfp8QRcA7HIL8Piu5pnPEagunMmMIIa/CbupidtHX9F3wgLqFzuuDj21BQQ==}
     engines: {node: '>=22'}
 
   '@tb-dev/utils@7.0.14':
@@ -6109,7 +6109,7 @@ snapshots:
       '@tauri-apps/api': 2.8.0
       es-toolkit: 1.39.10
 
-  '@tb-dev/eslint-config@8.0.10(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2)':
+  '@tb-dev/eslint-config@8.0.11(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2)':
     dependencies:
       '@typescript-eslint/eslint-plugin': 8.42.0(@typescript-eslint/parser@8.42.0(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2))(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2)
       '@typescript-eslint/parser': 8.42.0(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2)

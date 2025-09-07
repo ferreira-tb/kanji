@@ -2,15 +2,16 @@
 import { go } from '@/router';
 import { storeToRefs } from 'pinia';
 import { useRoute } from 'vue-router';
+import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
 import { capitalCase } from 'change-case';
 import { formatPercent } from '@/lib/intl';
 import { useKanjiStore } from '@/stores/kanji';
+import { isTauri } from '@tauri-apps/api/core';
 import { useKanjis } from '@/composables/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
 import { useColorMode, useToggle } from '@vueuse/core';
-import { createTrayIcon, showWindow } from '@/commands';
 import { handleError, onKeyDown, useHeight } from '@tb-dev/vue';
 import { computed, onBeforeMount, onMounted, useTemplateRef } from 'vue';
 import {
@@ -51,14 +52,17 @@ onKeyDown('F2', () => go('snippets'));
 onKeyDown('F3', () => go('quiz'));
 onKeyDown('F4', () => go('sources'));
 onKeyDown('F7', () => go('settings'));
-onKeyDown('Escape', () => exit(0).err());
+
+if (isTauri()) {
+  onKeyDown('Escape', () => exit(0).err());
+}
 
 onBeforeMount(load);
 
 onMounted(async () => {
   try {
-    await createTrayIcon();
-    await showWindow();
+    await commands.createTrayIcon();
+    await commands.showWindow();
   }
   catch (err) {
     handleError(err);

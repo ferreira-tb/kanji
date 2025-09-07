@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Set from './Set.vue';
-import { getSet } from '@/commands';
 import { useTemplateRef } from 'vue';
 import Question from './Question.vue';
+import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
 import { useQuiz } from '@/composables/quiz';
 import { asyncRef, useHeightDiff } from '@tb-dev/vue';
@@ -12,7 +12,7 @@ const {
   state: set,
   execute: loadSet,
   isLoading: isLoadingSet,
-} = asyncRef(null, getSet);
+} = asyncRef(null, commands.getSet);
 
 const {
   current,

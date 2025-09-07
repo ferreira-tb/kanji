@@ -3,6 +3,7 @@ import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
 import { useHeightDiff } from '@tb-dev/vue';
 import { computed, useTemplateRef } from 'vue';
+import { isTauri } from '@tauri-apps/api/core';
 import { useKanjis } from '@/composables/kanji';
 import { useSources } from '@/composables/source';
 import {
@@ -58,6 +59,7 @@ function toggle(source: Source) {
   <div class="flex size-full flex-col gap-2">
     <div ref="topbarEl" class="flex h-14 w-full items-center justify-end gap-4 px-6 py-4">
       <Button
+        v-if="isTauri()"
         size="sm"
         :disabled="loading"
         @click="create"

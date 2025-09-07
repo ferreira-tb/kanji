@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { open } from '@/commands';
 import { computed, ref } from 'vue';
+import * as commands from '@/commands';
 import type { Option } from '@tb-dev/utils';
 import { Button, Card, CardContent } from '@tb-dev/vue-components';
 
@@ -65,7 +65,7 @@ function getCardClass(option: KanjiChar) {
     <div class="h-full flex flex-col justify-center items-center text-2xl text-center gap-2">
       <span
         class="cursor-pointer text-muted-foreground text-sm"
-        @click="() => open(source.path, source.line)"
+        @click="() => commands.open(source.path, source.line)"
       >
         {{ source.name }}
       </span>

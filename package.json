@@ -40,7 +40,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.13",
     "@tauri-apps/cli": "^2.8.4",
-    "@tb-dev/eslint-config": "^8.0.10",
+    "@tb-dev/eslint-config": "^8.0.11",
     "@types/node": "^24.3.1",
     "@vitejs/plugin-vue": "^6.0.1",
     "eslint": "^9.35.0",

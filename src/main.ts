@@ -7,6 +7,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { go, router } from '@/router';
 import { handleError } from '@/lib/error';
+import { isTauri } from '@tauri-apps/api/core';
 import { checkForUpdates } from '@/lib/updater';
 import { TauriPluginPinia } from '@tauri-store/pinia';
 import { setCurrentApp, setErrorHandler } from '@tb-dev/vue';
@@ -14,14 +15,16 @@ import { setCurrentApp, setErrorHandler } from '@tb-dev/vue';
 const app = createApp(App);
 const pinia = createPinia();
 
-pinia.use(
-  TauriPluginPinia({
-    autoStart: true,
-    saveOnChange: true,
-    saveStrategy: 'debounce',
-    saveInterval: 1000,
-  }),
-);
+if (isTauri()) {
+  pinia.use(
+    TauriPluginPinia({
+      autoStart: true,
+      saveOnChange: true,
+      saveStrategy: 'debounce',
+      saveInterval: 1000,
+    }),
+  );
+}
 
 setCurrentApp(app);
 setErrorHandler(handleError, app);

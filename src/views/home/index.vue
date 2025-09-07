@@ -7,6 +7,7 @@ import { handleError } from '@/lib/error';
 import { useHeightDiff } from '@tb-dev/vue';
 import Search from '@/components/Search.vue';
 import { useKanjiStore } from '@/stores/kanji';
+import { isTauri } from '@tauri-apps/api/core';
 import { useKanjis } from '@/composables/kanji';
 import { useSettingsStore } from '@/stores/settings';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
@@ -35,7 +36,7 @@ async function addSource() {
 
 function onCardClick(kanji: DeepReadonly<KanjiStats>) {
   currentKanji.value = kanji;
-  if (settings.clipboard) {
+  if (isTauri() && settings.clipboard) {
     writeText(kanji.character).err();
   }
 }
@@ -54,12 +55,14 @@ function onCardDblClick() {
       <div class="flex items-center justify-center gap-4">
         <div class="flex items-center justify-center gap-2">
           <Button
+            v-if="isTauri()"
             size="sm"
             :disabled="loading"
             @click="addSource"
           >
             <span>Add Source</span>
           </Button>
+
           <Button
             size="sm"
             variant="secondary"
@@ -68,7 +71,9 @@ function onCardDblClick() {
           >
             <span>Reload</span>
           </Button>
+
           <Button
+            v-if="isTauri()"
             size="sm"
             variant="secondary"
             :disabled="loading"
