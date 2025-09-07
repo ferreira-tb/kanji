@@ -22,8 +22,8 @@ defineProps<{
 
         <div v-if="chunk.quizzes > 0" class="grid grid-cols-2 gap-4 px-2 md:px-4">
           <div class="flex h-16 flex-col items-center justify-center">
-            <span class="text-muted-foreground text-sm">Quiz</span>
-            <span class="text-lg font-semibold">{{ chunk.quizzes }}</span>
+            <span class="text-muted-foreground text-xs md:text-sm">Quiz</span>
+            <span class="text-base md:text-lg font-semibold">{{ chunk.quizzes }}</span>
           </div>
           <div
             v-if="Number.isFinite(chunk.quizAccuracy)"
