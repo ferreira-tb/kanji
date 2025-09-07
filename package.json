@@ -1,6 +1,6 @@
 {
   "name": "kanji",
-  "version": "4.7.1",
+  "version": "4.8.0",
   "type": "module",
   "packageManager": "pnpm@10.15.1",
   "license": "GPL-3.0-only",
@@ -30,6 +30,7 @@
     "@tb-dev/vue-components": "^6.0.0",
     "@vueuse/core": "^13.9.0",
     "change-case": "^5.4.4",
+    "date-fns": "^4.1.0",
     "es-toolkit": "^1.39.10",
     "lucide-vue-next": "^0.542.0",
     "pinia": "^3.0.3",

@@ -48,6 +48,15 @@ export async function exportSet() {
   }
 }
 
+export async function getQuizAnswers() {
+  if (isTauri()) {
+    return invoke<readonly QuizAnswer[]>('get_quiz_answers');
+  }
+  else {
+    return api.getQuizAnswers();
+  }
+}
+
 export async function getServerAddr() {
   if (isTauri()) {
     return invoke<string>('get_server_addr');

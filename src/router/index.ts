@@ -11,8 +11,19 @@ export const router = createRouter({
     },
     {
       component: () => import('@/views/quiz/index.vue'),
-      name: 'quiz' satisfies Route,
       path: '/quiz',
+      children: [
+        {
+          component: () => import('@/views/quiz/root/index.vue'),
+          path: '',
+          name: 'quiz' satisfies Route,
+        },
+        {
+          component: () => import('@/views/quiz/history/index.vue'),
+          path: 'history',
+          name: 'quiz-history' satisfies Route,
+        },
+      ],
     },
     {
       component: () => import('@/views/settings/index.vue'),

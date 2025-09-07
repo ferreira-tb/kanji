@@ -20,6 +20,12 @@ export async function createSource(source?: Option<string | string[]>) {
   }
 }
 
+export async function getQuizAnswers() {
+  const response = await get('get-quiz-answers');
+  const data: readonly QuizAnswer[] = await response.json();
+  return data;
+}
+
 export async function getSet() {
   const response = await get('get-set');
   const data: KanjiSet = await response.json();

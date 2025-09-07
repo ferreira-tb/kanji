@@ -39,6 +39,7 @@ fn main() {
       command::create_source,
       command::create_tray_icon,
       command::export_set,
+      command::get_quiz_answers,
       command::get_server_addr,
       command::get_set,
       command::get_sources,

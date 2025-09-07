@@ -4,7 +4,7 @@ pub mod schema;
 pub mod sql_types;
 
 use crate::database::model::kanji::NewKanji;
-use crate::database::model::quiz_answer::NewQuizAnswer;
+use crate::database::model::quiz_answer::{NewQuizAnswer, QuizAnswer};
 use crate::database::model::source::{NewSource, Source};
 use crate::database::sql_types::{KanjiChar, SourceId, SourceWeight, Zoned};
 use anyhow::Result;
@@ -133,6 +133,17 @@ impl DatabaseHandle {
       .execute(&mut *self.conn())
       .map(drop)
       .map_err(Into::into)
+  }
+
+  pub fn get_quiz_answers(&self) -> Result<Vec<QuizAnswer>> {
+    use schema::quiz_answer::dsl::*;
+    let mut answers = quiz_answer
+      .select(QuizAnswer::as_select())
+      .load(&mut *self.conn())?;
+
+    answers.sort_unstable_by(|a, b| b.created_at.cmp(&a.created_at));
+
+    Ok(answers)
   }
 
   pub fn count_quizzes(&self, kanji_char: KanjiChar) -> Result<u64> {

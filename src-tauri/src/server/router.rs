@@ -18,6 +18,7 @@ pub(super) fn create() -> Router<AppHandle> {
     .route("/create-quiz", post(create_quiz))
     .route("/create-quiz-answer", post(create_quiz_answer))
     .route("/create-source", post(create_source))
+    .route("/get-quiz-answers", get(get_quiz_answers))
     .route("/get-set", get(get_set))
     .route("/get-sources", get(get_sources))
     .route("/rename-source", post(rename_source))
@@ -51,6 +52,13 @@ async fn create_source(
 ) -> Response {
   command::create_source(app, req.source)
     .map_ok(|id| res!(OK, Json(id)))
+    .unwrap_or_else(Response::from)
+    .await
+}
+
+async fn get_quiz_answers(State(app): State<AppHandle>) -> Response {
+  command::get_quiz_answers(app)
+    .map_ok(|answers| res!(OK, Json(answers)))
     .unwrap_or_else(Response::from)
     .await
 }

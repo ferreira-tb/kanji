@@ -1,4 +1,4 @@
-use crate::database::model::quiz_answer::NewQuizAnswer;
+use crate::database::model::quiz_answer::{NewQuizAnswer, QuizAnswer};
 use crate::database::model::source::{NewSource, Source};
 use crate::database::sql_types::{KanjiChar, Path, SourceId, SourceWeight};
 use crate::error::{CResult, Error};
@@ -12,6 +12,7 @@ use itertools::Itertools;
 use std::net::SocketAddrV4;
 use std::path::PathBuf;
 use std::process::Stdio;
+use tauri::async_runtime::spawn_blocking;
 use tauri::{AppHandle, WebviewWindow};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_fs::{FilePath, FsExt};
@@ -73,6 +74,18 @@ pub async fn export_set(app: AppHandle) -> CResult<()> {
   }
 
   Ok(())
+}
+
+#[tauri::command]
+pub async fn get_quiz_answers(app: AppHandle) -> CResult<Vec<QuizAnswer>> {
+  let task = spawn_blocking(move || {
+    app
+      .database()
+      .get_quiz_answers()
+      .map_err(Into::into)
+  });
+
+  task.await?
 }
 
 #[tauri::command]

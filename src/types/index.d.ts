@@ -1,4 +1,4 @@
-type Route = 'home' | 'quiz' | 'settings' | 'snippets' | 'sources';
+type Route = 'home' | 'quiz' | 'quiz-history' | 'settings' | 'snippets' | 'sources';
 
 interface Sorting {
   ascending: boolean;

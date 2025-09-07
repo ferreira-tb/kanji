@@ -12,7 +12,7 @@ import { useKanjis } from '@/composables/kanji';
 import { useSettingsStore } from '@/stores/settings';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { type DeepReadonly, nextTick, useTemplateRef } from 'vue';
-import { Button, Card, CardContent, SidebarTrigger } from '@tb-dev/vue-components';
+import { Button, Card, CardContent, SidebarTrigger, useSidebar } from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
 const { search, currentKanji } = storeToRefs(store);
@@ -23,6 +23,8 @@ const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
 const { kanjis, loading, load } = useKanjis();
+
+const sidebar = useSidebar();
 
 async function addSource() {
   try {
@@ -36,7 +38,11 @@ async function addSource() {
 
 function onCardClick(kanji: DeepReadonly<KanjiStats>) {
   currentKanji.value = kanji;
-  if (isTauri() && settings.clipboard) {
+  if (sidebar.isMobile.value) {
+    sidebar.setOpenMobile(true);
+  }
+
+  if (settings.clipboard && isTauri()) {
     writeText(kanji.character).err();
   }
 }
