@@ -94,12 +94,14 @@ function setCurrentSource(source: KanjiStatsSource) {
         class="flex size-full flex-col justify-between gap-6 p-2 md:p-4 select-none"
       >
         <ScrollArea :style="{ height: toPixel(listHeight - 40) }">
-          <div id="source-grid" class="text-sidebar-accent-foreground text-sm pr-4">
+          <div id="source-grid" class="text-sidebar-accent-foreground pr-4">
             <template v-for="source of currentKanji.sources" :key="source.id">
               <div class="ellipsis cursor-pointer" @click="() => setCurrentSource(source)">
-                {{ source.name }}
+                <span class="text-xs md:text-sm">{{ source.name }}</span>
               </div>
-              <div class="text-end">{{ source.seen }}</div>
+              <div class="text-end">
+                <span class="text-xs md:text-sm">{{ source.seen }}</span>
+              </div>
             </template>
           </div>
         </ScrollArea>
