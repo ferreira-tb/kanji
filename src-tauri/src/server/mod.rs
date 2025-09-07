@@ -46,7 +46,7 @@ impl Server {
 }
 
 async fn bind() -> Result<(TcpListener, SocketAddrV4)> {
-  let listener = TcpListener::bind("0.0.0.0:0").await?;
+  let listener = TcpListener::bind("0.0.0.0:63500").await?;
   let SocketAddr::V4(addr) = listener.local_addr()? else {
     unreachable!();
   };

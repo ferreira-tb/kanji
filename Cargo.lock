@@ -2360,7 +2360,7 @@ dependencies = [
 
 [[package]]
 name = "kanji"
-version = "4.8.0"
+version = "4.8.1"
 dependencies = [
  "anyhow",
  "axum",
