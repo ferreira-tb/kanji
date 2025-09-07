@@ -9,7 +9,7 @@ const { state: server } = asyncRef(null, getServerAddr);
 </script>
 
 <template>
-  <div class="relative flex size-full flex-col gap-6 p-4">
+  <div class="relative flex size-full flex-col gap-6 p-4 overflow-x-hidden overflow-y-auto">
     <div v-if="isTauri() && server" class="absolute right-4 bottom-2">
       <span class="text-muted-foreground text-sm">{{ server }}</span>
     </div>

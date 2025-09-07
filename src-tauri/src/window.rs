@@ -25,7 +25,6 @@ pub fn open(app: &AppHandle) -> Result<()> {
     .title("Kanji")
     .initialization_script(script())
     .inner_size(1200.0, 800.0)
-    .min_inner_size(800.0, 600.0)
     .resizable(true)
     .maximizable(true)
     .minimizable(true)

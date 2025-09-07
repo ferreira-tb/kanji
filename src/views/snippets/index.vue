@@ -7,8 +7,8 @@ import { useSnippets } from '@/composables/snippets';
 import { useSettingsStore } from '@/stores/settings';
 import { handleError, useHeightDiff } from '@tb-dev/vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { Button, Card, CardContent, Loading } from '@tb-dev/vue-components';
 import { type DeepReadonly, nextTick, onActivated, useTemplateRef } from 'vue';
+import { Button, Card, CardContent, Loading, SidebarTrigger } from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
 const { currentKanji, currentSource } = storeToRefs(store);
@@ -39,7 +39,9 @@ function onContentClick(snippet: DeepReadonly<Snippet>) {
 
 <template>
   <div class="flex size-full flex-col gap-2">
-    <div ref="topbarEl" class="flex h-14 w-full items-center justify-end px-6 py-4">
+    <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
+      <SidebarTrigger />
+
       <div class="flex items-center justify-center gap-2">
         <Button
           size="sm"
@@ -61,7 +63,7 @@ function onContentClick(snippet: DeepReadonly<Snippet>) {
     </div>
 
     <div
-      class="flex flex-col gap-4 overflow-x-hidden overflow-y-auto px-6 pb-12"
+      class="flex flex-col gap-2 md:gap-4 overflow-x-hidden overflow-y-auto px-1 md:px-6 pb-12"
       :style="{ height: toPixel(contentHeight) }"
     >
       <div v-if="loading" class="size-full">

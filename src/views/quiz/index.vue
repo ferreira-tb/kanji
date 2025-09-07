@@ -6,7 +6,7 @@ import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
 import { useQuiz } from '@/composables/quiz';
 import { asyncRef, useHeightDiff } from '@tb-dev/vue';
-import { Button, Loading } from '@tb-dev/vue-components';
+import { Button, Loading, SidebarTrigger } from '@tb-dev/vue-components';
 
 const {
   state: set,
@@ -39,19 +39,22 @@ async function onLeave() {
 
 <template>
   <div class="flex size-full flex-col gap-2">
-    <div ref="topbarEl" class="flex h-14 w-full items-center justify-end px-6 py-4">
-      <Button
-        size="sm"
-        variant="secondary"
-        :disabled="isLoadingSet || isLoadingQuiz"
-        @click="onLoad"
-      >
-        <span>Reload</span>
-      </Button>
+    <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
+      <SidebarTrigger />
+      <div class="flex items-center justify-center gap-2">
+        <Button
+          size="sm"
+          variant="secondary"
+          :disabled="isLoadingSet || isLoadingQuiz"
+          @click="onLoad"
+        >
+          <span>Reload</span>
+        </Button>
+      </div>
     </div>
 
     <div
-      class="flex flex-col gap-2 overflow-x-hidden overflow-y-auto px-6 pb-12"
+      class="flex flex-col gap-2 overflow-x-hidden overflow-y-auto px-1 md:px-6 pb-12"
       :style="{ height: toPixel(contentHeight) }"
     >
       <div v-if="isLoadingSet" class="size-full">

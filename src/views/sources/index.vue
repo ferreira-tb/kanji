@@ -15,6 +15,7 @@ import {
   NumberFieldDecrement,
   NumberFieldIncrement,
   NumberFieldInput,
+  SidebarTrigger,
   Table,
   TableBody,
   TableCell,
@@ -57,27 +58,31 @@ function toggle(source: Source) {
 
 <template>
   <div class="flex size-full flex-col gap-2">
-    <div ref="topbarEl" class="flex h-14 w-full items-center justify-end gap-4 px-6 py-4">
-      <Button
-        v-if="isTauri()"
-        size="sm"
-        :disabled="loading"
-        @click="create"
-      >
-        <span>Add Source</span>
-      </Button>
-      <Button
-        size="sm"
-        variant="secondary"
-        :disabled="loading"
-        @click="load"
-      >
-        <span>Reload</span>
-      </Button>
+    <div ref="topbarEl" class="flex h-14 w-full items-center justify-between gap-4 px-2 md:px-6 py-4">
+      <SidebarTrigger />
+      <div class="flex items-center justify-center gap-2">
+        <Button
+          v-if="isTauri()"
+          size="sm"
+          :disabled="loading"
+          @click="create"
+        >
+          <span>Add</span>
+        </Button>
+
+        <Button
+          size="sm"
+          variant="secondary"
+          :disabled="loading"
+          @click="load"
+        >
+          <span>Reload</span>
+        </Button>
+      </div>
     </div>
 
     <div
-      class="overflow-x-hidden overflow-y-auto pb-12 px-6"
+      class="overflow-x-hidden overflow-y-auto pb-12 px-1 md:px-6"
       :style="{ height: toPixel(contentHeight) }"
     >
       <Table v-if="sources.length > 0">

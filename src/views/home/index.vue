@@ -12,7 +12,7 @@ import { useKanjis } from '@/composables/kanji';
 import { useSettingsStore } from '@/stores/settings';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { type DeepReadonly, nextTick, useTemplateRef } from 'vue';
-import { Button, Card, CardContent } from '@tb-dev/vue-components';
+import { Button, Card, CardContent, SidebarTrigger } from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
 const { search, currentKanji } = storeToRefs(store);
@@ -48,10 +48,12 @@ function onCardDblClick() {
 
 <template>
   <div class="flex size-full flex-col gap-2">
-    <div ref="topbarEl" class="flex h-14 w-full items-center justify-between gap-4 px-6 py-4">
-      <div class="flex items-center justify-center">
+    <div ref="topbarEl" class="flex h-14 w-full items-center justify-between gap-4 px-2 md:px-6 py-4">
+      <div class="flex items-center justify-center gap-2">
+        <SidebarTrigger />
         <Search v-model="search" class="hidden lg:block" />
       </div>
+
       <div class="flex items-center justify-center gap-4">
         <div class="flex items-center justify-center gap-2">
           <Button
@@ -60,7 +62,7 @@ function onCardDblClick() {
             :disabled="loading"
             @click="addSource"
           >
-            <span>Add Source</span>
+            <span>Add</span>
           </Button>
 
           <Button
@@ -91,7 +93,7 @@ function onCardDblClick() {
     >
       <div
         v-if="kanjis.length > 0"
-        class="grid grid-cols-4 gap-2 px-4 sm:grid-cols-6 lg:grid-cols-10 2xl:grid-cols-12"
+        class="grid grid-cols-4 gap-2 px-1 md:px-4 sm:grid-cols-6 lg:grid-cols-10 2xl:grid-cols-12"
       >
         <Card v-for="kanji of kanjis" :key="kanji.character" class="p-2">
           <CardContent>

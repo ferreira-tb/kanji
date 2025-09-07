@@ -11,16 +11,16 @@ defineProps<{
 
 <template>
   <Card v-for="chunk of set.chunks" :key="chunk.id" class="p-0">
-    <CardContent class="p-2 pr-8">
+    <CardContent class="p-2 md:pr-8">
       <div class="flex justify-between items-center gap-4">
         <div class="flex flex-col gap-1">
           <h1>Chunk {{ chunk.id }}</h1>
-          <h2 class="text-muted-foreground">
+          <h2 class="hidden md:block text-muted-foreground">
             <span>{{ chunk.kanjis.join('') }}</span>
           </h2>
         </div>
 
-        <div v-if="chunk.quizzes > 0" class="grid grid-cols-2 gap-4 px-4">
+        <div v-if="chunk.quizzes > 0" class="grid grid-cols-2 gap-4 px-2 md:px-4">
           <div class="flex h-16 flex-col items-center justify-center">
             <span class="text-muted-foreground text-sm">Quiz</span>
             <span class="text-lg font-semibold">{{ chunk.quizzes }}</span>
