@@ -1,8 +1,8 @@
 import { isTauri } from '@tauri-apps/api/core';
-import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
+import { createMemoryHistory, createRouter, createWebHashHistory } from 'vue-router';
 
 export const router = createRouter({
-  history: isTauri() ? createMemoryHistory() : createWebHistory(),
+  history: isTauri() ? createMemoryHistory() : createWebHashHistory(),
   routes: [
     {
       component: () => import('@/views/home/index.vue'),
