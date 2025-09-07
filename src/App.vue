@@ -8,6 +8,7 @@ import { capitalCase } from 'change-case';
 import { formatPercent } from '@/lib/intl';
 import { useKanjiStore } from '@/stores/kanji';
 import { isTauri } from '@tauri-apps/api/core';
+import { ChevronUpIcon } from 'lucide-vue-next';
 import { useKanjis } from '@/composables/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
@@ -18,9 +19,14 @@ import {
   Badge,
   Button,
   cn,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   ScrollArea,
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarProvider,
 } from '@tb-dev/vue-components';
@@ -151,6 +157,35 @@ function setCurrentSource(source: KanjiStatsSource) {
           </div>
         </div>
       </SidebarContent>
+
+      <SidebarFooter>
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button variant="outline">
+              <span>{{ capitalCase(String(route.name)) }}</span>
+              <ChevronUpIcon class="ml-auto" />
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent side="top" class="w-[var(--reka-dropdown-menu-trigger-width)]">
+            <DropdownMenuItem>
+              <RouterLink to="/" class="w-full">Home</RouterLink>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <RouterLink to="/snippets" class="w-full">Snippets</RouterLink>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <RouterLink to="/quiz" class="w-full">Quiz</RouterLink>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <RouterLink to="/sources" class="w-full">Sources</RouterLink>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <RouterLink to="/settings" class="w-full">Settings</RouterLink>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarFooter>
     </Sidebar>
 
     <main class="h-screen w-full select-none">
