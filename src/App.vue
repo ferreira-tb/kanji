@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { go } from '@/router';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import * as commands from '@/commands';
+import { useColorMode } from '@vueuse/core';
 import { isTauri } from '@tauri-apps/api/core';
 import Sidebar from '@/components/Sidebar.vue';
 import { exit } from '@tauri-apps/plugin-process';
 import { handleError, onKeyDown } from '@tb-dev/vue';
-import { useColorMode, useToggle } from '@vueuse/core';
 import { SidebarProvider } from '@tb-dev/vue-components';
 
-const [isSidebarOpen] = useToggle(true);
+const isSidebarOpen = ref(true);
 
 useColorMode({
   initialValue: 'dark',
@@ -51,11 +51,3 @@ onMounted(async () => {
     </main>
   </SidebarProvider>
 </template>
-
-<style scoped>
-#source-grid {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 1rem;
-}
-</style>

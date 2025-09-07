@@ -24,7 +24,7 @@ const contentHeight = useHeightDiff(topbar);
     </div>
 
     <div
-      class="flex flex-col gap-2 md:gap-4 overflow-x-hidden overflow-y-auto px-1 md:px-6 pb-12"
+      class="flex flex-col gap-6 md:gap-4 overflow-x-hidden overflow-y-auto px-4 md:px-6 pb-12"
       :style="{ height: toPixel(contentHeight) }"
     >
       <Tauri v-if="isTauri()" />
