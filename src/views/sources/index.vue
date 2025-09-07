@@ -108,7 +108,7 @@ function toggle(source: Source) {
                   v-model="source.name"
                   type="text"
                   :disabled="loading"
-                  @blur="() => rename(source)"
+                  @change="() => rename(source)"
                 />
               </div>
             </TableCell>
