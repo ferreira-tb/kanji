@@ -17,11 +17,7 @@ const contentHeight = useHeightDiff(topbar);
 <template>
   <div class="flex size-full flex-col gap-2">
     <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
-      <div class="flex items-center justify-start gap-2">
-        <SidebarTrigger />
-        <h1 class="text-2xl font-semibold">Settings</h1>
-      </div>
-
+      <SidebarTrigger />
       <div v-if="isTauri() && server">
         <span class="text-muted-foreground text-sm">{{ server }}</span>
       </div>
