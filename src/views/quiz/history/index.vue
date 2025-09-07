@@ -23,10 +23,6 @@ const {
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
-
-function format(answer: QuizAnswer) {
-  return formatZoned(answer.createdAt, 'dd/MM HH:mm');
-}
 </script>
 
 <template>
@@ -59,10 +55,16 @@ function format(answer: QuizAnswer) {
         </TableHeader>
 
         <TableBody>
-          <TableRow v-for="answer of answers" :key="answer.id">
-            <TableCell>{{ answer.question }}</TableCell>
-            <TableCell>{{ answer.answer }}</TableCell>
-            <TableCell>{{ format(answer) }}</TableCell>
+          <TableRow v-for="({ id, question, answer, createdAt }) of answers" :key="id">
+            <TableCell>
+              <span>{{ question }}</span>
+            </TableCell>
+            <TableCell :class="question === answer ? 'text-green-500' : 'text-red-500'">
+              <span>{{ answer }}</span>
+            </TableCell>
+            <TableCell>
+              <span>{{ formatZoned(createdAt, 'dd/MM HH:mm') }}</span>
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>
