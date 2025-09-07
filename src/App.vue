@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { go } from '@/router';
 import { storeToRefs } from 'pinia';
-import { useRoute } from 'vue-router';
 import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
 import { capitalCase } from 'change-case';
@@ -12,9 +11,10 @@ import { ChevronUpIcon } from 'lucide-vue-next';
 import { useKanjis } from '@/composables/kanji';
 import { exit } from '@tauri-apps/plugin-process';
 import { useRanking } from '@/composables/ranking';
-import { useColorMode, useToggle } from '@vueuse/core';
+import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { handleError, onKeyDown, useHeight } from '@tb-dev/vue';
-import { computed, onBeforeMount, onMounted, useTemplateRef } from 'vue';
+import { computed, nextTick, onBeforeMount, onMounted, useTemplateRef } from 'vue';
+import { breakpointsTailwind, useBreakpoints, useColorMode, useToggle } from '@vueuse/core';
 import {
   Badge,
   Button,
@@ -39,6 +39,7 @@ const { kanjis, loading, load, next, previous } = useKanjis();
 
 const route = useRoute();
 const [isSidebarOpen] = useToggle(true);
+const { md } = useBreakpoints(breakpointsTailwind);
 
 const contentEl = useTemplateRef('content');
 const contentHeight = useHeight(contentEl);
@@ -58,12 +59,10 @@ onKeyDown('F2', () => go('snippets'));
 onKeyDown('F3', () => go('quiz'));
 onKeyDown('F4', () => go('sources'));
 onKeyDown('F7', () => go('settings'));
-
-if (isTauri()) {
-  onKeyDown('Escape', () => exit(0).err());
-}
+onKeyDown('Escape', () => isTauri() && exit(0).err());
 
 onBeforeMount(load);
+onBeforeRouteUpdate(closeSidebar);
 
 onMounted(async () => {
   try {
@@ -79,6 +78,13 @@ function setCurrentSource(source: KanjiStatsSource) {
   currentSource.value = source;
   if (route.name !== ('snippets' satisfies Route)) {
     go('snippets');
+  }
+}
+
+async function closeSidebar() {
+  if (!isTauri() && !md.value) {
+    await nextTick();
+    isSidebarOpen.value = false;
   }
 }
 </script>

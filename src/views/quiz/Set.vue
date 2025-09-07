@@ -29,8 +29,8 @@ defineProps<{
             v-if="Number.isFinite(chunk.quizAccuracy)"
             class="flex h-16 flex-col items-center justify-center"
           >
-            <span class="text-muted-foreground text-sm">Accuracy</span>
-            <span class="text-lg font-semibold">
+            <span class="text-muted-foreground text-xs md:text-sm">Accuracy</span>
+            <span class="text-base md:text-lg font-semibold">
               {{ formatPercent(chunk.quizAccuracy) }}
             </span>
           </div>

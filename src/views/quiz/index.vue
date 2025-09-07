@@ -43,6 +43,7 @@ async function onLeave() {
       <SidebarTrigger />
       <div class="flex items-center justify-center gap-2">
         <Button
+          v-if="!active"
           size="sm"
           variant="secondary"
           :disabled="isLoadingSet || isLoadingQuiz"
