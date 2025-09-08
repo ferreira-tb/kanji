@@ -1,56 +1,36 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import * as commands from '@/commands';
-import { computed, nextTick } from 'vue';
-import type { Option } from '@tb-dev/utils';
+import { useQuiz } from '@/composables/quiz';
 import { Button, Card, CardContent } from '@tb-dev/vue-components';
 
 const props = defineProps<{
-  current: QuizQuestion;
   disabled: boolean;
-  onAnswer: () => Promise<void>;
-  onNext: () => void;
-  onLeave: () => void;
+  loadSet: () => Promise<void>;
 }>();
 
-const chosen = defineModel<Option<KanjiChar>>('chosen', { required: true });
-const canAnswer = defineModel<boolean>('canAnswer', { required: true });
+const {
+  current,
+  chosen,
+  canAnswer,
+  ...quiz
+} = useQuiz(() => props.loadSet);
 
-const source = computed(() => props.current.snippet.source);
+const source = computed(() => current.value?.snippet.source);
 const question = computed(() => {
-  return canAnswer.value ? props.current.censored : props.current.snippet.content;
+  return canAnswer.value ?
+    current.value?.censored :
+    current.value?.snippet.content;
 });
 
-async function answer(option: KanjiChar) {
-  if (canAnswer.value && !props.disabled) {
-    canAnswer.value = false;
-    chosen.value = option;
-    await nextTick();
-    await props.onAnswer();
-  }
-}
-
-async function next() {
-  if (!canAnswer.value && !props.disabled) {
-    canAnswer.value = true;
-    chosen.value = null;
-    await nextTick();
-    props.onNext();
-  }
-}
-
-function leave() {
-  chosen.value = null;
-  props.onLeave();
-}
-
 function getCardClass(option: KanjiChar) {
-  let classList = 'p0 md:p-4';
+  let classList = 'p-2 md:p-4';
   if (canAnswer.value && !props.disabled) {
     classList += ' cursor-pointer hover:bg-accent';
   }
 
-  if (!canAnswer.value && chosen.value) {
-    if (option === props.current.answer) {
+  if (current.value && chosen.value && !canAnswer.value) {
+    if (option === current.value.answer) {
       classList += ' bg-green-300';
     }
     else if (option === chosen.value) {
@@ -60,15 +40,27 @@ function getCardClass(option: KanjiChar) {
 
   return classList;
 }
+
+async function answer(option: KanjiChar) {
+  if (canAnswer.value && !props.disabled) {
+    await quiz.answer(option);
+  }
+}
+
+function open() {
+  if (source.value && !props.disabled) {
+    commands.open(source.value.path, source.value.line).err();
+  }
+}
 </script>
 
 <template>
   <div class="size-full flex flex-col justify-center items-center p-6">
-    <div class="h-full flex flex-col justify-center items-center text-center gap-2">
-      <span
-        class="cursor-pointer text-muted-foreground text-sm"
-        @click="() => commands.open(source.path, source.line)"
-      >
+    <div
+      v-if="source && question"
+      class="h-full flex flex-col justify-center items-center text-center gap-2"
+    >
+      <span class="cursor-pointer text-muted-foreground text-sm" @click="open">
         {{ source.name }}
       </span>
       <span class="text-xl md:text-2xl select-text">
@@ -76,10 +68,13 @@ function getCardClass(option: KanjiChar) {
       </span>
     </div>
 
-    <div class="flex flex-col gap-8">
+    <div v-if="current" class="flex flex-col gap-8">
       <div class="grid grid-cols-5 gap-4">
         <div v-for="option of current.options" :key="option">
-          <Card :class="getCardClass(option)" class="p-2" @click="() => answer(option)">
+          <Card
+            :class="getCardClass(option)"
+            @click="() => answer(option)"
+          >
             <CardContent class="p-2 md:p-4">
               <div class="flex justify-center items-center">
                 <span class="text-xl md:text-4xl font-bold">{{ option }}</span>
@@ -96,7 +91,7 @@ function getCardClass(option: KanjiChar) {
             size="lg"
             :disabled="canAnswer || disabled"
             class="max-w-24 px-6"
-            @click="next"
+            @click="() => quiz.next()"
           >
             <span>Next</span>
           </Button>
@@ -106,7 +101,7 @@ function getCardClass(option: KanjiChar) {
             size="lg"
             :disabled
             class="max-w-24 px-6"
-            @click="leave"
+            @click="() => quiz.leave()"
           >
             <span>Leave</span>
           </Button>

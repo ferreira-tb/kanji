@@ -8,12 +8,14 @@ import { createQuiz, createQuizAnswer } from '@/commands';
 import {
   effectScope,
   type InjectionKey,
+  type MaybeRefOrGetter,
   nextTick,
   readonly,
   ref,
   type Ref,
   shallowRef,
   type ShallowRef,
+  toValue,
   watch,
 } from 'vue';
 
@@ -21,8 +23,8 @@ interface UseQuizReturn {
   current: Readonly<ShallowRef<Option<QuizQuestion>>>;
   active: Readonly<Ref<boolean>>;
   loading: Readonly<Ref<boolean>>;
-  chosen: Ref<Option<KanjiChar>>;
-  canAnswer: Ref<boolean>;
+  chosen: Readonly<Ref<Option<KanjiChar>>>;
+  canAnswer: Readonly<Ref<boolean>>;
   start: () => Promise<void>;
   answer: () => Promise<void>;
   next: () => void;
@@ -31,10 +33,11 @@ interface UseQuizReturn {
 
 const SYMBOL = Symbol() as InjectionKey<UseQuizReturn>;
 
-export function useQuiz(loadSet: () => Promise<void>) {
+export function useQuiz(loadSet: MaybeRefOrGetter<() => Promise<void>>) {
+  const fn = toValue(loadSet);
   return tryInjectOrElse(SYMBOL, () => {
     const scope = effectScope(/* detached */ true);
-    const value = scope.run(() => create(loadSet))!;
+    const value = scope.run(() => create(fn))!;
     return {
       current: value.current,
       active: value.active,
@@ -66,6 +69,7 @@ export function create(loadSet: () => Promise<void>) {
     if (!isActive) {
       quiz.value = null;
       current.value = null;
+      chosen.value = null;
     }
   });
 
@@ -80,14 +84,12 @@ export function create(loadSet: () => Promise<void>) {
           quiz.value = null;
         }
 
-        if (quiz.value) {
-          current.value = quiz.value.at(0);
-          active.value = true;
-        }
+        next();
       }
       catch (err) {
         quiz.value = null;
         current.value = null;
+        chosen.value = null;
         handleError(err);
       }
       finally {
@@ -96,17 +98,18 @@ export function create(loadSet: () => Promise<void>) {
     }
   }
 
-  async function answer() {
+  async function answer(option: KanjiChar) {
     if (
       active.value &&
       quiz.value &&
       current.value &&
-      chosen.value &&
       canAnswer.value
     ) {
       await mutex.acquire();
       try {
-        await createQuizAnswer(current.value.answer, chosen.value);
+        chosen.value = option;
+        canAnswer.value = false;
+        await createQuizAnswer(current.value.answer, option);
         quiz.value = quiz.value.filter((it) => {
           return it.answer !== current.value?.answer;
         });
@@ -122,10 +125,11 @@ export function create(loadSet: () => Promise<void>) {
 
   function next() {
     if (quiz.value) {
-      if (quiz.value.length > 0) {
-        current.value = quiz.value.at(0);
-      }
-      else {
+      current.value = quiz.value.at(0);
+      active.value = Boolean(current.value);
+      canAnswer.value = Boolean(current.value);
+
+      if (!current.value) {
         leave();
       }
     }
@@ -133,6 +137,7 @@ export function create(loadSet: () => Promise<void>) {
 
   function leave() {
     active.value = false;
+    chosen.value = null;
     void nextTick(loadSet);
   }
 
@@ -140,8 +145,8 @@ export function create(loadSet: () => Promise<void>) {
     current: current as Readonly<typeof current>,
     active: readonly(active),
     loading: locked,
-    chosen,
-    canAnswer,
+    chosen: readonly(chosen),
+    canAnswer: readonly(canAnswer),
     start,
     answer,
     next,

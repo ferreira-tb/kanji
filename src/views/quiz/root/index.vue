@@ -19,12 +19,7 @@ const {
   current,
   active,
   loading: isLoadingQuiz,
-  chosen,
-  canAnswer,
   start,
-  answer,
-  next,
-  leave,
 } = useQuiz(loadSet);
 
 const topbar = useTemplateRef('topbarEl');
@@ -77,13 +72,8 @@ async function onLoad() {
       />
       <Question
         v-else-if="current"
-        v-model:chosen="chosen"
-        v-model:can-answer="canAnswer"
-        :current
         :disabled="isLoadingSet || isLoadingQuiz"
-        @answer="answer"
-        @next="next"
-        @leave="leave"
+        :load-set
       />
     </div>
   </div>
