@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
-import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
 import { formatZoned } from '@/lib/date';
+import { getQuizAnswers } from '@/commands';
+import { onActivated, useTemplateRef } from 'vue';
 import { asyncRef, useHeightDiff } from '@tb-dev/vue';
 import {
   Button,
@@ -19,10 +19,12 @@ const {
   state: answers,
   execute: load,
   isLoading,
-} = asyncRef([], commands.getQuizAnswers);
+} = asyncRef([], getQuizAnswers, { immediate: false });
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
+
+onActivated(load);
 </script>
 
 <template>
