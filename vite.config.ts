@@ -9,19 +9,25 @@ export default defineConfig({
     tailwind(),
     vue({ features: { optionsAPI: false } }),
   ],
-  base: env.KANJI_WEBSITE ? '/kanji/' : undefined,
-  clearScreen: false,
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('src', import.meta.url)),
     },
   },
+
+  base: env.KANJI_WEBSITE ? '/kanji/' : undefined,
+  publicDir: 'src/public',
+  clearScreen: false,
+
   build: {
+    copyPublicDir: true,
     emptyOutDir: true,
     minify: true,
     target: env.KANJI_WEBSITE ? 'baseline-widely-available' : 'esnext',
     sourcemap: Boolean(env.TAURI_ENV_DEBUG),
   },
+
   server: {
     port: 1420,
     strictPort: true,
