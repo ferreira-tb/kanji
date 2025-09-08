@@ -30,7 +30,7 @@ const SYMBOL = Symbol() as InjectionKey<UseKanjiReturn>;
 export function useKanjis() {
   return tryInjectOrElse(SYMBOL, () => {
     const scope = effectScope(/* detached */ true);
-    const value = scope.run(start)!;
+    const value = scope.run(create)!;
     return {
       kanjis: value.kanjis,
       raw: value.raw,
@@ -43,7 +43,7 @@ export function useKanjis() {
   });
 }
 
-function start() {
+function create() {
   const store = useKanjiStore();
   const { sorting, search, currentKanji } = storeToRefs(store);
 

@@ -1,37 +1,39 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
 import * as commands from '@/commands';
+import { computed, nextTick } from 'vue';
 import type { Option } from '@tb-dev/utils';
 import { Button, Card, CardContent } from '@tb-dev/vue-components';
 
 const props = defineProps<{
   current: QuizQuestion;
   disabled: boolean;
-  onAnswer: (chosen: string) => Promise<void>;
+  onAnswer: () => Promise<void>;
   onNext: () => void;
   onLeave: () => void;
 }>();
 
-const ready = ref(true);
-const chosen = ref<Option<KanjiChar>>();
+const chosen = defineModel<Option<KanjiChar>>('chosen', { required: true });
+const canAnswer = defineModel<boolean>('canAnswer', { required: true });
 
 const source = computed(() => props.current.snippet.source);
 const question = computed(() => {
-  return ready.value ? props.current.censored : props.current.snippet.content;
+  return canAnswer.value ? props.current.censored : props.current.snippet.content;
 });
 
 async function answer(option: KanjiChar) {
-  if (ready.value && !props.disabled) {
-    ready.value = false;
+  if (canAnswer.value && !props.disabled) {
+    canAnswer.value = false;
     chosen.value = option;
-    await props.onAnswer(option);
+    await nextTick();
+    await props.onAnswer();
   }
 }
 
-function next() {
-  if (!ready.value && !props.disabled) {
-    ready.value = true;
+async function next() {
+  if (!canAnswer.value && !props.disabled) {
+    canAnswer.value = true;
     chosen.value = null;
+    await nextTick();
     props.onNext();
   }
 }
@@ -43,11 +45,11 @@ function leave() {
 
 function getCardClass(option: KanjiChar) {
   let classList = 'p0 md:p-4';
-  if (ready.value && !props.disabled) {
+  if (canAnswer.value && !props.disabled) {
     classList += ' cursor-pointer hover:bg-accent';
   }
 
-  if (!ready.value && chosen.value) {
+  if (!canAnswer.value && chosen.value) {
     if (option === props.current.answer) {
       classList += ' bg-green-300';
     }
@@ -92,7 +94,7 @@ function getCardClass(option: KanjiChar) {
           <Button
             variant="default"
             size="lg"
-            :disabled="ready || disabled"
+            :disabled="canAnswer || disabled"
             class="max-w-24 px-6"
             @click="next"
           >

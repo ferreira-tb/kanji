@@ -1,16 +1,61 @@
 import { storeToRefs } from 'pinia';
-import { useMutex } from '@tb-dev/vue';
 import { handleError } from '@/lib/error';
 import type { Option } from '@tb-dev/utils';
 import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
+import { tryInjectOrElse, useMutex } from '@tb-dev/vue';
 import { createQuiz, createQuizAnswer } from '@/commands';
-import { nextTick, readonly, ref, shallowRef, watch } from 'vue';
+import {
+  effectScope,
+  type InjectionKey,
+  nextTick,
+  readonly,
+  ref,
+  type Ref,
+  shallowRef,
+  type ShallowRef,
+  watch,
+} from 'vue';
+
+interface UseQuizReturn {
+  current: Readonly<ShallowRef<Option<QuizQuestion>>>;
+  active: Readonly<Ref<boolean>>;
+  loading: Readonly<Ref<boolean>>;
+  chosen: Ref<Option<KanjiChar>>;
+  canAnswer: Ref<boolean>;
+  start: () => Promise<void>;
+  answer: () => Promise<void>;
+  next: () => void;
+  leave: () => void;
+}
+
+const SYMBOL = Symbol() as InjectionKey<UseQuizReturn>;
 
 export function useQuiz(loadSet: () => Promise<void>) {
+  return tryInjectOrElse(SYMBOL, () => {
+    const scope = effectScope(/* detached */ true);
+    const value = scope.run(() => create(loadSet))!;
+    return {
+      current: value.current,
+      active: value.active,
+      loading: value.loading,
+      chosen: value.chosen,
+      canAnswer: value.canAnswer,
+      start: value.start,
+      answer: value.answer,
+      next: value.next,
+      leave: value.leave,
+    };
+  });
+}
+
+export function create(loadSet: () => Promise<void>) {
   const quiz = shallowRef<Option<Quiz>>();
   const current = shallowRef<Option<QuizQuestion>>();
   const active = ref(false);
+
+  const chosen = ref<Option<KanjiChar>>();
+  const canAnswer = ref(true);
 
   const settings = useSettingsStore();
   const { baseUrl } = storeToRefs(settings);
@@ -51,11 +96,17 @@ export function useQuiz(loadSet: () => Promise<void>) {
     }
   }
 
-  async function answer(chosen: KanjiChar) {
-    if (active.value && quiz.value && current.value) {
+  async function answer() {
+    if (
+      active.value &&
+      quiz.value &&
+      current.value &&
+      chosen.value &&
+      canAnswer.value
+    ) {
       await mutex.acquire();
       try {
-        await createQuizAnswer(current.value.answer, chosen);
+        await createQuizAnswer(current.value.answer, chosen.value);
         quiz.value = quiz.value.filter((it) => {
           return it.answer !== current.value?.answer;
         });
@@ -89,6 +140,8 @@ export function useQuiz(loadSet: () => Promise<void>) {
     current: current as Readonly<typeof current>,
     active: readonly(active),
     loading: locked,
+    chosen,
+    canAnswer,
     start,
     answer,
     next,
