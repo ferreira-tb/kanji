@@ -3,56 +3,34 @@ import { handleError } from '@/lib/error';
 import type { Option } from '@tb-dev/utils';
 import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
-import { tryInjectOrElse, useMutex } from '@tb-dev/vue';
-import { createQuiz, createQuizAnswer } from '@/commands';
-import {
-  effectScope,
-  type InjectionKey,
-  type MaybeRefOrGetter,
-  nextTick,
-  readonly,
-  ref,
-  type Ref,
-  shallowRef,
-  type ShallowRef,
-  toValue,
-  watch,
-} from 'vue';
+import { asyncRef, tryInjectOrElse, useMutex } from '@tb-dev/vue';
+import { createQuiz, createQuizAnswer, getSet } from '@/commands';
+import { computed, effectScope, type InjectionKey, readonly, ref, shallowRef, watch } from 'vue';
 
-interface UseQuizReturn {
-  current: Readonly<ShallowRef<Option<QuizQuestion>>>;
-  active: Readonly<Ref<boolean>>;
-  loading: Readonly<Ref<boolean>>;
-  chosen: Readonly<Ref<Option<KanjiChar>>>;
-  canAnswer: Readonly<Ref<boolean>>;
-  start: () => Promise<void>;
-  answer: () => Promise<void>;
-  next: () => void;
-  leave: () => void;
-}
+const SYMBOL = Symbol() as InjectionKey<ReturnType<typeof create>>;
 
-const SYMBOL = Symbol() as InjectionKey<UseQuizReturn>;
-
-export function useQuiz(loadSet: MaybeRefOrGetter<() => Promise<void>>) {
-  const fn = toValue(loadSet);
+export function useQuiz() {
   return tryInjectOrElse(SYMBOL, () => {
     const scope = effectScope(/* detached */ true);
-    const value = scope.run(() => create(fn))!;
+    const value = scope.run(create)!;
     return {
+      set: value.set,
       current: value.current,
       active: value.active,
-      loading: value.loading,
+      isLoading: value.isLoading,
+      isLoadingSet: value.isLoadingSet,
       chosen: value.chosen,
       canAnswer: value.canAnswer,
       start: value.start,
       answer: value.answer,
       next: value.next,
       leave: value.leave,
+      loadSet: value.loadSet,
     };
   });
 }
 
-export function create(loadSet: () => Promise<void>) {
+export function create() {
   const quiz = shallowRef<Option<Quiz>>();
   const current = shallowRef<Option<QuizQuestion>>();
   const active = ref(false);
@@ -60,10 +38,17 @@ export function create(loadSet: () => Promise<void>) {
   const chosen = ref<Option<KanjiChar>>();
   const canAnswer = ref(true);
 
+  const {
+    state: set,
+    execute: loadSet,
+    isLoading: isLoadingSet,
+  } = asyncRef(null, getSet);
+
   const settings = useSettingsStore();
   const { baseUrl } = storeToRefs(settings);
 
   const { locked, ...mutex } = useMutex();
+  const isLoading = computed(() => locked.value || isLoadingSet.value);
 
   watch(active, (isActive) => {
     if (!isActive) {
@@ -84,7 +69,7 @@ export function create(loadSet: () => Promise<void>) {
           quiz.value = null;
         }
 
-        next();
+        await next();
       }
       catch (err) {
         quiz.value = null;
@@ -123,33 +108,36 @@ export function create(loadSet: () => Promise<void>) {
     }
   }
 
-  function next() {
+  async function next() {
     if (quiz.value) {
       current.value = quiz.value.at(0);
       active.value = Boolean(current.value);
       canAnswer.value = Boolean(current.value);
 
       if (!current.value) {
-        leave();
+        await leave();
       }
     }
   }
 
-  function leave() {
+  async function leave() {
     active.value = false;
     chosen.value = null;
-    void nextTick(loadSet);
+    await loadSet();
   }
 
   return {
+    set: set as Readonly<typeof set>,
     current: current as Readonly<typeof current>,
     active: readonly(active),
-    loading: locked,
+    isLoading,
+    isLoadingSet,
     chosen: readonly(chosen),
     canAnswer: readonly(canAnswer),
     start,
     answer,
     next,
     leave,
+    loadSet,
   };
 }

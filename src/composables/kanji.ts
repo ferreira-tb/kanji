@@ -5,27 +5,9 @@ import { useKanjiStore } from '@/stores/kanji';
 import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
 import { tryInjectOrElse, useMutex } from '@tb-dev/vue';
-import {
-  computed,
-  type DeepReadonly,
-  effectScope,
-  type InjectionKey,
-  type Ref,
-  shallowRef,
-  type ShallowRef,
-} from 'vue';
+import { computed, effectScope, type InjectionKey, shallowRef } from 'vue';
 
-interface UseKanjiReturn {
-  kanjis: Readonly<ShallowRef<DeepReadonly<KanjiStats[]>>>;
-  raw: Readonly<ShallowRef<DeepReadonly<KanjiStats[]>>>;
-  currentIndex: Readonly<Ref<number>>;
-  loading: Readonly<Ref<boolean>>;
-  load: () => Promise<void>;
-  next: () => void;
-  previous: () => void;
-}
-
-const SYMBOL = Symbol() as InjectionKey<UseKanjiReturn>;
+const SYMBOL = Symbol() as InjectionKey<ReturnType<typeof create>>;
 
 export function useKanjis() {
   return tryInjectOrElse(SYMBOL, () => {

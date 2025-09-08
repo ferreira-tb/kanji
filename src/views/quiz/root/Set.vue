@@ -1,16 +1,20 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { formatPercent } from '@/lib/intl';
+import { useQuiz } from '@/composables/quiz';
 import { Button, Card, CardContent } from '@tb-dev/vue-components';
 
 defineProps<{
-  set: KanjiSet;
   disabled: boolean;
-  onQuiz: (chunk: KanjiSetChunk) => Promise<void>;
 }>();
+
+const { set, start } = useQuiz();
+
+const chunks = computed(() => set.value?.chunks ?? []);
 </script>
 
 <template>
-  <Card v-for="chunk of set.chunks" :key="chunk.id" class="p-0">
+  <Card v-for="chunk of chunks" :key="chunk.id" class="p-0">
     <CardContent class="p-2 md:pr-8">
       <div class="flex justify-between items-center gap-4">
         <div class="flex flex-col gap-1">
@@ -42,7 +46,7 @@ defineProps<{
             variant="default"
             :disabled
             class="px-4"
-            @click="() => onQuiz(chunk)"
+            @click="() => start(chunk.kanjis)"
           >
             <span>Study</span>
           </Button>

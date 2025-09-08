@@ -3,31 +3,22 @@ import Set from './Set.vue';
 import { go } from '@/router';
 import { useTemplateRef } from 'vue';
 import Question from './Question.vue';
-import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
+import { useHeightDiff } from '@tb-dev/vue';
 import { useQuiz } from '@/composables/quiz';
-import { asyncRef, useHeightDiff } from '@tb-dev/vue';
 import { Button, Loading, SidebarTrigger } from '@tb-dev/vue-components';
 
 const {
-  state: set,
-  execute: loadSet,
-  isLoading: isLoadingSet,
-} = asyncRef(null, commands.getSet);
-
-const {
+  set,
   current,
   active,
-  loading: isLoadingQuiz,
-  start,
-} = useQuiz(loadSet);
+  isLoading,
+  isLoadingSet,
+  loadSet,
+} = useQuiz();
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
-
-async function onLoad() {
-  await loadSet();
-}
 </script>
 
 <template>
@@ -39,8 +30,8 @@ async function onLoad() {
           v-if="!active"
           size="sm"
           variant="secondary"
-          :disabled="isLoadingSet || isLoadingQuiz"
-          @click="onLoad"
+          :disabled="isLoading"
+          @click="loadSet"
         >
           <span>Reload</span>
         </Button>
@@ -64,17 +55,8 @@ async function onLoad() {
       <div v-if="isLoadingSet" class="size-full">
         <Loading />
       </div>
-      <Set
-        v-else-if="set && !active"
-        :set
-        :disabled="isLoadingSet || isLoadingQuiz"
-        @quiz="(chunk) => start(chunk.kanjis)"
-      />
-      <Question
-        v-else-if="current"
-        :disabled="isLoadingSet || isLoadingQuiz"
-        :load-set
-      />
+      <Set v-else-if="set && !active" :disabled="isLoading" />
+      <Question v-else-if="current" :disabled="isLoading" />
     </div>
   </div>
 </template>

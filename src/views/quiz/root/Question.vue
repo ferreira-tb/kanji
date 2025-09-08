@@ -6,15 +6,9 @@ import { Button, Card, CardContent } from '@tb-dev/vue-components';
 
 const props = defineProps<{
   disabled: boolean;
-  loadSet: () => Promise<void>;
 }>();
 
-const {
-  current,
-  chosen,
-  canAnswer,
-  ...quiz
-} = useQuiz(() => props.loadSet);
+const { current, chosen, canAnswer, ...quiz } = useQuiz();
 
 const source = computed(() => current.value?.snippet.source);
 const question = computed(() => {
