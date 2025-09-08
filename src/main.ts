@@ -33,19 +33,19 @@ app.use(router);
 app.use(pinia);
 
 async function init() {
-  try {
-    await checkForUpdates();
-  }
-  catch (err) {
-    handleError(err);
-  }
-  finally {
-    if (isTauri()) {
+  if (isTauri()) {
+    try {
+      await checkForUpdates();
+    }
+    catch (err) {
+      handleError(err);
+    }
+    finally {
       await router.push({ name: 'home' satisfies Route });
     }
-
-    app.mount('#app');
   }
+
+  app.mount('#app');
 }
 
 void init();
