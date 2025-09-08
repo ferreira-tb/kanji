@@ -1,6 +1,6 @@
 {
   "name": "kanji",
-  "version": "4.8.1",
+  "version": "4.8.2",
   "type": "module",
   "packageManager": "pnpm@10.15.1",
   "license": "GPL-3.0-only",
@@ -9,7 +9,7 @@
     "build": "cargo tauri build",
     "clippy": "cargo clippy --workspace",
     "dev": "cargo tauri dev",
-    "eslint": "eslint . --config eslint.config.js",
+    "eslint": "eslint . --config eslint.config.ts",
     "format": "dprint fmt && cargo fmt --all",
     "preview": "cargo tauri build --no-bundle -- --profile preview",
     "type-check": "vue-tsc --noEmit",
@@ -48,7 +48,7 @@
     "tailwindcss": "^4.1.13",
     "tslib": "^2.8.1",
     "typescript": "^5.9.2",
-    "vite": "^7.1.4",
+    "vite": "^7.1.5",
     "vue-tsc": "^3.0.6"
   }
 }

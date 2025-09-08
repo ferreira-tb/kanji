@@ -4,7 +4,9 @@
 <template>
   <RouterView #default="{ Component }">
     <template v-if="Component">
-      <component :is="Component" />
+      <KeepAlive>
+        <component :is="Component" />
+      </KeepAlive>
     </template>
   </RouterView>
 </template>

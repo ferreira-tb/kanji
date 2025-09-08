@@ -9,7 +9,7 @@ const props = defineProps<{
   disabled: boolean;
   onAnswer: (chosen: string) => Promise<void>;
   onNext: () => void;
-  onLeave: () => Promise<void>;
+  onLeave: () => void;
 }>();
 
 const ready = ref(true);
@@ -38,7 +38,7 @@ function next() {
 
 function leave() {
   chosen.value = null;
-  props.onLeave().err();
+  props.onLeave();
 }
 
 function getCardClass(option: KanjiChar) {

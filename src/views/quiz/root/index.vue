@@ -23,18 +23,13 @@ const {
   answer,
   next,
   leave,
-} = useQuiz();
+} = useQuiz(loadSet);
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
 async function onLoad() {
   await loadSet();
-}
-
-async function onLeave() {
-  leave();
-  await onLoad();
 }
 </script>
 
@@ -84,7 +79,7 @@ async function onLeave() {
         :disabled="isLoadingSet || isLoadingQuiz"
         @answer="(chosen) => answer(chosen)"
         @next="next"
-        @leave="onLeave"
+        @leave="leave"
       />
     </div>
   </div>

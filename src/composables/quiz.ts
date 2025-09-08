@@ -4,10 +4,10 @@ import { handleError } from '@/lib/error';
 import type { Option } from '@tb-dev/utils';
 import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
-import { readonly, ref, shallowRef, watch } from 'vue';
 import { createQuiz, createQuizAnswer } from '@/commands';
+import { nextTick, readonly, ref, shallowRef, watch } from 'vue';
 
-export function useQuiz() {
+export function useQuiz(loadSet: () => Promise<void>) {
   const quiz = shallowRef<Option<Quiz>>();
   const current = shallowRef<Option<QuizQuestion>>();
   const active = ref(false);
@@ -82,6 +82,7 @@ export function useQuiz() {
 
   function leave() {
     active.value = false;
+    void nextTick(loadSet);
   }
 
   return {
