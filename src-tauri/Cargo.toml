@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "4.8.5"
+version = "4.8.6"
 publish = false
 
 [package.edition]
@@ -42,12 +42,12 @@ version = "2.0"
 features = ["deref", "display"]
 
 [dependencies.diesel]
-version = "2.2"
+version = "2.3"
 default-features = false
 features = ["returning_clauses_for_sqlite_3_35", "sqlite"]
 
 [dependencies.diesel_migrations]
-version = "2.2"
+version = "2.3"
 features = ["sqlite"]
 
 [dependencies.jiff]
