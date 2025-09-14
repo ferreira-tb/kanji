@@ -14,11 +14,17 @@ pub struct SourceWeight(NonZeroU8);
 
 impl SourceWeight {
   const MIN: u8 = 1;
-  const MAX: u8 = 5;
+  const MAX: u8 = 10;
 
   pub fn new(weight: u8) -> Self {
     let weight = weight.clamp(Self::MIN, Self::MAX);
     Self(unsafe { NonZeroU8::new_unchecked(weight) })
+  }
+}
+
+impl Default for SourceWeight {
+  fn default() -> Self {
+    Self::new(Self::MAX.div_ceil(2))
   }
 }
 

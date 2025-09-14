@@ -59,6 +59,9 @@ pub struct NewSource<'a> {
 
   #[builder(skip = Zoned::now())]
   updated_at: Zoned,
+
+  #[builder(skip)]
+  weight: SourceWeight,
 }
 
 impl NewSource<'_> {

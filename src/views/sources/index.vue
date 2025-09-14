@@ -124,7 +124,7 @@ function toggle(source: Source) {
               <NumberField
                 v-model="source.weight"
                 :min="1"
-                :max="5"
+                :max="10"
                 :step="1"
                 :disabled="loading"
                 class="max-w-28"

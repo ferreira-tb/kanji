@@ -128,7 +128,7 @@ export async function searchSnippets(kanji: KanjiChar, source?: Option<SourceId>
 }
 
 export async function setSourceWeight(id: SourceId, weight: SourceWeight) {
-  weight = clamp(Math.trunc(weight), 1, 5);
+  weight = clamp(Math.trunc(weight), 1, 10);
   if (isTauri()) {
     await invoke('set_source_weight', { id, weight });
   }
