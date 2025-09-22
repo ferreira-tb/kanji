@@ -18,7 +18,7 @@ impl Settings {
   pub fn get(app: &AppHandle) -> Result<Self> {
     app
       .pinia()
-      .try_state_or_default("settings")
+      .state_or_default("settings")
       .map_err(Into::into)
   }
 }
