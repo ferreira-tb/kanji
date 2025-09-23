@@ -1,6 +1,6 @@
 {
   "name": "kanji",
-  "version": "4.11.3",
+  "version": "4.11.4",
   "type": "module",
   "packageManager": "pnpm@10.17.1",
   "license": "GPL-3.0-only",
@@ -24,7 +24,7 @@
     "@tauri-apps/plugin-fs": "^2.4.2",
     "@tauri-apps/plugin-process": "^2.3.0",
     "@tauri-apps/plugin-updater": "^2.9.0",
-    "@tauri-store/pinia": "^4.0.0",
+    "@tauri-store/pinia": "^4.0.1",
     "@tb-dev/utils": "^7.0.15",
     "@tb-dev/vue": "^3.3.1",
     "@tb-dev/vue-components": "^6.0.1",

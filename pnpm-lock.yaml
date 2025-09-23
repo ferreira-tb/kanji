@@ -27,8 +27,8 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0
       '@tauri-store/pinia':
-        specifier: ^4.0.0
-        version: 4.0.0(typescript@5.9.2)
+        specifier: ^4.0.1
+        version: 4.0.1(typescript@5.9.2)
       '@tb-dev/utils':
         specifier: ^7.0.15
         version: 7.0.15
@@ -1534,11 +1534,11 @@ packages:
   '@tauri-apps/plugin-updater@2.9.0':
     resolution: {integrity: sha512-j++sgY8XpeDvzImTrzWA08OqqGqgkNyxczLD7FjNJJx/uXxMZFz5nDcfkyoI/rCjYuj2101Tci/r/HFmOmoxCg==}
 
-  '@tauri-store/pinia@4.0.0':
-    resolution: {integrity: sha512-YD7Cw/d1RWh0oRl329B/uW24oYXD+0vHgHsScxVRMNqf+jNWhXkPUbiAoGWD3zXH2WLv5kR8/67SEySXQhi+0w==}
+  '@tauri-store/pinia@4.0.1':
+    resolution: {integrity: sha512-Z+kHIQ8slHXLMUGaez1fSl3KiLqKPiJwQQvk9bY/FtHCFylHxD7WPDuJqfZ74QLSZqtAyVMZtlqAyuVUFeoLpA==}
 
-  '@tauri-store/shared@0.10.0':
-    resolution: {integrity: sha512-TSX3D4M6sLqAmEiOK8UV0PExpbkz4+S1wTZaVIbr0wheeLuCmVJXvr3tLiRBI/KAZEem9hj5/xvSvpR/F5yMeA==}
+  '@tauri-store/shared@0.10.1':
+    resolution: {integrity: sha512-m6d3Qg97akCwUqe10uaYLFJqt/ou3lvDRm3OFZdMv5gRuMYpfzhxguw+XABrJ6FZoLvNqn4Z1iVJX2KYETbmfQ==}
 
   '@tb-dev/eslint-config@8.0.12':
     resolution: {integrity: sha512-qSO6it3LUVeq+pJkPXR2HGSjVa9ccZ08+1VP0GUqCiSCamocCuS0EpX20Isfzyv3jeUCPVgNP4X1D8+0W9ZecA==}
@@ -6144,16 +6144,16 @@ snapshots:
     dependencies:
       '@tauri-apps/api': 2.8.0
 
-  '@tauri-store/pinia@4.0.0(typescript@5.9.2)':
+  '@tauri-store/pinia@4.0.1(typescript@5.9.2)':
     dependencies:
       '@tauri-apps/api': 2.8.0
-      '@tauri-store/shared': 0.10.0
+      '@tauri-store/shared': 0.10.1
       pinia: 3.0.3(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))
       vue: 3.5.21(typescript@5.9.2)
     transitivePeerDependencies:
       - typescript
 
-  '@tauri-store/shared@0.10.0':
+  '@tauri-store/shared@0.10.1':
     dependencies:
       '@tauri-apps/api': 2.8.0
       es-toolkit: 1.39.10
