@@ -42,7 +42,7 @@ onMounted(async () => {
       <div class="size-full overflow-hidden p-0">
         <RouterView #default="{ Component }">
           <template v-if="Component">
-            <KeepAlive>
+            <KeepAlive :exclude="isTauri() ? [] : /.*/">
               <component :is="Component" />
             </KeepAlive>
           </template>
