@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import * as commands from '@/commands';
 import { useQuiz } from '@/composables/quiz';
-import { Button, Card, CardContent } from '@tb-dev/vue-components';
+import { Button, Card, CardContent, cn } from '@tb-dev/vue-components';
 
 const props = defineProps<{
   disabled: boolean;
@@ -54,10 +54,10 @@ function open() {
       v-if="source && question"
       class="h-full flex flex-col justify-center items-center text-center gap-2"
     >
-      <span class="cursor-pointer text-muted-foreground text-sm" @click="open">
+      <span class="cursor-pointer text-muted-foreground text-xs md:text-sm" @click="open">
         {{ source.name }}
       </span>
-      <span class="text-xl md:text-2xl select-text">
+      <span :class="cn('md:text-2xl select-text', question.length > 200 ? 'text-lg' : 'text-xl')">
         {{ question }}
       </span>
     </div>

@@ -1,6 +1,6 @@
 {
   "name": "kanji",
-  "version": "4.11.5",
+  "version": "4.11.6",
   "type": "module",
   "packageManager": "pnpm@10.17.1",
   "license": "GPL-3.0-only",
