@@ -89,8 +89,9 @@ pub fn blocking_search(
 
   blocking_search_with_options(kanji)
     .sources(&sources)
-    .min_len(settings.snippet_min_len)
     .limit(settings.snippet_limit)
+    .min_len(settings.snippet_min_len)
+    .threshold(settings.snippet_kanji_threshold)
     .shuffle(settings.shuffle_snippets)
     .call()
 }
@@ -99,9 +100,10 @@ pub fn blocking_search(
 pub fn blocking_search_with_options(
   #[builder(start_fn)] kanji: KanjiChar,
   #[builder(default)] sources: &[Source],
-  #[builder(default = 5)] min_len: usize,
-  #[builder(default = 1000)] limit: usize,
-  #[builder(default = true)] shuffle: bool,
+  #[builder(default = Settings::DEFAULT_SNIPPET_LIMIT)] limit: usize,
+  #[builder(default = Settings::DEFAULT_SNIPPET_MIN_LEN)] min_len: usize,
+  #[builder(default = Settings::DEFAULT_SNIPPET_KANJI_THRESHOLD)] threshold: f64,
+  #[builder(default = Settings::DEFAULT_SHUFFLE_SNIPPETS)] shuffle: bool,
 ) -> Result<Vec<Snippet>> {
   let mut snippets = Vec::new();
   let mut buf = [0u8; 4];
@@ -117,7 +119,7 @@ pub fn blocking_search_with_options(
 
       for (line, text) in file.lines().enumerate() {
         let Ok(text) = text else { continue };
-        if !should_skip(&text) && has_min_len(&text, min_len) {
+        if !should_skip(&text, min_len, threshold) {
           let bytes = text.as_bytes();
           if finder.find(bytes).is_some() {
             let name = Arc::clone(&name);
@@ -158,22 +160,26 @@ pub fn blocking_search_with_options(
   Ok(snippets)
 }
 
-fn should_skip(text: &str) -> bool {
-  let text = text.trim_start();
-  text.starts_with('#') || text.starts_with('<')
-}
+fn should_skip(text: &str, min_len: usize, threshold: f64) -> bool {
+  let text = text.trim();
+  if text.is_empty() || text.starts_with('#') || text.starts_with('<') {
+    return true;
+  }
 
-fn has_min_len(text: &str, min_len: usize) -> bool {
-  let mut matches: usize = 0;
+  let mut chars: u32 = 0;
+  let mut matches: u32 = 0;
   for char in text.chars() {
+    chars = chars.saturating_add(1);
     if is_kanji(char) {
       matches = matches.saturating_add(1);
     }
-
-    if matches >= min_len {
-      return true;
-    }
   }
 
-  false
+  if (matches as usize) < min_len {
+    true
+  } else {
+    let chars = f64::from(chars);
+    let matches = f64::from(matches);
+    chars < 1.0 || (matches / chars) < threshold
+  }
 }

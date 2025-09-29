@@ -72,6 +72,23 @@ const settings = useSettingsStore();
         </NumberFieldContent>
       </NumberField>
     </Label>
+
+    <Label class="max-w-70">
+      <span>Kanji threshold</span>
+      <NumberField
+        v-model="settings.snippetKanjiThreshold"
+        :min="0.1"
+        :max="1"
+        :step="0.05"
+        class="w-full"
+      >
+        <NumberFieldContent>
+          <NumberFieldDecrement />
+          <NumberFieldInput class="dark:bg-input/40" />
+          <NumberFieldIncrement />
+        </NumberFieldContent>
+      </NumberField>
+    </Label>
   </div>
 
   <Separator />
@@ -80,13 +97,13 @@ const settings = useSettingsStore();
     <h2 class="text-xl">Set</h2>
     <Label class="max-w-70">
       <span>File name</span>
-      <Input v-model="settings.setFileName" type="text" />
+      <Input v-model="settings.kanjiSetFileName" type="text" />
     </Label>
 
     <Label class="max-w-70">
       <span>Size</span>
       <NumberField
-        v-model="settings.setSize"
+        v-model="settings.kanjiSetSize"
         :min="10"
         :max="100"
         :step="1"

@@ -1,6 +1,6 @@
-use crate::database::model::source::Source;
 use crate::database::sql_types::KanjiChar;
 use crate::manager::ManagerExt;
+use crate::settings::Settings;
 use crate::snippet::{self, Snippet};
 use anyhow::Result;
 use rand::seq::{IteratorRandom, SliceRandom};
@@ -26,6 +26,7 @@ impl Quiz {
     let sources = Arc::from(db.get_enabled_sources()?);
     let questions = Arc::new(Mutex::new(Vec::new()));
     let semaphore = Arc::new(Semaphore::new(100));
+    let settings = Arc::new(Settings::get(&app)?);
 
     let mut set: JoinSet<Result<()>> = kanjis
       .into_iter()
@@ -34,10 +35,21 @@ impl Quiz {
         let sources = Arc::clone(&sources);
         let questions = Arc::clone(&questions);
         let semaphore = Arc::clone(&semaphore);
+        let settings = Arc::clone(&settings);
 
         async move {
           let permit = semaphore.acquire().await?;
-          if let Some(snippet) = pick_snippet(kanji, sources).await? {
+          let snippet = spawn_blocking(move || {
+            snippet::blocking_search_with_options(kanji)
+              .sources(&sources)
+              .limit(1)
+              .min_len(settings.snippet_min_len)
+              .threshold(settings.snippet_kanji_threshold)
+              .shuffle(true)
+              .call()
+          });
+
+          if let Some(snippet) = snippet.await??.pop() {
             let censored = snippet.content().replace(*kanji, MARUMARU);
             let mut questions = questions.lock().await;
             questions.push(QuizQuestion {
@@ -68,20 +80,6 @@ impl Quiz {
 
     Ok(Self(questions))
   }
-}
-
-async fn pick_snippet(kanji: KanjiChar, sources: Arc<[Source]>) -> Result<Option<Snippet>> {
-  let future = spawn_blocking(move || {
-    snippet::blocking_search_with_options(kanji)
-      .sources(&sources)
-      .min_len(5)
-      .limit(1)
-      .shuffle(true)
-      .call()
-      .map(|mut snippets| snippets.pop())
-  });
-
-  future.await?
 }
 
 fn pick_options(answer: KanjiChar, pool: &[KanjiChar]) -> Vec<KanjiChar> {
