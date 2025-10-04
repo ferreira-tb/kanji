@@ -103,7 +103,7 @@ const settings = useSettingsStore();
     <Label class="max-w-70">
       <span>Size</span>
       <NumberField
-        v-model="settings.kanjiSetSize"
+        v-model="settings.kanjiSetChunkSize"
         :min="10"
         :max="100"
         :step="1"

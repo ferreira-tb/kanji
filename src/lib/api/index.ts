@@ -11,6 +11,12 @@ export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar) {
   await post('create-quiz-answer', { question, answer });
 }
 
+export async function createRandomQuiz() {
+  const response = await get('create-random-quiz');
+  const data: Quiz = await response.json();
+  return data;
+}
+
 export async function createSource(source?: Option<string | string[]>) {
   if (Array.isArray(source)) {
     await Promise.all(source.map(createSource));

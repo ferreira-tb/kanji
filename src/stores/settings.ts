@@ -16,7 +16,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const shuffleSnippets = ref(true);
 
   const kanjiSetFileName = ref('Kanji Set.txt');
-  const kanjiSetSize = ref(50);
+  const kanjiSetChunkSize = ref(50);
 
   if (!isTauri()) {
     watchEffect(() => {
@@ -32,7 +32,7 @@ export const useSettingsStore = defineStore('settings', () => {
     snippetKanjiThreshold,
     shuffleSnippets,
     kanjiSetFileName,
-    kanjiSetSize,
+    kanjiSetChunkSize,
     baseUrl,
   };
 }, {

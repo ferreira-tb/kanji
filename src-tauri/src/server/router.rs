@@ -17,6 +17,7 @@ pub(super) fn create() -> Router<AppHandle> {
   Router::new()
     .route("/create-quiz", post(create_quiz))
     .route("/create-quiz-answer", post(create_quiz_answer))
+    .route("/create-random-quiz", get(create_random_quiz))
     .route("/create-source", post(create_source))
     .route("/get-quiz-answers", get(get_quiz_answers))
     .route("/get-set", get(get_set))
@@ -42,6 +43,13 @@ async fn create_quiz_answer(
 ) -> Response {
   command::create_quiz_answer(app, req.question, req.answer)
     .map_ok(|()| res!(OK))
+    .unwrap_or_else(Response::from)
+    .await
+}
+
+async fn create_random_quiz(State(app): State<AppHandle>) -> Response {
+  command::create_random_quiz(app)
+    .map_ok(|quiz| res!(OK, Json(quiz)))
     .unwrap_or_else(Response::from)
     .await
 }

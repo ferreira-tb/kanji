@@ -4,7 +4,7 @@ import type { Option } from '@tb-dev/utils';
 import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
 import { asyncRef, tryInjectOrElse, useMutex } from '@tb-dev/vue';
-import { createQuiz, createQuizAnswer, getSet } from '@/commands';
+import { createQuiz, createQuizAnswer, createRandomQuiz, getSet } from '@/commands';
 import { computed, effectScope, type InjectionKey, readonly, ref, shallowRef, watch } from 'vue';
 
 const SYMBOL = Symbol() as InjectionKey<ReturnType<typeof create>>;
@@ -22,6 +22,8 @@ export function useQuiz() {
       chosen: value.chosen,
       canAnswer: value.canAnswer,
       start: value.start,
+      startRandom: value.startRandom,
+      startWith: value.startWith,
       answer: value.answer,
       next: value.next,
       leave: value.leave,
@@ -58,12 +60,12 @@ export function create() {
     }
   });
 
-  async function start(kanjis: readonly KanjiChar[]) {
-    if (!active.value && kanjis.length > 0) {
+  async function startWith(f: () => Promise<Quiz>) {
+    if (!active.value) {
       await mutex.acquire();
       try {
         if (isTauri() || baseUrl.value) {
-          quiz.value = await createQuiz(kanjis);
+          quiz.value = await f();
         }
         else {
           quiz.value = null;
@@ -81,6 +83,16 @@ export function create() {
         mutex.release();
       }
     }
+  }
+
+  async function start(kanjis: readonly KanjiChar[]) {
+    if (kanjis.length > 0) {
+      await startWith(() => createQuiz(kanjis));
+    }
+  }
+
+  function startRandom() {
+    return startWith(createRandomQuiz);
   }
 
   async function answer(option: KanjiChar) {
@@ -135,6 +147,8 @@ export function create() {
     chosen: readonly(chosen),
     canAnswer: readonly(canAnswer),
     start,
+    startRandom,
+    startWith,
     answer,
     next,
     leave,

@@ -43,6 +43,11 @@ pub async fn create_quiz_answer(
 }
 
 #[tauri::command]
+pub async fn create_random_quiz(app: AppHandle) -> CResult<Quiz> {
+  Quiz::random(app).await.map_err(Into::into)
+}
+
+#[tauri::command]
 pub async fn create_source(app: AppHandle, source: Path) -> CResult<SourceId> {
   let name: Option<String> = try { source.file_stem()?.to_str()?.to_owned() };
   let Some(name) = name else {

@@ -12,7 +12,7 @@ pub struct Settings {
   pub snippet_kanji_threshold: f64,
   pub shuffle_snippets: bool,
   pub set_file_name: Box<str>,
-  pub set_size: usize,
+  pub set_chunk_size: usize,
 }
 
 impl Settings {
@@ -21,7 +21,7 @@ impl Settings {
   pub const DEFAULT_SNIPPET_MIN_LEN: usize = 5;
   pub const DEFAULT_SNIPPET_KANJI_THRESHOLD: f64 = 0.2;
   pub const DEFAULT_SHUFFLE_SNIPPETS: bool = true;
-  pub const DEFAULT_SET_SIZE: usize = 50;
+  pub const DEFAULT_SET_CHUNK_SIZE: usize = 50;
 
   pub fn get(app: &AppHandle) -> Result<Self> {
     app
@@ -40,7 +40,7 @@ impl Default for Settings {
       snippet_kanji_threshold: Self::DEFAULT_SNIPPET_KANJI_THRESHOLD,
       shuffle_snippets: Self::DEFAULT_SHUFFLE_SNIPPETS,
       set_file_name: Box::from("Kanji Set.txt"),
-      set_size: Self::DEFAULT_SET_SIZE,
+      set_chunk_size: Self::DEFAULT_SET_CHUNK_SIZE,
     }
   }
 }

@@ -30,7 +30,7 @@ impl KanjiSet {
       .iter()
       .map(KanjiStats::character)
       .rev()
-      .chunks(settings.set_size);
+      .chunks(settings.set_chunk_size);
 
     let database = app.database();
     for (id, chunk) in (1u32..).zip(&iter) {

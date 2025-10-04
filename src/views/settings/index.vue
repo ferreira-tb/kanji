@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Tauri from './Tauri.vue';
-import Website from './Website.vue';
+import Web from './Web.vue';
+import Desktop from './Desktop.vue';
 import { useTemplateRef } from 'vue';
 import { toPixel } from '@tb-dev/utils';
 import { getServerAddr } from '@/commands';
@@ -34,8 +34,8 @@ const contentHeight = useHeightDiff(topbar);
       class="flex flex-col gap-6 md:gap-4 overflow-x-hidden overflow-y-auto px-4 md:px-6 pb-12"
       :style="{ height: toPixel(contentHeight) }"
     >
-      <Tauri v-if="isTauri()" />
-      <Website v-else />
+      <Desktop v-if="isTauri()" />
+      <Web v-else />
     </div>
   </div>
 </template>

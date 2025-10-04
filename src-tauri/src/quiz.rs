@@ -3,7 +3,8 @@ use crate::manager::ManagerExt;
 use crate::settings::Settings;
 use crate::snippet::{self, Snippet};
 use anyhow::Result;
-use rand::seq::{IteratorRandom, SliceRandom};
+use itertools::Itertools;
+use rand::seq::{IndexedRandom, IteratorRandom, SliceRandom};
 use serde::Serialize;
 use std::sync::Arc;
 use tauri::AppHandle;
@@ -79,6 +80,18 @@ impl Quiz {
     questions.shuffle(&mut rng);
 
     Ok(Self(questions))
+  }
+
+  pub async fn random(app: AppHandle) -> Result<Self> {
+    let settings = Settings::get(&app)?;
+    let kanjis = app
+      .database()
+      .get_kanji_chars()?
+      .choose_multiple(&mut rand::rng(), settings.set_chunk_size)
+      .copied()
+      .collect_vec();
+
+    Self::new(app, kanjis).await
   }
 }
 

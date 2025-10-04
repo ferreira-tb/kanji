@@ -21,6 +21,15 @@ export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar) {
   }
 }
 
+export async function createRandomQuiz() {
+  if (isTauri()) {
+    return invoke<Quiz>('create_random_quiz');
+  }
+  else {
+    return api.createRandomQuiz();
+  }
+}
+
 export async function createSource(source?: Option<string | string[]>) {
   if (isTauri()) {
     source ??= await pickFolders();

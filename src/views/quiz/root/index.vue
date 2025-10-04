@@ -15,6 +15,7 @@ const {
   isLoading,
   isLoadingSet,
   loadSet,
+  startRandom,
 } = useQuiz();
 
 const topbar = useTemplateRef('topbarEl');
@@ -26,6 +27,16 @@ const contentHeight = useHeightDiff(topbar);
     <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
       <SidebarTrigger />
       <div class="flex items-center justify-center gap-2">
+        <Button
+          v-if="!active"
+          size="sm"
+          variant="default"
+          :disabled="isLoading"
+          @click="startRandom"
+        >
+          <span>Random</span>
+        </Button>
+
         <Button
           v-if="!active"
           size="sm"

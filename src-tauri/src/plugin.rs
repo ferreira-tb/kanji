@@ -2,6 +2,13 @@ use crate::window::WindowExt;
 use anyhow::Result;
 use tauri::Wry;
 use tauri::plugin::TauriPlugin;
+use tauri_plugin_pinia::PrettyTomlMarshaler;
+
+pub fn pinia() -> TauriPlugin<Wry> {
+  tauri_plugin_pinia::Builder::new()
+    .marshaler_of("settings", Box::new(PrettyTomlMarshaler))
+    .build()
+}
 
 pub fn prevent_default() -> TauriPlugin<Wry> {
   use tauri_plugin_prevent_default::{Builder, Flags, PlatformOptions};
