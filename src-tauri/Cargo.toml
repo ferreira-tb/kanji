@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "4.12.1"
+version = "4.12.2"
 publish = false
 
 [package.edition]
@@ -14,7 +14,7 @@ workspace = true
 
 [dependencies]
 anyhow = "1.0"
-bon = "3.7"
+bon = "3.8"
 futures = "0.3"
 globset = "0.4"
 itertools = "0.14"

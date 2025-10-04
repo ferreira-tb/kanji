@@ -100,12 +100,18 @@ pub async fn get_set(app: AppHandle) -> CResult<KanjiSet> {
 
 #[tauri::command]
 pub async fn get_sources(app: AppHandle) -> CResult<Vec<Source>> {
-  let sources = app
-    .database()
-    .get_sources()?
-    .into_iter()
-    .sorted_unstable_by(|a, b| a.name.cmp(&b.name))
-    .collect_vec();
+  let mut sources = app.database().get_sources()?;
+  sources.sort_by(|a, b| {
+    if let Some(dir_a) = a.path.file_stem()
+      && let Some(dir_b) = b.path.file_stem()
+      && let Some(dir_a) = dir_a.to_str()
+      && let Some(dir_b) = dir_b.to_str()
+    {
+      dir_a.cmp(dir_b)
+    } else {
+      a.name.cmp(&b.name)
+    }
+  });
 
   Ok(sources)
 }
