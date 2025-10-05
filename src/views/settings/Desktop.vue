@@ -97,13 +97,13 @@ const settings = useSettingsStore();
     <h2 class="text-xl">Set</h2>
     <Label class="max-w-70">
       <span>File name</span>
-      <Input v-model="settings.kanjiSetFileName" type="text" />
+      <Input v-model="settings.setFileName" type="text" />
     </Label>
 
     <Label class="max-w-70">
-      <span>Size</span>
+      <span>Chunk size</span>
       <NumberField
-        v-model="settings.kanjiSetChunkSize"
+        v-model="settings.setChunkSize"
         :min="10"
         :max="100"
         :step="1"

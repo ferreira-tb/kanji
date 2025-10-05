@@ -21,7 +21,7 @@ impl Settings {
   pub const DEFAULT_SNIPPET_MIN_LEN: usize = 5;
   pub const DEFAULT_SNIPPET_KANJI_THRESHOLD: f64 = 0.2;
   pub const DEFAULT_SHUFFLE_SNIPPETS: bool = true;
-  pub const DEFAULT_SET_CHUNK_SIZE: usize = 50;
+  pub const DEFAULT_SET_CHUNK_SIZE: usize = 25;
 
   pub fn get(app: &AppHandle) -> Result<Self> {
     app
