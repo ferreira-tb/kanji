@@ -28,6 +28,13 @@ onMounted(async () => {
   try {
     await commands.createTrayIcon();
     await commands.showWindow();
+
+    if (!isTauri() && window.screen.width < 720) {
+      const main = document.querySelector('main');
+      if (main && !document.fullscreenElement) {
+        await main.requestFullscreen({ navigationUI: 'hide' });
+      }
+    }
   }
   catch (err) {
     handleError(err);
