@@ -34,12 +34,14 @@ fn main() {
     .plugin(tauri_plugin_updater::Builder::new().build())
     .setup(|app| setup(app.app_handle()))
     .invoke_handler(tauri::generate_handler![
+      command::create_bookmark,
       command::create_quiz,
       command::create_quiz_answer,
       command::create_random_quiz,
       command::create_source,
       command::create_tray_icon,
       command::export_set,
+      command::get_bookmarks,
       command::get_quiz_answers,
       command::get_server_addr,
       command::get_set,
@@ -47,6 +49,7 @@ fn main() {
       command::open,
       command::pick_folders,
       command::rename_source,
+      command::remove_bookmark,
       command::search_kanji,
       command::search_snippets,
       command::set_source_weight,

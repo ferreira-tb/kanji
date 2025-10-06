@@ -8,7 +8,7 @@ use diesel::sqlite::Sqlite;
 use serde::{Deserialize, Serialize};
 use std::num::NonZeroU8;
 
-#[derive(FromSqlRow, AsExpression, Debug, Deref, Clone, Copy, Deserialize, Serialize)]
+#[derive(FromSqlRow, AsExpression, Clone, Copy, Debug, Deref, Deserialize, Serialize)]
 #[diesel(sql_type = Integer)]
 pub struct SourceWeight(NonZeroU8);
 

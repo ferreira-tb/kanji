@@ -1,6 +1,15 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    bookmark (id) {
+        id -> Integer,
+        snippet -> Text,
+        source_id -> Integer,
+        created_at -> Text,
+    }
+}
+
+diesel::table! {
     kanji (id) {
         id -> Text,
         created_at -> Text,
@@ -29,4 +38,6 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(kanji, quiz_answer, source,);
+diesel::joinable!(bookmark -> source (source_id));
+
+diesel::allow_tables_to_appear_in_same_query!(bookmark, kanji, quiz_answer, source,);

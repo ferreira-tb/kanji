@@ -32,6 +32,7 @@ impl Quiz {
     let mut set: JoinSet<Result<()>> = kanjis
       .into_iter()
       .map(|kanji| {
+        let app = app.clone();
         let chars = Arc::clone(&chars);
         let sources = Arc::clone(&sources);
         let questions = Arc::clone(&questions);
@@ -41,7 +42,7 @@ impl Quiz {
         async move {
           let permit = semaphore.acquire().await?;
           let snippet = spawn_blocking(move || {
-            snippet::blocking_search_with_options(kanji)
+            snippet::blocking_search_with_options(&app, kanji)
               .sources(&sources)
               .limit(1)
               .min_len(settings.snippet_min_len)

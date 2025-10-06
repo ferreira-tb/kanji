@@ -6,8 +6,8 @@ import { useKanjiStore } from '@/stores/kanji';
 import { useSnippets } from '@/composables/snippets';
 import { useSettingsStore } from '@/stores/settings';
 import { handleError, useHeightDiff } from '@tb-dev/vue';
+import { nextTick, onActivated, useTemplateRef } from 'vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { type DeepReadonly, nextTick, onActivated, useTemplateRef } from 'vue';
 import { Button, Card, CardContent, Loading, SidebarTrigger } from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
@@ -30,7 +30,7 @@ onActivated(async () => {
   }
 });
 
-function onContentClick(snippet: DeepReadonly<Snippet>) {
+function onContentClick(snippet: Snippet) {
   if (settings.clipboard) {
     writeText(snippet.content).err();
   }

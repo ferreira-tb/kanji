@@ -8,8 +8,10 @@ interface QuizQuestion {
 }
 
 interface QuizAnswer {
-  readonly id: string;
+  readonly id: QuizAnswerId;
   readonly question: KanjiChar;
   readonly answer: KanjiChar;
   readonly createdAt: string;
 }
+
+type QuizAnswerId = string;

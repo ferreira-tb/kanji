@@ -1,6 +1,14 @@
+use crate::database::model::bookmark::Bookmark;
 use crate::database::model::quiz_answer::{NewQuizAnswer, QuizAnswer};
 use crate::database::model::source::{NewSource, Source};
-use crate::database::sql_types::{KanjiChar, Path, SourceId, SourceWeight};
+use crate::database::sql_types::{
+  BookmarkId,
+  KanjiChar,
+  Path,
+  QuizAnswerId,
+  SourceId,
+  SourceWeight,
+};
 use crate::error::{CResult, Error};
 use crate::kanji::{self, KanjiStats};
 use crate::manager::ManagerExt;
@@ -16,10 +24,16 @@ use tauri::async_runtime::spawn_blocking;
 use tauri::{AppHandle, WebviewWindow};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_fs::{FilePath, FsExt};
-
 use tokio::process::Command;
 use tokio::sync::oneshot;
 use windows::Win32::System::Threading::{CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW};
+
+#[tauri::command]
+pub async fn create_bookmark(app: AppHandle, snippet: Snippet) -> CResult<BookmarkId> {
+  snippet
+    .create_bookmark(&app)
+    .map_err(Into::into)
+}
 
 #[tauri::command]
 pub async fn create_quiz(app: AppHandle, kanjis: Vec<KanjiChar>) -> CResult<Quiz> {
@@ -33,7 +47,7 @@ pub async fn create_quiz_answer(
   app: AppHandle,
   question: KanjiChar,
   answer: KanjiChar,
-) -> CResult<()> {
+) -> CResult<QuizAnswerId> {
   NewQuizAnswer::builder()
     .question(question)
     .answer(answer)
@@ -79,6 +93,14 @@ pub async fn export_set(app: AppHandle) -> CResult<()> {
   }
 
   Ok(())
+}
+
+#[tauri::command]
+pub async fn get_bookmarks(app: AppHandle) -> CResult<Vec<Bookmark>> {
+  app
+    .database()
+    .get_bookmarks()
+    .map_err(Into::into)
 }
 
 #[tauri::command]
@@ -168,6 +190,13 @@ pub async fn rename_source(app: AppHandle, id: SourceId, name: String) -> CResul
   app
     .database()
     .rename_source(id, &name)
+    .map_err(Into::into)
+}
+#[tauri::command]
+pub async fn remove_bookmark(app: AppHandle, id: BookmarkId) -> CResult<usize> {
+  app
+    .database()
+    .remove_bookmark(id)
     .map_err(Into::into)
 }
 

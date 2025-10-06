@@ -1,5 +1,10 @@
 import { get, post } from '@/lib/api/http';
-import type { Option } from '@tb-dev/utils';
+
+export async function createBookmark(snippet: Snippet) {
+  const response = await post('create-bookmark', { snippet });
+  const data: BookmarkId = await response.json();
+  return data;
+}
 
 export async function createQuiz(kanjis: readonly KanjiChar[]) {
   const response = await post('create-quiz', { kanjis });
@@ -8,7 +13,9 @@ export async function createQuiz(kanjis: readonly KanjiChar[]) {
 }
 
 export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar) {
-  await post('create-quiz-answer', { question, answer });
+  const response = await post('create-quiz-answer', { question, answer });
+  const data: QuizAnswerId = await response.json();
+  return data;
 }
 
 export async function createRandomQuiz() {
@@ -24,6 +31,12 @@ export async function createSource(source?: Option<string | string[]>) {
   else if (typeof source === 'string' && source.length > 0) {
     await post('create-source', { source });
   }
+}
+
+export async function getBookmarks() {
+  const response = await get('get-bookmarks');
+  const data: readonly Bookmark[] = await response.json();
+  return data;
 }
 
 export async function getQuizAnswers() {
@@ -46,6 +59,12 @@ export async function getSources() {
 
 export async function renameSource(id: SourceId, name: string) {
   await post('rename-source', { id, name });
+}
+
+export async function removeBookmark(id: BookmarkId) {
+  const response = await post('remove-bookmark', { id });
+  const data: number = await response.json();
+  return data;
 }
 
 export async function searchKanji() {

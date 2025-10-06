@@ -26,6 +26,11 @@ export const router = createRouter({
       ],
     },
     {
+      component: () => import('@/views/bookmarks/index.vue'),
+      name: 'bookmarks' satisfies Route,
+      path: '/bookmarks',
+    },
+    {
       component: () => import('@/views/settings/index.vue'),
       name: 'settings' satisfies Route,
       path: '/settings',

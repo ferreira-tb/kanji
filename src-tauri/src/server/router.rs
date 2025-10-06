@@ -15,19 +15,32 @@ pub(super) fn create() -> Router<AppHandle> {
     .allow_origin(Any);
 
   Router::new()
+    .route("/create-bookmark", post(create_bookmark))
     .route("/create-quiz", post(create_quiz))
     .route("/create-quiz-answer", post(create_quiz_answer))
     .route("/create-random-quiz", get(create_random_quiz))
     .route("/create-source", post(create_source))
+    .route("/get-bookmarks", get(get_bookmarks))
     .route("/get-quiz-answers", get(get_quiz_answers))
     .route("/get-set", get(get_set))
     .route("/get-sources", get(get_sources))
     .route("/rename-source", post(rename_source))
+    .route("/remove-bookmark", post(remove_bookmark))
     .route("/search-kanji", get(search_kanji))
     .route("/search-snippets", post(search_snippets))
     .route("/set-source-weight", post(set_source_weight))
     .route("/toggle-source", post(toggle_source))
     .layer(cors)
+}
+
+async fn create_bookmark(
+  State(app): State<AppHandle>,
+  Json(req): Json<CreateBookmarkRequest>,
+) -> Response {
+  command::create_bookmark(app, req.snippet)
+    .map_ok(|id| res!(OK, Json(id)))
+    .unwrap_or_else(Response::from)
+    .await
 }
 
 async fn create_quiz(State(app): State<AppHandle>, Json(req): Json<CreateQuizRequest>) -> Response {
@@ -42,7 +55,7 @@ async fn create_quiz_answer(
   Json(req): Json<CreateQuizAnswerRequest>,
 ) -> Response {
   command::create_quiz_answer(app, req.question, req.answer)
-    .map_ok(|()| res!(OK))
+    .map_ok(|id| res!(OK, Json(id)))
     .unwrap_or_else(Response::from)
     .await
 }
@@ -60,6 +73,13 @@ async fn create_source(
 ) -> Response {
   command::create_source(app, req.source)
     .map_ok(|id| res!(OK, Json(id)))
+    .unwrap_or_else(Response::from)
+    .await
+}
+
+async fn get_bookmarks(State(app): State<AppHandle>) -> Response {
+  command::get_bookmarks(app)
+    .map_ok(|bookmarks| res!(OK, Json(bookmarks)))
     .unwrap_or_else(Response::from)
     .await
 }
@@ -91,6 +111,16 @@ async fn rename_source(
 ) -> Response {
   command::rename_source(app, req.id, req.name)
     .map_ok(|()| res!(OK))
+    .unwrap_or_else(Response::from)
+    .await
+}
+
+async fn remove_bookmark(
+  State(app): State<AppHandle>,
+  Json(req): Json<RemoveBookmarkRequest>,
+) -> Response {
+  command::remove_bookmark(app, req.id)
+    .map_ok(|rows| res!(OK, Json(rows)))
     .unwrap_or_else(Response::from)
     .await
 }

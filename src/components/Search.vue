@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Option } from '@tb-dev/utils';
 import { SearchIcon } from 'lucide-vue-next';
 import { Input } from '@tb-dev/vue-components';
 

@@ -3,10 +3,18 @@ pub mod model;
 pub mod schema;
 pub mod sql_types;
 
+use crate::database::model::bookmark::{Bookmark, NewBookmark};
 use crate::database::model::kanji::NewKanji;
 use crate::database::model::quiz_answer::{NewQuizAnswer, QuizAnswer};
 use crate::database::model::source::{NewSource, Source};
-use crate::database::sql_types::{KanjiChar, SourceId, SourceWeight, Zoned};
+use crate::database::sql_types::{
+  BookmarkId,
+  KanjiChar,
+  QuizAnswerId,
+  SourceId,
+  SourceWeight,
+  Zoned,
+};
 use anyhow::Result;
 use diesel::Connection;
 use diesel::prelude::*;
@@ -117,21 +125,21 @@ impl DatabaseHandle {
       .map_err(Into::into)
   }
 
-  pub fn toggle_source(&self, source_id: SourceId, yes: bool) -> Result<()> {
+  pub fn toggle_source(&self, source_id: SourceId, is_enabled: bool) -> Result<()> {
     use schema::source::dsl::*;
     diesel::update(source.find(source_id))
-      .set((enabled.eq(yes), updated_at.eq(Zoned::now())))
+      .set((enabled.eq(is_enabled), updated_at.eq(Zoned::now())))
       .execute(&mut *self.conn())
       .map(drop)
       .map_err(Into::into)
   }
 
-  pub fn create_quiz_answer(&self, new: &NewQuizAnswer) -> Result<()> {
+  pub fn create_quiz_answer(&self, new: &NewQuizAnswer) -> Result<QuizAnswerId> {
     use schema::quiz_answer::dsl::*;
     diesel::insert_into(quiz_answer)
       .values(new)
-      .execute(&mut *self.conn())
-      .map(drop)
+      .returning(id)
+      .get_result(&mut *self.conn())
       .map_err(Into::into)
   }
 
@@ -185,5 +193,39 @@ impl DatabaseHandle {
     }
 
     Ok(count)
+  }
+
+  pub fn create_bookmark(&self, new: &NewBookmark) -> Result<BookmarkId> {
+    use schema::bookmark::dsl::*;
+    diesel::insert_into(bookmark)
+      .values(new)
+      .returning(id)
+      .get_result(&mut *self.conn())
+      .map_err(Into::into)
+  }
+
+  pub fn get_bookmark_id(&self, text: &str) -> Result<Option<BookmarkId>> {
+    use schema::bookmark::dsl::*;
+    bookmark
+      .filter(snippet.eq(text))
+      .select(id)
+      .first::<BookmarkId>(&mut *self.conn())
+      .optional()
+      .map_err(Into::into)
+  }
+
+  pub fn get_bookmarks(&self) -> Result<Vec<Bookmark>> {
+    use schema::bookmark::dsl::*;
+    bookmark
+      .select(Bookmark::as_select())
+      .load(&mut *self.conn())
+      .map_err(Into::into)
+  }
+
+  pub fn remove_bookmark(&self, bookmark_id: BookmarkId) -> Result<usize> {
+    use schema::bookmark::dsl::*;
+    diesel::delete(bookmark.find(bookmark_id))
+      .execute(&mut *self.conn())
+      .map_err(Into::into)
   }
 }

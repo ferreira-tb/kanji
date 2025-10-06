@@ -1,5 +1,12 @@
-use crate::database::sql_types::{KanjiChar, Path, SourceId, SourceWeight};
+use crate::database::sql_types::{BookmarkId, KanjiChar, Path, SourceId, SourceWeight};
+use crate::snippet::Snippet;
 use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateBookmarkRequest {
+  pub snippet: Snippet,
+}
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -25,6 +32,12 @@ pub struct CreateSourceRequest {
 pub struct RenameSourceRequest {
   pub id: SourceId,
   pub name: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RemoveBookmarkRequest {
+  pub id: BookmarkId,
 }
 
 #[derive(Debug, Deserialize)]

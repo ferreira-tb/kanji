@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import * as commands from '@/commands';
+import { StarIcon } from 'lucide-vue-next';
 import { useQuiz } from '@/composables/quiz';
 import { Button, Card, CardContent, cn } from '@tb-dev/vue-components';
 
@@ -15,6 +16,10 @@ const question = computed(() => {
   return canAnswer.value ?
     current.value?.censored :
     current.value?.snippet.content;
+});
+
+const isBookmarked = computed(() => {
+  return typeof quiz.bookmark.value === 'number';
 });
 
 function getCardClass(option: KanjiChar) {
@@ -46,10 +51,25 @@ function open() {
     commands.open(source.value.path, source.value.line).err();
   }
 }
+
+async function bookmark() {
+  if (isBookmarked.value) {
+    await quiz.removeBookmark();
+  }
+  else {
+    await quiz.createBookmark();
+  }
+}
 </script>
 
 <template>
-  <div class="size-full flex flex-col justify-center items-center p-6">
+  <div class="size-full relative flex flex-col justify-center items-center p-6">
+    <div class="absolute top-2 right-2">
+      <Button variant="ghost" :disabled @click="bookmark">
+        <StarIcon class="size-4" :fill="isBookmarked ? 'currentColor' : 'none'" />
+      </Button>
+    </div>
+
     <div
       v-if="source && question"
       class="h-full flex flex-col justify-center items-center text-center gap-2"

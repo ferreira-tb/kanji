@@ -5,7 +5,7 @@ import { useHeightDiff } from '@tb-dev/vue';
 import { computed, useTemplateRef } from 'vue';
 import { isTauri } from '@tauri-apps/api/core';
 import { useKanjis } from '@/composables/kanji';
-import { useSources } from '@/composables/source';
+import { useSources } from '@/composables/sources';
 import {
   Button,
   Checkbox,

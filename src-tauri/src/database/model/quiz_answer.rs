@@ -34,7 +34,7 @@ pub struct NewQuizAnswer {
 }
 
 impl NewQuizAnswer {
-  pub fn create(self, app: &AppHandle) -> Result<()> {
+  pub fn create(self, app: &AppHandle) -> Result<QuizAnswerId> {
     app.database().create_quiz_answer(&self)
   }
 }

@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import type { Option } from '@tb-dev/utils';
 import { type DeepReadonly, ref } from 'vue';
 
 export const useKanjiStore = defineStore('kanji', () => {

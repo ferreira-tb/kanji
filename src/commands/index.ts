@@ -1,7 +1,15 @@
 import * as api from '@/lib/api';
 import { clamp } from 'es-toolkit';
-import type { nil, Option } from '@tb-dev/utils';
 import { invoke, isTauri } from '@tauri-apps/api/core';
+
+export async function createBookmark(snippet: Snippet) {
+  if (isTauri()) {
+    return invoke<BookmarkId>('create_bookmark', { snippet });
+  }
+  else {
+    return api.createBookmark(snippet);
+  }
+}
 
 export async function createQuiz(kanjis: readonly KanjiChar[]) {
   if (isTauri()) {
@@ -14,7 +22,7 @@ export async function createQuiz(kanjis: readonly KanjiChar[]) {
 
 export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar) {
   if (isTauri()) {
-    return invoke<nil>('create_quiz_answer', { question, answer });
+    return invoke<QuizAnswerId>('create_quiz_answer', { question, answer });
   }
   else {
     return api.createQuizAnswer(question, answer);
@@ -54,6 +62,15 @@ export async function createTrayIcon() {
 export async function exportSet() {
   if (isTauri()) {
     await invoke('export_set');
+  }
+}
+
+export async function getBookmarks() {
+  if (isTauri()) {
+    return invoke<readonly Bookmark[]>('get_bookmarks');
+  }
+  else {
+    return api.getBookmarks();
   }
 }
 
@@ -114,6 +131,15 @@ export async function renameSource(id: SourceId, name: string) {
   }
   else {
     await api.renameSource(id, name);
+  }
+}
+
+export async function removeBookmark(id: BookmarkId) {
+  if (isTauri()) {
+    return invoke<number>('remove_bookmark', { id });
+  }
+  else {
+    return api.removeBookmark(id);
   }
 }
 
