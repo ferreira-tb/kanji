@@ -145,13 +145,11 @@ impl DatabaseHandle {
 
   pub fn get_quiz_answers(&self) -> Result<Vec<QuizAnswer>> {
     use schema::quiz_answer::dsl::*;
-    let mut answers = quiz_answer
+    quiz_answer
       .select(QuizAnswer::as_select())
-      .load(&mut *self.conn())?;
-
-    answers.sort_unstable_by(|a, b| b.created_at.cmp(&a.created_at));
-
-    Ok(answers)
+      .order(id.desc())
+      .load(&mut *self.conn())
+      .map_err(Into::into)
   }
 
   pub fn count_quizzes(&self, kanji_char: KanjiChar) -> Result<u64> {

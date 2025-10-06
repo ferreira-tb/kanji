@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "4.14.1"
+version = "4.14.2"
 publish = false
 
 [package.edition]
@@ -87,7 +87,7 @@ features = ["cors"]
 
 [dependencies.uuid]
 version = "1.18"
-features = ["serde", "v4"]
+features = ["serde", "v7"]
 
 [dependencies.windows]
 version = "0.62"

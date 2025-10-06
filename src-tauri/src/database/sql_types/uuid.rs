@@ -61,10 +61,10 @@ macro_rules! impl_uuid {
   };
 }
 
-macro_rules! impl_uuid_v4 {
+macro_rules! impl_uuid_v7 {
   ($($name:ident),+ $(,)?) => {
-    $(impl_uuid! { $name, new_v4 })+
+    $(impl_uuid! { $name, now_v7 })+
   }
 }
 
-impl_uuid_v4!(QuizAnswerId);
+impl_uuid_v7!(QuizAnswerId);
