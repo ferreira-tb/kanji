@@ -66,7 +66,10 @@ async function bookmark() {
   <div class="size-full relative flex flex-col justify-center items-center p-6">
     <div class="absolute top-2 right-2">
       <Button variant="ghost" :disabled @click="bookmark">
-        <StarIcon class="size-4" :fill="isBookmarked ? 'currentColor' : 'none'" />
+        <StarIcon
+          :fill="isBookmarked ? 'currentColor' : 'none'"
+          class="size-4 lg:size-6 md:size-8"
+        />
       </Button>
     </div>
 
