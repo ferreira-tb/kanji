@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import * as commands from '@/commands';
 import { StarIcon } from 'lucide-vue-next';
 import { useQuiz } from '@/composables/quiz';
-import { Badge, Button, Card, CardContent } from '@tb-dev/vue-components';
+import { Badge, Button, Card, CardContent, cn } from '@tb-dev/vue-components';
 
 const props = defineProps<{
   disabled: boolean;
@@ -44,24 +44,24 @@ function getCardClass(option: KanjiChar) {
     }
   }
 
-  return classList;
+  return cn(classList);
 }
 
 function getQuestionClass() {
   let classList = 'md:text-2xl select-text';
   if (question.value) {
     if (question.value.length > 300) {
-      classList += 'text-base';
+      classList += ' text-base';
     }
     else if (question.value.length > 100) {
-      classList += 'text-lg';
+      classList += ' text-lg';
     }
     else {
-      classList += 'text-xl';
+      classList += ' text-xl';
     }
   }
 
-  return classList;
+  return cn(classList);
 }
 
 async function answer(option: KanjiChar) {
