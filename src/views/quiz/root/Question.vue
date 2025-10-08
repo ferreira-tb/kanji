@@ -53,7 +53,7 @@ function getQuestionClass() {
     if (question.value.length > 300) {
       classList += 'text-base';
     }
-    else if (question.value.length > 100) {
+    else if (question.value.length > 150) {
       classList += 'text-lg';
     }
     else {
