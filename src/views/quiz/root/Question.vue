@@ -3,23 +3,30 @@ import { computed } from 'vue';
 import * as commands from '@/commands';
 import { StarIcon } from 'lucide-vue-next';
 import { useQuiz } from '@/composables/quiz';
-import { Button, Card, CardContent, cn } from '@tb-dev/vue-components';
+import { Badge, Button, Card, CardContent, cn } from '@tb-dev/vue-components';
 
 const props = defineProps<{
   disabled: boolean;
 }>();
 
-const { current, chosen, canAnswer, ...quiz } = useQuiz();
+const {
+  quizSize,
+  currentQuestion,
+  currentIndex,
+  chosenAnswer,
+  canAnswer,
+  ...quiz
+} = useQuiz();
 
-const source = computed(() => current.value?.snippet.source);
+const source = computed(() => currentQuestion.value?.snippet.source);
 const question = computed(() => {
   return canAnswer.value ?
-    current.value?.censored :
-    current.value?.snippet.content;
+    currentQuestion.value?.censored :
+    currentQuestion.value?.snippet.content;
 });
 
 const isBookmarked = computed(() => {
-  return typeof quiz.bookmark.value === 'number';
+  return typeof quiz.currentBookmark.value === 'number';
 });
 
 function getCardClass(option: KanjiChar) {
@@ -28,16 +35,33 @@ function getCardClass(option: KanjiChar) {
     classList += ' cursor-pointer hover:bg-accent';
   }
 
-  if (current.value && chosen.value && !canAnswer.value) {
-    if (option === current.value.answer) {
+  if (currentQuestion.value && chosenAnswer.value && !canAnswer.value) {
+    if (option === currentQuestion.value.answer) {
       classList += ' bg-green-300';
     }
-    else if (option === chosen.value) {
+    else if (option === chosenAnswer.value) {
       classList += ' bg-red-300';
     }
   }
 
-  return classList;
+  return cn(classList);
+}
+
+function getQuestionClass() {
+  let classList = 'md:text-2xl select-text';
+  if (question.value) {
+    if (question.value.length > 300) {
+      classList += 'text-base';
+    }
+    else if (question.value.length > 100) {
+      classList += 'text-lg';
+    }
+    else {
+      classList += 'text-xl';
+    }
+  }
+
+  return cn(classList);
 }
 
 async function answer(option: KanjiChar) {
@@ -64,6 +88,10 @@ async function bookmark() {
 
 <template>
   <div class="size-full relative flex flex-col justify-center items-center p-6">
+    <Badge v-if="currentIndex && quizSize" variant="outline" class="absolute top-2 left-2">
+      <span class="text-muted-foreground text-xs">{{ `${currentIndex}/${quizSize}` }}</span>
+    </Badge>
+
     <div class="absolute top-2 right-2">
       <Button variant="ghost" :disabled @click="bookmark">
         <StarIcon
@@ -80,14 +108,14 @@ async function bookmark() {
       <span class="cursor-pointer text-muted-foreground text-xs md:text-sm" @click="open">
         {{ source.name }}
       </span>
-      <span :class="cn('md:text-2xl select-text', question.length > 200 ? 'text-lg' : 'text-xl')">
+      <span :class="getQuestionClass()">
         {{ question }}
       </span>
     </div>
 
-    <div v-if="current" class="flex flex-col gap-8">
+    <div v-if="currentQuestion" class="flex flex-col gap-8">
       <div class="grid grid-cols-5 gap-4">
-        <div v-for="option of current.options" :key="option">
+        <div v-for="option of currentQuestion.options" :key="option">
           <Card
             :class="getCardClass(option)"
             @click="() => answer(option)"

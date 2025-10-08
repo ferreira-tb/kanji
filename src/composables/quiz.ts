@@ -14,14 +14,16 @@ export function useQuiz() {
     const value = scope.run(create)!;
     return {
       set: value.set,
-      current: value.current,
+      quizSize: value.quizSize,
       active: value.active,
       isLoading: value.isLoading,
       isLoadingSet: value.isLoadingSet,
-      chosen: value.chosen,
+      currentQuestion: value.currentQuestion,
+      currentIndex: value.currentIndex,
+      currentSnippet: value.currentSnippet,
+      currentBookmark: value.currentBookmark,
+      chosenAnswer: value.chosenAnswer,
       canAnswer: value.canAnswer,
-      snippet: value.snippet,
-      bookmark: value.bookmark,
       start: value.start,
       startRandom: value.startRandom,
       startWith: value.startWith,
@@ -37,10 +39,15 @@ export function useQuiz() {
 
 export function create() {
   const quiz = shallowRef<Option<Quiz>>();
-  const current = ref<Option<QuizQuestion>>();
+  const quizSize = ref<Option<number>>();
   const active = ref(false);
 
-  const chosen = ref<Option<KanjiChar>>();
+  const currentQuestion = ref<Option<QuizQuestion>>();
+  const currentIndex = ref<Option<number>>();
+  const currentSnippet = computed(() => currentQuestion.value?.snippet);
+  const currentBookmark = computed(() => currentSnippet.value?.bookmark);
+
+  const chosenAnswer = ref<Option<KanjiChar>>();
   const canAnswer = ref(true);
 
   const {
@@ -55,14 +62,9 @@ export function create() {
   const { locked, ...mutex } = useMutex();
   const isLoading = computed(() => locked.value || isLoadingSet.value);
 
-  const snippet = computed(() => current.value?.snippet);
-  const bookmark = computed(() => snippet.value?.bookmark);
-
   watch(active, (isActive) => {
     if (!isActive) {
-      quiz.value = null;
-      current.value = null;
-      chosen.value = null;
+      cleanup();
     }
   });
 
@@ -72,17 +74,17 @@ export function create() {
       try {
         if (isTauri() || baseUrl.value) {
           quiz.value = await f();
+          quizSize.value = quiz.value.length;
         }
         else {
           quiz.value = null;
+          quizSize.value = null;
         }
 
         await next();
       }
       catch (err) {
-        quiz.value = null;
-        current.value = null;
-        chosen.value = null;
+        void leave();
         handleError(err);
       }
       finally {
@@ -105,16 +107,16 @@ export function create() {
     if (
       active.value &&
       quiz.value &&
-      current.value &&
+      currentQuestion.value &&
       canAnswer.value
     ) {
       await mutex.acquire();
       try {
-        chosen.value = option;
+        chosenAnswer.value = option;
         canAnswer.value = false;
-        await commands.createQuizAnswer(current.value.answer, option);
+        await commands.createQuizAnswer(currentQuestion.value.answer, option);
         quiz.value = quiz.value.filter((it) => {
-          return it.answer !== current.value?.answer;
+          return it.answer !== currentQuestion.value?.answer;
         });
       }
       catch (err) {
@@ -127,31 +129,44 @@ export function create() {
   }
 
   async function next() {
-    if (quiz.value) {
-      current.value = quiz.value.at(0);
-      active.value = Boolean(current.value);
-      canAnswer.value = Boolean(current.value);
+    const total = quizSize.value ?? 0;
+    const pending = quiz.value?.length ?? 0;
+    if (quiz.value && pending > 0 && total > 0) {
+      currentQuestion.value = quiz.value.at(0);
+      active.value = Boolean(currentQuestion.value);
+      canAnswer.value = Boolean(currentQuestion.value);
 
-      if (!current.value) {
-        await leave();
+      if (currentQuestion.value) {
+        currentIndex.value = Math.min(total, (total - pending) + 1);
       }
+    }
+    else {
+      await leave();
     }
   }
 
   async function leave() {
     active.value = false;
-    chosen.value = null;
     await loadSet();
   }
 
+  function cleanup() {
+    quiz.value = null;
+    quizSize.value = null;
+    currentQuestion.value = null;
+    currentIndex.value = null;
+    chosenAnswer.value = null;
+    canAnswer.value = false;
+  }
+
   async function createBookmark() {
-    if (current.value && snippet.value && !bookmark.value) {
+    if (currentQuestion.value && currentSnippet.value && !currentBookmark.value) {
       await mutex.acquire();
       try {
-        const snippetId = snippet.value.id;
-        const bookmarkId = await commands.createBookmark(snippet.value);
-        if (current.value.snippet.id === snippetId) {
-          current.value.snippet.bookmark = bookmarkId;
+        const snippetId = currentSnippet.value.id;
+        const bookmarkId = await commands.createBookmark(currentSnippet.value);
+        if (currentQuestion.value.snippet.id === snippetId) {
+          currentQuestion.value.snippet.bookmark = bookmarkId;
         }
       }
       catch (err) {
@@ -164,13 +179,13 @@ export function create() {
   }
 
   async function removeBookmark() {
-    if (current.value && snippet.value && bookmark.value) {
+    if (currentQuestion.value && currentSnippet.value && currentBookmark.value) {
       await mutex.acquire();
       try {
-        const snippetId = snippet.value.id;
-        const rows = await commands.removeBookmark(bookmark.value);
-        if (rows > 0 && current.value.snippet.id === snippetId) {
-          current.value.snippet.bookmark = null;
+        const snippetId = currentSnippet.value.id;
+        const rows = await commands.removeBookmark(currentBookmark.value);
+        if (rows > 0 && currentQuestion.value.snippet.id === snippetId) {
+          currentQuestion.value.snippet.bookmark = null;
         }
       }
       catch (err) {
@@ -184,14 +199,16 @@ export function create() {
 
   return {
     set: set as Readonly<typeof set>,
-    current: current as Readonly<typeof current>,
+    quizSize: readonly(quizSize),
     active: readonly(active),
     isLoading,
     isLoadingSet,
-    chosen: readonly(chosen),
+    currentQuestion: currentQuestion as Readonly<typeof currentQuestion>,
+    currentSnippet,
+    currentBookmark,
+    currentIndex: readonly(currentIndex),
+    chosenAnswer: readonly(chosenAnswer),
     canAnswer: readonly(canAnswer),
-    snippet,
-    bookmark,
     start,
     startRandom,
     startWith,

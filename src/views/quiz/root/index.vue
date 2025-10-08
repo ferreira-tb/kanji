@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Set from './Set.vue';
 import { go } from '@/router';
+import Chunks from './Chunks.vue';
 import { useTemplateRef } from 'vue';
 import Question from './Question.vue';
 import { toPixel } from '@tb-dev/utils';
@@ -10,7 +10,7 @@ import { Button, Loading, SidebarTrigger } from '@tb-dev/vue-components';
 
 const {
   set,
-  current,
+  currentQuestion,
   active,
   isLoading,
   isLoadingSet,
@@ -66,8 +66,8 @@ const contentHeight = useHeightDiff(topbar);
       <div v-if="isLoadingSet" class="size-full">
         <Loading />
       </div>
-      <Set v-else-if="set && !active" :disabled="isLoading" />
-      <Question v-else-if="current" :disabled="isLoading" />
+      <Chunks v-else-if="set && !active" :disabled="isLoading" />
+      <Question v-else-if="currentQuestion" :disabled="isLoading" />
     </div>
   </div>
 </template>
