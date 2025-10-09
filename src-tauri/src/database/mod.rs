@@ -107,6 +107,13 @@ impl DatabaseHandle {
       .map_err(Into::into)
   }
 
+  pub fn remove_source(&self, source_id: SourceId) -> Result<usize> {
+    use schema::source::dsl::*;
+    diesel::delete(source.find(source_id))
+      .execute(&mut *self.conn())
+      .map_err(Into::into)
+  }
+
   pub fn rename_source(&self, source_id: SourceId, new_name: &str) -> Result<()> {
     use schema::source::dsl::*;
     diesel::update(source.find(source_id))

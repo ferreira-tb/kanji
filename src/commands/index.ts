@@ -1,4 +1,4 @@
-import * as api from '@/lib/api';
+import * as api from '@/api';
 import { clamp } from 'es-toolkit';
 import { invoke, isTauri } from '@tauri-apps/api/core';
 
@@ -140,6 +140,15 @@ export async function removeBookmark(id: BookmarkId) {
   }
   else {
     return api.removeBookmark(id);
+  }
+}
+
+export async function removeSource(id: SourceId) {
+  if (isTauri()) {
+    return invoke<number>('remove_source', { id });
+  }
+  else {
+    return api.removeSource(id);
   }
 }
 

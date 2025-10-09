@@ -42,6 +42,12 @@ pub struct RemoveBookmarkRequest {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct RemoveSourceRequest {
+  pub id: SourceId,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SearchSnippetsRequest {
   pub kanji: KanjiChar,
   pub source: Option<SourceId>,

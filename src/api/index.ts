@@ -1,4 +1,4 @@
-import { get, post } from '@/lib/api/http';
+import { get, post } from '@/api/http';
 
 export async function createBookmark(snippet: Snippet) {
   const response = await post('create-bookmark', { snippet });
@@ -63,6 +63,12 @@ export async function renameSource(id: SourceId, name: string) {
 
 export async function removeBookmark(id: BookmarkId) {
   const response = await post('remove-bookmark', { id });
+  const data: number = await response.json();
+  return data;
+}
+
+export async function removeSource(id: SourceId) {
+  const response = await post('remove-source', { id });
   const data: number = await response.json();
   return data;
 }

@@ -50,6 +50,7 @@ fn main() {
       command::pick_folders,
       command::rename_source,
       command::remove_bookmark,
+      command::remove_source,
       command::search_kanji,
       command::search_snippets,
       command::set_source_weight,

@@ -192,11 +192,20 @@ pub async fn rename_source(app: AppHandle, id: SourceId, name: String) -> CResul
     .rename_source(id, &name)
     .map_err(Into::into)
 }
+
 #[tauri::command]
 pub async fn remove_bookmark(app: AppHandle, id: BookmarkId) -> CResult<usize> {
   app
     .database()
     .remove_bookmark(id)
+    .map_err(Into::into)
+}
+
+#[tauri::command]
+pub async fn remove_source(app: AppHandle, id: SourceId) -> CResult<usize> {
+  app
+    .database()
+    .remove_source(id)
     .map_err(Into::into)
 }
 

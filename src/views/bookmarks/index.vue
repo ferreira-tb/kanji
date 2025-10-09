@@ -10,7 +10,13 @@ import { Button, Card, CardContent, Loading, SidebarTrigger } from '@tb-dev/vue-
 
 const settings = useSettingsStore();
 
-const { bookmarks, loadBookmarks, loading } = useBookmarks();
+const {
+  bookmarks,
+  loading,
+  loadBookmarks,
+  removeBookmark,
+} = useBookmarks();
+
 const { findSource } = useSources();
 
 const topbar = useTemplateRef('topbarEl');
@@ -45,12 +51,20 @@ function onContentClick(bookmark: Bookmark) {
       <template v-else>
         <Card v-for="bookmark of bookmarks" :key="bookmark.id" class="p-0">
           <CardContent class="p-2">
-            <div class="flex flex-col gap-2">
-              <div class="text-muted-foreground text-xs">
-                <span>{{ findSource(bookmark.sourceId)?.name ?? '' }}</span>
+            <div class="flex justify-between items-center gap-4">
+              <div class="flex flex-col gap-2">
+                <div class="text-muted-foreground text-xs">
+                  <span>{{ findSource(bookmark.sourceId)?.name ?? '' }}</span>
+                </div>
+                <div class="cursor-pointer text-lg" @click="() => onContentClick(bookmark)">
+                  <span>{{ bookmark.snippet }}</span>
+                </div>
               </div>
-              <div class="cursor-pointer text-lg" @click="() => onContentClick(bookmark)">
-                <span>{{ bookmark.snippet }}</span>
+
+              <div class="flex justify-center items-center gap-2">
+                <Button variant="destructive" size="sm" @click="() => removeBookmark(bookmark.id)">
+                  <span>Remove</span>
+                </Button>
               </div>
             </div>
           </CardContent>

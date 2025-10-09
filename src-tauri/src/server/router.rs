@@ -26,6 +26,7 @@ pub(super) fn create() -> Router<AppHandle> {
     .route("/get-sources", get(get_sources))
     .route("/rename-source", post(rename_source))
     .route("/remove-bookmark", post(remove_bookmark))
+    .route("/remove-source", post(remove_source))
     .route("/search-kanji", get(search_kanji))
     .route("/search-snippets", post(search_snippets))
     .route("/set-source-weight", post(set_source_weight))
@@ -120,6 +121,16 @@ async fn remove_bookmark(
   Json(req): Json<RemoveBookmarkRequest>,
 ) -> Response {
   command::remove_bookmark(app, req.id)
+    .map_ok(|rows| res!(OK, Json(rows)))
+    .unwrap_or_else(Response::from)
+    .await
+}
+
+async fn remove_source(
+  State(app): State<AppHandle>,
+  Json(req): Json<RemoveSourceRequest>,
+) -> Response {
+  command::remove_source(app, req.id)
     .map_ok(|rows| res!(OK, Json(rows)))
     .unwrap_or_else(Response::from)
     .await

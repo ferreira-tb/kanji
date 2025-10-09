@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import * as commands from '@/commands';
-import { StarIcon } from 'lucide-vue-next';
 import { useQuiz } from '@/composables/quiz';
+import Bookmark from '@/components/Bookmark.vue';
 import { Badge, Button, Card, CardContent, cn } from '@tb-dev/vue-components';
 
 const props = defineProps<{
@@ -50,7 +50,7 @@ function getCardClass(option: KanjiChar) {
 function getQuestionClass() {
   let classList = 'md:text-2xl select-text';
   if (question.value) {
-    if (question.value.length > 300) {
+    if (question.value.length > 200) {
       classList += ' text-base';
     }
     else if (question.value.length > 100) {
@@ -93,12 +93,7 @@ async function bookmark() {
     </Badge>
 
     <div class="absolute top-2 right-2">
-      <Button variant="ghost" :disabled @click="bookmark">
-        <StarIcon
-          :fill="isBookmarked ? 'currentColor' : 'none'"
-          class="size-4 lg:size-6 md:size-8"
-        />
-      </Button>
+      <Bookmark :is-bookmarked :disabled @click="bookmark" />
     </div>
 
     <div

@@ -17,6 +17,7 @@ export function useSources() {
       sources: value.sources,
       loading: value.loading,
       loadSources: value.loadSources,
+      removeSource: value.removeSource,
       findSource: value.findSource,
     };
   });
@@ -47,6 +48,24 @@ export function create() {
     }
   }
 
+  async function removeSource(id: SourceId) {
+    try {
+      await mutex.acquire();
+      const rows = await commands.removeSource(id);
+      if (rows > 0) {
+        sources.value = sources.value.filter((source) => {
+          return source.id !== id;
+        });
+      }
+    }
+    catch (err) {
+      handleError(err);
+    }
+    finally {
+      mutex.release();
+    }
+  }
+
   function findSource(id: SourceId): Option<Source> {
     return sources.value.find((source) => source.id === id);
   }
@@ -57,6 +76,7 @@ export function create() {
     sources: sources as Readonly<typeof sources>,
     loading: locked,
     loadSources,
+    removeSource,
     findSource,
   };
 }

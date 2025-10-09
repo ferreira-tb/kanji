@@ -24,8 +24,14 @@ import {
   TableRow,
 } from '@tb-dev/vue-components';
 
-const { load: loadKanjis, loading: isLoadingKanjis } = useKanjis();
-const { sources, loadSources, loading: isLoadingSources } = useSources();
+const { loading: isLoadingKanjis, load: loadKanjis } = useKanjis();
+
+const {
+  sources,
+  loading: isLoadingSources,
+  removeSource,
+  loadSources,
+} = useSources();
 
 const loading = computed(() => {
   return isLoadingKanjis.value || isLoadingSources.value;
@@ -90,8 +96,9 @@ function toggle(source: Source) {
           <TableRow>
             <TableHead></TableHead>
             <TableHead>Path</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Weight</TableHead>
+            <TableHead class="max-md:hidden">Name</TableHead>
+            <TableHead class="max-md:hidden">Weight</TableHead>
+            <TableHead class="max-lg:hidden"></TableHead>
           </TableRow>
         </TableHeader>
 
@@ -106,10 +113,10 @@ function toggle(source: Source) {
             </TableCell>
 
             <TableCell>
-              <span>{{ source.path }}</span>
+              <span class="break-all wrap-anywhere">{{ source.path }}</span>
             </TableCell>
 
-            <TableCell>
+            <TableCell class="max-md:hidden">
               <div class="flex justify-start items-center gap-2">
                 <Input
                   v-model="source.name"
@@ -120,7 +127,7 @@ function toggle(source: Source) {
               </div>
             </TableCell>
 
-            <TableCell>
+            <TableCell class="max-md:hidden">
               <NumberField
                 v-model="source.weight"
                 :min="1"
@@ -136,6 +143,14 @@ function toggle(source: Source) {
                   <NumberFieldIncrement />
                 </NumberFieldContent>
               </NumberField>
+            </TableCell>
+
+            <TableCell class="max-lg:hidden">
+              <div class="flex justify-start items-center gap-2">
+                <Button variant="destructive" size="sm" @click="() => removeSource(source.id)">
+                  <span>Remove</span>
+                </Button>
+              </div>
             </TableCell>
           </TableRow>
         </TableBody>

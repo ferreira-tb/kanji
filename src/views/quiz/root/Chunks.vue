@@ -48,7 +48,7 @@ const chunks = computed(() => set.value?.chunks ?? []);
             class="px-4"
             @click="() => start(chunk.kanjis)"
           >
-            <span>Study</span>
+            <span>Start</span>
           </Button>
         </div>
       </div>

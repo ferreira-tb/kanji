@@ -32,11 +32,30 @@ export function useBookmarks() {
     }
   }
 
+  async function removeBookmark(id: BookmarkId) {
+    try {
+      await mutex.acquire();
+      const rows = await commands.removeBookmark(id);
+      if (rows > 0) {
+        bookmarks.value = bookmarks.value.filter((bookmark) => {
+          return bookmark.id !== id;
+        });
+      }
+    }
+    catch (err) {
+      handleError(err);
+    }
+    finally {
+      mutex.release();
+    }
+  }
+
   tryOnMounted(() => void loadBookmarks());
 
   return {
     bookmarks: bookmarks as Readonly<typeof bookmarks>,
     loading: locked,
     loadBookmarks,
+    removeBookmark,
   };
 }
