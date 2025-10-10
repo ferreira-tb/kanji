@@ -84,11 +84,11 @@ impl Quiz {
   }
 
   pub async fn random(app: AppHandle) -> Result<Self> {
-    let settings = Settings::get(&app)?;
+    let chunk_size = Settings::get(&app)?.set_chunk_size;
     let kanjis = app
       .database()
       .get_kanji_chars()?
-      .choose_multiple(&mut rand::rng(), settings.set_chunk_size)
+      .choose_multiple(&mut rand::rng(), chunk_size)
       .copied()
       .collect_vec();
 
