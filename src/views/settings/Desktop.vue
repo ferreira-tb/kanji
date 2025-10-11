@@ -77,9 +77,9 @@ const settings = useSettingsStore();
       <span>Kanji threshold</span>
       <NumberField
         v-model="settings.snippetKanjiThreshold"
-        :min="0.1"
+        :min="0.01"
         :max="1"
-        :step="0.05"
+        :step="0.01"
         class="w-full"
       >
         <NumberFieldContent>
