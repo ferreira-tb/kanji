@@ -114,7 +114,13 @@ export function create() {
       try {
         chosenAnswer.value = option;
         canAnswer.value = false;
-        await commands.createQuizAnswer(currentQuestion.value.answer, option);
+
+        await commands.createQuizAnswer(
+          currentQuestion.value.answer,
+          option,
+          currentQuestion.value.snippet.source.id,
+        );
+
         quiz.value = quiz.value.filter((it) => {
           return it.answer !== currentQuestion.value?.answer;
         });

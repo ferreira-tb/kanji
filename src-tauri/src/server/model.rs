@@ -19,6 +19,7 @@ pub struct CreateQuizRequest {
 pub struct CreateQuizAnswerRequest {
   pub question: KanjiChar,
   pub answer: KanjiChar,
+  pub source: Option<SourceId>,
 }
 
 #[derive(Debug, Deserialize)]

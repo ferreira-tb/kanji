@@ -23,6 +23,7 @@ diesel::table! {
         question -> Text,
         answer -> Text,
         created_at -> Text,
+        source_id -> Nullable<Integer>,
     }
 }
 
@@ -39,5 +40,6 @@ diesel::table! {
 }
 
 diesel::joinable!(bookmark -> source (source_id));
+diesel::joinable!(quiz_answer -> source (source_id));
 
 diesel::allow_tables_to_appear_in_same_query!(bookmark, kanji, quiz_answer, source,);

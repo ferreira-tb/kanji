@@ -47,10 +47,12 @@ pub async fn create_quiz_answer(
   app: AppHandle,
   question: KanjiChar,
   answer: KanjiChar,
+  source: Option<SourceId>,
 ) -> CResult<QuizAnswerId> {
   NewQuizAnswer::builder()
     .question(question)
     .answer(answer)
+    .maybe_source_id(source)
     .build()
     .create(&app)
     .map_err(Into::into)

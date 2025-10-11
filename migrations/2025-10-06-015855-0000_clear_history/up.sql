@@ -1,1 +1,0 @@
-DELETE FROM quiz_answer;

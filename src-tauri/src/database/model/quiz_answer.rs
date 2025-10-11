@@ -1,4 +1,4 @@
-use crate::database::sql_types::{KanjiChar, QuizAnswerId, Zoned};
+use crate::database::sql_types::{KanjiChar, QuizAnswerId, SourceId, Zoned};
 use crate::manager::ManagerExt;
 use anyhow::Result;
 use bon::Builder;
@@ -15,6 +15,7 @@ pub struct QuizAnswer {
   pub question: KanjiChar,
   pub answer: KanjiChar,
   pub created_at: Zoned,
+  pub source_id: Option<SourceId>,
 }
 
 #[derive(Insertable, Builder, Clone, Debug)]
@@ -31,6 +32,9 @@ pub struct NewQuizAnswer {
 
   #[builder(skip = Zoned::now())]
   created_at: Zoned,
+
+  #[builder(into)]
+  source_id: Option<SourceId>,
 }
 
 impl NewQuizAnswer {

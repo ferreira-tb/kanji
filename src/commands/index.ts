@@ -20,12 +20,12 @@ export async function createQuiz(kanjis: readonly KanjiChar[]) {
   }
 }
 
-export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar) {
+export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, source: SourceId) {
   if (isTauri()) {
-    return invoke<QuizAnswerId>('create_quiz_answer', { question, answer });
+    return invoke<QuizAnswerId>('create_quiz_answer', { question, answer, source });
   }
   else {
-    return api.createQuizAnswer(question, answer);
+    return api.createQuizAnswer(question, answer, source);
   }
 }
 

@@ -12,6 +12,7 @@ interface QuizAnswer {
   readonly question: KanjiChar;
   readonly answer: KanjiChar;
   readonly createdAt: string;
+  readonly sourceId: Option<SourceId>;
 }
 
 type QuizAnswerId = string;

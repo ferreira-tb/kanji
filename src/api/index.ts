@@ -12,8 +12,8 @@ export async function createQuiz(kanjis: readonly KanjiChar[]) {
   return data;
 }
 
-export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar) {
-  const response = await post('create-quiz-answer', { question, answer });
+export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, source: SourceId) {
+  const response = await post('create-quiz-answer', { question, answer, source });
   const data: QuizAnswerId = await response.json();
   return data;
 }
