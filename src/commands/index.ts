@@ -1,9 +1,9 @@
 import * as api from '@/api';
 import { clamp } from 'es-toolkit';
-import { invoke, isTauri } from '@tauri-apps/api/core';
+import { invoke } from '@tauri-apps/api/core';
 
 export async function createBookmark(snippet: Snippet) {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<BookmarkId>('create_bookmark', { snippet });
   }
   else {
@@ -12,7 +12,7 @@ export async function createBookmark(snippet: Snippet) {
 }
 
 export async function createQuiz(kanjis: readonly KanjiChar[]) {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<Quiz>('create_quiz', { kanjis });
   }
   else {
@@ -21,7 +21,7 @@ export async function createQuiz(kanjis: readonly KanjiChar[]) {
 }
 
 export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, source: SourceId) {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<QuizAnswerId>('create_quiz_answer', { question, answer, source });
   }
   else {
@@ -30,7 +30,7 @@ export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, s
 }
 
 export async function createRandomQuiz() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<Quiz>('create_random_quiz');
   }
   else {
@@ -39,7 +39,7 @@ export async function createRandomQuiz() {
 }
 
 export async function createSource(source?: Option<string | string[]>) {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     source ??= await pickFolders();
     if (Array.isArray(source)) {
       await Promise.all(source.map(createSource));
@@ -54,19 +54,19 @@ export async function createSource(source?: Option<string | string[]>) {
 }
 
 export async function createTrayIcon() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     await invoke('create_tray_icon');
   }
 }
 
 export async function exportSet() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     await invoke('export_set');
   }
 }
 
 export async function getBookmarks() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<readonly Bookmark[]>('get_bookmarks');
   }
   else {
@@ -75,7 +75,7 @@ export async function getBookmarks() {
 }
 
 export async function getQuizAnswers() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<readonly QuizAnswer[]>('get_quiz_answers');
   }
   else {
@@ -84,7 +84,7 @@ export async function getQuizAnswers() {
 }
 
 export async function getServerAddr() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<string>('get_server_addr');
   }
   else {
@@ -93,7 +93,7 @@ export async function getServerAddr() {
 }
 
 export async function getSet() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<KanjiSet>('get_set');
   }
   else {
@@ -102,7 +102,7 @@ export async function getSet() {
 }
 
 export async function getSources() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<readonly Source[]>('get_sources');
   }
   else {
@@ -111,13 +111,13 @@ export async function getSources() {
 }
 
 export async function open(path: string, line: number) {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     await invoke('open', { path, line });
   }
 }
 
 export async function pickFolders() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<string[]>('pick_folders');
   }
   else {
@@ -126,7 +126,7 @@ export async function pickFolders() {
 }
 
 export async function renameSource(id: SourceId, name: string) {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     await invoke('rename_source', { id, name });
   }
   else {
@@ -135,7 +135,7 @@ export async function renameSource(id: SourceId, name: string) {
 }
 
 export async function removeBookmark(id: BookmarkId) {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<number>('remove_bookmark', { id });
   }
   else {
@@ -144,7 +144,7 @@ export async function removeBookmark(id: BookmarkId) {
 }
 
 export async function removeSource(id: SourceId) {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<number>('remove_source', { id });
   }
   else {
@@ -153,7 +153,7 @@ export async function removeSource(id: SourceId) {
 }
 
 export async function searchKanji() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<KanjiStats[]>('search_kanji');
   }
   else {
@@ -163,7 +163,7 @@ export async function searchKanji() {
 
 export async function searchSnippets(kanji: KanjiChar, source?: Option<SourceId>) {
   source ??= null;
-  if (isTauri()) {
+  if (__DESKTOP__) {
     return invoke<Snippet[]>('search_snippets', { kanji, source });
   }
   else {
@@ -173,7 +173,7 @@ export async function searchSnippets(kanji: KanjiChar, source?: Option<SourceId>
 
 export async function setSourceWeight(id: SourceId, weight: SourceWeight) {
   weight = clamp(Math.trunc(weight), 1, 10);
-  if (isTauri()) {
+  if (__DESKTOP__) {
     await invoke('set_source_weight', { id, weight });
   }
   else {
@@ -182,13 +182,13 @@ export async function setSourceWeight(id: SourceId, weight: SourceWeight) {
 }
 
 export async function showWindow() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     await invoke('show_window');
   }
 }
 
 export async function toggleSource(id: SourceId, enabled: boolean) {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     await invoke('toggle_source', { id, enabled });
   }
   else {

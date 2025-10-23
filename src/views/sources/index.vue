@@ -3,7 +3,6 @@ import * as commands from '@/commands';
 import { toPixel } from '@tb-dev/utils';
 import { useHeightDiff } from '@tb-dev/vue';
 import { computed, useTemplateRef } from 'vue';
-import { isTauri } from '@tauri-apps/api/core';
 import { useKanjis } from '@/composables/kanji';
 import { useSources } from '@/composables/sources';
 import {
@@ -37,6 +36,7 @@ const loading = computed(() => {
   return isLoadingKanjis.value || isLoadingSources.value;
 });
 
+const desktop = globalThis.__DESKTOP__;
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
@@ -68,7 +68,7 @@ function toggle(source: Source) {
       <SidebarTrigger />
       <div class="flex items-center justify-center gap-2">
         <Button
-          v-if="isTauri()"
+          v-if="desktop"
           size="sm"
           :disabled="loading"
           @click="create"

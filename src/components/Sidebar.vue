@@ -136,7 +136,7 @@ function setCurrentSource(source: KanjiStatsSource) {
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent side="top" class="w-[var(--reka-dropdown-menu-trigger-width)]">
+        <DropdownMenuContent side="top" class="w-(--reka-dropdown-menu-trigger-width)">
           <DropdownMenuItem>
             <RouterLink to="/" class="w-full">Home</RouterLink>
           </DropdownMenuItem>

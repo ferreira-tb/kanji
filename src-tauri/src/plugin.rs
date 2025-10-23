@@ -1,8 +1,9 @@
-use crate::window::WindowExt;
-use anyhow::Result;
 use tauri::Wry;
 use tauri::plugin::TauriPlugin;
 use tauri_plugin_pinia::PrettyTomlMarshaler;
+
+#[cfg(desktop)]
+use {crate::window::desktop::WindowExt, anyhow::Result};
 
 pub fn pinia() -> TauriPlugin<Wry> {
   tauri_plugin_pinia::Builder::new()
@@ -10,6 +11,7 @@ pub fn pinia() -> TauriPlugin<Wry> {
     .build()
 }
 
+#[cfg(desktop)]
 pub fn prevent_default() -> TauriPlugin<Wry> {
   use tauri_plugin_prevent_default::{Builder, Flags, PlatformOptions};
   Builder::new()
@@ -21,6 +23,7 @@ pub fn prevent_default() -> TauriPlugin<Wry> {
     .build()
 }
 
+#[cfg(desktop)]
 pub fn single_instance() -> TauriPlugin<Wry> {
   tauri_plugin_single_instance::init(|app, _, _| {
     let window = app.main_window();
@@ -32,6 +35,7 @@ pub fn single_instance() -> TauriPlugin<Wry> {
   })
 }
 
+#[cfg(desktop)]
 pub fn window_state() -> TauriPlugin<Wry> {
   use tauri_plugin_window_state::StateFlags as Flags;
 

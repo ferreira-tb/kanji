@@ -2,7 +2,6 @@ import { storeToRefs } from 'pinia';
 import * as commands from '@/commands';
 import { watchImmediate } from '@vueuse/core';
 import { useKanjiStore } from '@/stores/kanji';
-import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
 import { tryInjectOrElse, useMutex } from '@tb-dev/vue';
 import { computed, effectScope, type InjectionKey, shallowRef } from 'vue';
@@ -73,7 +72,7 @@ function create() {
 
   async function load() {
     await lock(async () => {
-      if (isTauri() || baseUrl.value) {
+      if (__DESKTOP__ || baseUrl.value) {
         raw.value = await commands.searchKanji();
       }
       else {

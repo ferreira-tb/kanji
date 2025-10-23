@@ -2286,7 +2286,7 @@ dependencies = [
 
 [[package]]
 name = "kanji"
-version = "4.17.2"
+version = "5.0.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -4336,9 +4336,9 @@ dependencies = [
 
 [[package]]
 name = "sqlite-wasm-rs"
-version = "0.4.5"
+version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9aead1c279716985b981b7940ef9b652d3f93d70a7296853c633b7ce8fa8088a"
+checksum = "54e4348c16a3d2e2a45437eff67efc5462b60443de76f61b5d0ed9111c626d9d"
 dependencies = [
  "js-sys",
  "once_cell",

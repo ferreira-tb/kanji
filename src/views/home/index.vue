@@ -6,7 +6,6 @@ import { toPixel } from '@tb-dev/utils';
 import { handleError } from '@/lib/error';
 import Search from '@/components/Search.vue';
 import { useKanjiStore } from '@/stores/kanji';
-import { isTauri } from '@tauri-apps/api/core';
 import { useKanjis } from '@/composables/kanji';
 import { useSettingsStore } from '@/stores/settings';
 import { useHeight, useHeightDiff } from '@tb-dev/vue';
@@ -60,6 +59,7 @@ const currentChunk = computed(() => {
   }
 });
 
+const desktop = globalThis.__DESKTOP__;
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
@@ -91,7 +91,7 @@ function onCardClick(kanji: DeepReadonly<KanjiStats>) {
     sidebar.setOpenMobile(true);
   }
 
-  if (settings.clipboard && isTauri()) {
+  if (desktop && settings.clipboard) {
     writeText(kanji.character).err();
   }
 }
@@ -108,7 +108,7 @@ function onCardClick(kanji: DeepReadonly<KanjiStats>) {
       <div class="flex items-center justify-center gap-4">
         <div class="flex items-center justify-center gap-2">
           <Button
-            v-if="isTauri()"
+            v-if="desktop"
             size="sm"
             :disabled="loading"
             @click="addSource"
@@ -126,7 +126,7 @@ function onCardClick(kanji: DeepReadonly<KanjiStats>) {
           </Button>
 
           <Button
-            v-if="isTauri()"
+            v-if="desktop"
             size="sm"
             variant="secondary"
             :disabled="loading"

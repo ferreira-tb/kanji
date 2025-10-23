@@ -3,7 +3,6 @@ import { storeToRefs } from 'pinia';
 import { asyncRef } from '@tb-dev/vue';
 import { searchSnippets } from '@/commands';
 import { useKanjiStore } from '@/stores/kanji';
-import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
 
 export function useSnippets() {
@@ -15,7 +14,7 @@ export function useSnippets() {
 
   const snippets = asyncRef([], async () => {
     let result: Snippet[] = [];
-    if (currentKanji.value && (isTauri() || baseUrl.value)) {
+    if (currentKanji.value && (__DESKTOP__ || baseUrl.value)) {
       const kanji = currentKanji.value.character;
       result = await searchSnippets(kanji, currentSource.value?.id);
     }
