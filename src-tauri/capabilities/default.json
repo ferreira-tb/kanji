@@ -11,6 +11,11 @@
     "dialog:allow-message",
     "pinia:default",
     "process:allow-exit",
-    "process:allow-restart"
+    "process:allow-restart",
+
+    {
+      "identifier": "http:default",
+      "allow": [{ "url": "http://*:*" }, { "url": "https://*:*" }]
+    }
   ]
 }

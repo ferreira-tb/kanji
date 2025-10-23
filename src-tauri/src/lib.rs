@@ -67,6 +67,7 @@ pub fn run() {
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_persisted_scope::init())
     .plugin(tauri_plugin_process::init())
+    .plugin(tauri_plugin_http::init())
     .setup(|app| setup(app.app_handle()))
     .run(tauri::generate_context!())
     .expect("failed to start tauri app");

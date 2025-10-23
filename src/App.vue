@@ -39,7 +39,7 @@ onMounted(async () => {
   <SidebarProvider v-model:open="isSidebarOpen" style="--sidebar-width: 20rem">
     <Sidebar />
     <main class="h-screen w-full select-none">
-      <div class="size-full overflow-hidden p-0">
+      <div class="size-full overflow-hidden p-0 pb-safe">
         <RouterView #default="{ Component }">
           <template v-if="Component">
             <KeepAlive>

@@ -20,6 +20,9 @@ importers:
       '@tauri-apps/plugin-fs':
         specifier: ^2.4.2
         version: 2.4.2
+      '@tauri-apps/plugin-http':
+        specifier: ^2.5.2
+        version: 2.5.2
       '@tauri-apps/plugin-process':
         specifier: ^2.3.0
         version: 2.3.0
@@ -1535,6 +1538,9 @@ packages:
 
   '@tauri-apps/plugin-fs@2.4.2':
     resolution: {integrity: sha512-YGhmYuTgXGsi6AjoV+5mh2NvicgWBfVJHHheuck6oHD+HC9bVWPaHvCP0/Aw4pHDejwrvT8hE3+zZAaWf+hrig==}
+
+  '@tauri-apps/plugin-http@2.5.2':
+    resolution: {integrity: sha512-x1mQKHSLDk4mS2S938OTeyk8L7QyLpCrKZCZcjkljGsvTvRMojCvI9SeJ1kaxc7t8xSilkC7WdId8xER9TIGLg==}
 
   '@tauri-apps/plugin-process@2.3.0':
     resolution: {integrity: sha512-0DNj6u+9csODiV4seSxxRbnLpeGYdojlcctCuLOCgpH9X3+ckVZIEj6H7tRQ7zqWr7kSTEWnrxtAdBb0FbtrmQ==}
@@ -6219,6 +6225,10 @@ snapshots:
     dependencies:
       '@tauri-apps/api': 2.9.0
 
+  '@tauri-apps/plugin-http@2.5.2':
+    dependencies:
+      '@tauri-apps/api': 2.9.0
+
   '@tauri-apps/plugin-process@2.3.0':
     dependencies:
       '@tauri-apps/api': 2.9.0
@@ -7360,7 +7370,7 @@ snapshots:
 
   detective-typescript@14.0.0(typescript@5.9.3):
     dependencies:
-      '@typescript-eslint/typescript-estree': 8.45.0(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.46.2(typescript@5.9.3)
       ast-module-types: 6.0.1
       node-source-walk: 7.0.1
       typescript: 5.9.3

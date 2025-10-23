@@ -1,5 +1,6 @@
-import '@/assets/base.css';
-import '@/assets/main.css';
+import '@/assets/style/base.css';
+import '@/assets/style/vars.css';
+import '@/assets/style/main.css';
 import '@tb-dev/vue-components/style';
 import '@/lib/prototype';
 import App from '@/App.vue';

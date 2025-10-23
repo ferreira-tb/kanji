@@ -1,4 +1,5 @@
 import { panic } from '@tb-dev/utils';
+import { fetch } from '@tauri-apps/plugin-http';
 import { BASE_URL_KEY } from '@/stores/settings';
 
 function url(endpoint: string) {
