@@ -31,7 +31,7 @@ const contentHeight = useHeightDiff(topbar);
     </div>
 
     <div
-      class="flex flex-col gap-6 md:gap-4 overflow-x-hidden overflow-y-auto px-4 md:px-6 pb-12"
+      class="flex flex-col gap-6 md:gap-4 overflow-x-hidden overflow-y-auto px-4 md:px-6 pb-safe-12"
       :style="{ height: toPixel(contentHeight) }"
     >
       <Desktop v-if="desktop" />

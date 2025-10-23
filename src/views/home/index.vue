@@ -138,7 +138,7 @@ function onCardClick(kanji: DeepReadonly<KanjiStats>) {
       </div>
     </div>
 
-    <div id="kanji-grid-container" class="top-14!" :style="{ height: toPixel(contentHeight) }">
+    <div id="kanji-grid-container" class="top-14! pb-safe" :style="{ height: toPixel(contentHeight) }">
       <div
         v-if="currentChunk.length > 0"
         id="kanji-grid"

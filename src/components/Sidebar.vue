@@ -130,10 +130,12 @@ function setCurrentSource(source: KanjiStatsSource) {
     <SidebarFooter>
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
-          <Button variant="outline">
-            <span>{{ capitalCase(String(route.name)) }}</span>
-            <ChevronUpIcon class="ml-auto" />
-          </Button>
+          <div class="pb-safe">
+            <Button variant="outline" class="w-full">
+              <span>{{ capitalCase(String(route.name)) }}</span>
+              <ChevronUpIcon class="ml-auto" />
+            </Button>
+          </div>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent side="top" class="w-(--reka-dropdown-menu-trigger-width)">

@@ -36,10 +36,6 @@ label:has(input[type="radio"]) {
   }
 }
 
-[data-slot="sidebar-footer"] > div {
-  @apply pb-safe-4;
-}
-
 [data-scrollbarimpl] {
   @apply border-0!;
 }

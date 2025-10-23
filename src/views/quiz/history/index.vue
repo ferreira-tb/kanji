@@ -47,7 +47,7 @@ onActivated(load);
     </div>
 
     <div
-      class="overflow-x-hidden overflow-y-auto pb-12 px-1 md:px-6"
+      class="overflow-x-hidden overflow-y-auto pb-safe-12 px-1 md:px-6"
       :style="{ height: toPixel(contentHeight) }"
     >
       <Table v-if="answers.length > 0">
