@@ -33,7 +33,7 @@ const { kanjis, loading, load } = useKanjis();
 const { isMobile, ...sidebar } = useSidebar();
 
 const currentPage = ref(1);
-const itemsPerPage = ref(200);
+const itemsPerPage = ref(50);
 const isPaginationEnabled = computed(() => {
   return isMobile.value && kanjis.value.length > 1000;
 });
