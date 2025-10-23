@@ -157,7 +157,7 @@ pub fn blocking_search_with_options(
         let Ok(text) = text else { continue };
 
         let text = text.trim();
-        if !should_skip(&text, min_len, threshold) {
+        if !should_skip(text, min_len, threshold) {
           let bytes = text.as_bytes();
           if finder.find(bytes).is_some() {
             let name = Arc::clone(&name);
