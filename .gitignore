@@ -5,7 +5,7 @@ npm-debug.log*
 pnpm-debug.log*
 
 # Editor
-.idea/*
+**/.idea
 .vscode/*
 !.vscode/extensions.json
 !.vscode/launch.json
@@ -24,13 +24,17 @@ target
 rustc-ice-*.txt
 
 # Tauri
-**/gen
+**/gen/schemas
+
+# Vite
+**/*vite*timestamp*
 
 # Others
-.temp
-**/*vite*timestamp*
-.eslintcache
-
+**/.DS_Store
+**/.Thumbs.db
+**/.eslintcache
+**/.temp
 **/*.db
-.env
+**/*.jks
+**/.env
 workspace.md

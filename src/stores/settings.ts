@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { ref, watchEffect } from 'vue';
-import { isTauri } from '@tauri-apps/api/core';
 
 export const BASE_URL_KEY = 'kanji:base-url';
 
@@ -18,7 +17,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const setFileName = ref('Kanji Set.txt');
   const setChunkSize = ref(25);
 
-  if (!isTauri()) {
+  if (!__DESKTOP__) {
     watchEffect(() => {
       localStorage.setItem(BASE_URL_KEY, baseUrl.value ?? '');
     });

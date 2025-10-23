@@ -2,7 +2,6 @@ import { storeToRefs } from 'pinia';
 import * as commands from '@/commands';
 import { handleError } from '@/lib/error';
 import { tryOnMounted } from '@vueuse/core';
-import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
 import { tryInjectOrElse, useMutex } from '@tb-dev/vue';
 import { effectScope, type InjectionKey, ref } from 'vue';
@@ -33,7 +32,7 @@ export function create() {
   async function loadSources() {
     try {
       await mutex.acquire();
-      if (isTauri() || baseUrl.value) {
+      if (__DESKTOP__ || baseUrl.value) {
         sources.value = await commands.getSources();
       }
       else {

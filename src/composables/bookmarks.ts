@@ -4,7 +4,6 @@ import { useMutex } from '@tb-dev/vue';
 import * as commands from '@/commands';
 import { handleError } from '@/lib/error';
 import { tryOnMounted } from '@vueuse/core';
-import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
 
 export function useBookmarks() {
@@ -17,7 +16,7 @@ export function useBookmarks() {
   async function loadBookmarks() {
     try {
       await mutex.acquire();
-      if (isTauri() || baseUrl.value) {
+      if (__DESKTOP__ || baseUrl.value) {
         bookmarks.value = await commands.getBookmarks();
       }
       else {

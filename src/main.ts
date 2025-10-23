@@ -7,7 +7,6 @@ import { createApp } from 'vue';
 import { router } from '@/router';
 import { createPinia } from 'pinia';
 import { handleError } from '@/lib/error';
-import { isTauri } from '@tauri-apps/api/core';
 import { checkForUpdates } from '@/lib/updater';
 import { TauriPluginPinia } from '@tauri-store/pinia';
 import { setCurrentApp, setErrorHandler } from '@tb-dev/vue';
@@ -15,7 +14,7 @@ import { setCurrentApp, setErrorHandler } from '@tb-dev/vue';
 const app = createApp(App);
 const pinia = createPinia();
 
-if (isTauri()) {
+if (__DESKTOP__) {
   pinia.use(
     TauriPluginPinia({
       autoStart: true,
@@ -33,7 +32,7 @@ app.use(router);
 app.use(pinia);
 
 async function init() {
-  if (isTauri()) {
+  if (__DESKTOP__) {
     try {
       await checkForUpdates();
     }

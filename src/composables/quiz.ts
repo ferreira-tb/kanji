@@ -1,7 +1,6 @@
 import { storeToRefs } from 'pinia';
 import * as commands from '@/commands';
 import { handleError } from '@/lib/error';
-import { isTauri } from '@tauri-apps/api/core';
 import { useSettingsStore } from '@/stores/settings';
 import { asyncRef, tryInjectOrElse, useMutex } from '@tb-dev/vue';
 import { computed, effectScope, type InjectionKey, readonly, ref, shallowRef, watch } from 'vue';
@@ -72,7 +71,7 @@ export function create() {
     if (!active.value) {
       await mutex.acquire();
       try {
-        if (isTauri() || baseUrl.value) {
+        if (__DESKTOP__ || baseUrl.value) {
           quiz.value = await f();
           quizSize.value = quiz.value.length;
         }

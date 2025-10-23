@@ -1,15 +1,6 @@
 use crate::settings::Settings;
 use anyhow::Result;
-use serde_json::json;
-use tauri::{
-  AppHandle,
-  Manager,
-  WebviewUrl,
-  WebviewWindow,
-  WebviewWindowBuilder,
-  WindowEvent,
-  Wry,
-};
+use tauri::{AppHandle, Manager, WebviewWindow, WebviewWindowBuilder, WindowEvent, Wry};
 
 pub trait WindowExt: Manager<Wry> {
   fn main_window(&self) -> WebviewWindow<Wry> {
@@ -20,10 +11,9 @@ pub trait WindowExt: Manager<Wry> {
 impl<T: Manager<Wry>> WindowExt for T {}
 
 pub fn open(app: &AppHandle) -> Result<()> {
-  let url = WebviewUrl::App("index.html".into());
-  let window = WebviewWindowBuilder::new(app, "main", url)
+  let window = WebviewWindowBuilder::new(app, "main", super::url())
     .title("Kanji")
-    .initialization_script(script())
+    .initialization_script(super::script())
     .inner_size(1200.0, 800.0)
     .resizable(true)
     .maximizable(true)
@@ -48,28 +38,4 @@ fn on_window_event(app: &AppHandle) -> impl Fn(&WindowEvent) + use<> {
       app.main_window().hide().unwrap();
     }
   }
-}
-
-fn script() -> String {
-  let mut script = String::new();
-  macro_rules! define {
-    ($name:literal, $value:expr) => {{
-      let name = $name;
-      let value = json!($value);
-      let snippet = format! {"
-        Object.defineProperty(window, '{name}', {{
-          configurable: false,
-          enumerable: true,
-          writable: false,
-          value: {value},
-        }});
-      "};
-
-      script.push_str(&snippet);
-    }};
-  }
-
-  define!("__DEBUG_ASSERTIONS__", cfg!(debug_assertions));
-
-  script
 }

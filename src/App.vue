@@ -3,7 +3,6 @@ import { go } from '@/router';
 import { onMounted, ref } from 'vue';
 import * as commands from '@/commands';
 import { useColorMode } from '@vueuse/core';
-import { isTauri } from '@tauri-apps/api/core';
 import Sidebar from '@/components/Sidebar.vue';
 import { exit } from '@tauri-apps/plugin-process';
 import { handleError, onKeyDown } from '@tb-dev/vue';
@@ -23,7 +22,7 @@ onKeyDown('F3', () => go('quiz'));
 onKeyDown('F4', () => go('sources'));
 onKeyDown('F6', () => go('bookmarks'));
 onKeyDown('F7', () => go('settings'));
-onKeyDown('Escape', () => exit(0).err(), { enabled: isTauri() });
+onKeyDown('Escape', () => exit(0).err(), { enabled: __DESKTOP__ });
 
 onMounted(async () => {
   try {

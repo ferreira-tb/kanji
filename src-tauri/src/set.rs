@@ -1,14 +1,18 @@
 use crate::database::sql_types::KanjiChar;
-use crate::kanji::{KanjiStats, search as search_kanji};
-use crate::manager::ManagerExt;
 use crate::settings::Settings;
 use anyhow::Result;
-use itertools::Itertools;
 use serde::Serialize;
-use std::path::Path as StdPath;
 use tauri::AppHandle;
-use tokio::fs::File;
-use tokio::io::AsyncWriteExt;
+
+#[cfg(desktop)]
+use {
+  crate::kanji::{KanjiStats, search as search_kanji},
+  crate::manager::ManagerExt,
+  itertools::Itertools,
+  std::path::Path as StdPath,
+  tokio::fs::File,
+  tokio::io::AsyncWriteExt,
+};
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -20,6 +24,7 @@ pub struct KanjiSet {
 }
 
 impl KanjiSet {
+  #[cfg(desktop)]
   pub async fn load(app: AppHandle) -> Result<Self> {
     let settings = Settings::get(&app)?;
     let mut kanjis = search_kanji(app.clone()).await?;
@@ -77,6 +82,7 @@ impl KanjiSet {
     })
   }
 
+  #[cfg(desktop)]
   pub async fn export(self, app: AppHandle, folder: &StdPath) -> Result<()> {
     let settings = Settings::get(&app)?;
     let sets = KanjiSet::load(app).await?;

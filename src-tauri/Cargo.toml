@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "4.17.2"
+version = "5.0.0"
 publish = false
 
 [package.edition]
@@ -8,6 +8,10 @@ workspace = true
 
 [package.rust-version]
 workspace = true
+
+[lib]
+name = "kanji_lib"
+crate-type = ["cdylib", "rlib", "staticlib"]
 
 [lints]
 workspace = true
@@ -26,14 +30,7 @@ tauri-plugin-dialog = "2.4"
 tauri-plugin-fs = "2.4"
 tauri-plugin-persisted-scope = "2.3"
 tauri-plugin-process = "2.3"
-tauri-plugin-single-instance = "2.3"
-tauri-plugin-updater = "2.9"
-tauri-plugin-window-state = "2.4"
 walkdir = "2.5"
-
-[dependencies.axum]
-version = "0.8"
-features = ["macros"]
 
 [dependencies.derive_more]
 version = "2.0"
@@ -72,27 +69,36 @@ features = ["image-png", "protocol-asset", "rustls-tls", "tray-icon"]
 version = "4.1"
 features = ["marshaler-toml"]
 
-[dependencies.tauri-plugin-prevent-default]
-version = "3.0"
-features = ["platform-windows"]
-
 [dependencies.tokio]
 version = "1.48"
 features = ["full"]
-
-[dependencies.tower]
-version = "0.5"
-features = []
-
-[dependencies.tower-http]
-version = "0.6"
-features = ["cors"]
 
 [dependencies.uuid]
 version = "1.18"
 features = ["serde", "v7"]
 
-[dependencies.windows]
+[target.'cfg(not(target_os = "android"))'.dependencies]
+tauri-plugin-single-instance = "2.3"
+tauri-plugin-updater = "2.9"
+tauri-plugin-window-state = "2.4"
+
+[target.'cfg(not(target_os = "android"))'.dependencies.axum]
+version = "0.8"
+features = ["macros"]
+
+[target.'cfg(not(target_os = "android"))'.dependencies.tauri-plugin-prevent-default]
+version = "3.0"
+features = ["platform-windows"]
+
+[target.'cfg(not(target_os = "android"))'.dependencies.tower]
+version = "0.5"
+features = []
+
+[target.'cfg(not(target_os = "android"))'.dependencies.tower-http]
+version = "0.6"
+features = ["cors"]
+
+[target.'cfg(not(target_os = "android"))'.dependencies.windows]
 version = "0.62"
 features = ["Win32_System_Threading"]
 

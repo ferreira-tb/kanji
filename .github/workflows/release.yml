@@ -1,4 +1,4 @@
-name: "publish"
+name: "release"
 
 on:
   workflow_dispatch:
@@ -10,18 +10,16 @@ env:
   KANJI_DATABASE_URL: ${{ secrets.KANJI_DATABASE_URL }}
 
 jobs:
-  publish-tauri:
+  release-desktop:
+    runs-on: windows-latest
     permissions:
       contents: write
-
-    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: pnpm
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@nightly

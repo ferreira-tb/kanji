@@ -1,12 +1,12 @@
 {
   "name": "kanji",
-  "version": "4.17.2",
+  "version": "5.0.0",
   "type": "module",
   "packageManager": "pnpm@10.19.0",
   "license": "GPL-3.0-only",
   "private": true,
   "scripts": {
-    "build": "cargo tauri build",
+    "build": "pwsh scripts/build.ps1",
     "clippy": "cargo clippy --workspace",
     "dev": "cargo tauri dev",
     "eslint": "eslint . --config eslint.config.ts",
