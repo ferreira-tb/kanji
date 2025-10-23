@@ -36,9 +36,22 @@ walkdir = "2.5"
 version = "2.0"
 features = ["deref", "display"]
 
+[dependencies.diesel]
+version = "2.3"
+default-features = false
+features = ["returning_clauses_for_sqlite_3_35", "sqlite"]
+
+[dependencies.diesel_migrations]
+version = "2.3"
+features = ["sqlite"]
+
 [dependencies.jiff]
 version = "0.2"
 features = ["serde"]
+
+[dependencies.libsqlite3-sys]
+version = "0.35"
+features = ["bundled"]
 
 [dependencies.rand]
 version = "0.9"
@@ -72,19 +85,6 @@ tauri-plugin-window-state = "2.4"
 [target.'cfg(not(target_os = "android"))'.dependencies.axum]
 version = "0.8"
 features = ["macros"]
-
-[target.'cfg(not(target_os = "android"))'.dependencies.diesel]
-version = "2.3"
-default-features = false
-features = ["returning_clauses_for_sqlite_3_35", "sqlite"]
-
-[target.'cfg(not(target_os = "android"))'.dependencies.diesel_migrations]
-version = "2.3"
-features = ["sqlite"]
-
-[target.'cfg(not(target_os = "android"))'.dependencies.libsqlite3-sys]
-version = "0.35"
-features = ["bundled"]
 
 [target.'cfg(not(target_os = "android"))'.dependencies.tauri-plugin-prevent-default]
 version = "3.0"

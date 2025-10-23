@@ -1,9 +1,8 @@
 #![feature(file_buffered, try_blocks)]
 
-mod command;
+mod database;
 mod error;
 mod kanji;
-mod manager;
 mod plugin;
 mod quiz;
 mod set;
@@ -12,7 +11,9 @@ mod snippet;
 mod window;
 
 #[cfg(desktop)]
-mod database;
+mod command;
+#[cfg(desktop)]
+mod manager;
 #[cfg(desktop)]
 mod server;
 #[cfg(desktop)]

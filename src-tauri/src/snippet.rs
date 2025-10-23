@@ -1,23 +1,27 @@
-use crate::database::model::bookmark::NewBookmark;
-use crate::database::model::source::Source;
 use crate::database::sql_types::{BookmarkId, KanjiChar, SourceId, SourceWeight};
-use crate::kanji::is_kanji;
-use crate::manager::ManagerExt;
 use crate::settings::Settings;
 use anyhow::Result;
-use itertools::Itertools;
-use memchr::memmem::Finder;
-use rand::seq::{IndexedRandom, SliceRandom};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::collections::HashSet;
-use std::fs::File;
-use std::io::BufRead;
 use std::path::Path as StdPath;
 use std::sync::Arc;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering::Relaxed;
 use tauri::AppHandle;
-use tauri::async_runtime::spawn_blocking;
+
+#[cfg(desktop)]
+use {
+  crate::database::model::bookmark::NewBookmark,
+  crate::database::model::source::Source,
+  crate::kanji::is_kanji,
+  crate::manager::ManagerExt,
+  itertools::Itertools,
+  memchr::memmem::Finder,
+  rand::seq::{IndexedRandom, SliceRandom},
+  std::fs::File,
+  std::io::BufRead,
+  tauri::async_runtime::spawn_blocking,
+};
 
 static ID: AtomicU64 = AtomicU64::new(0);
 
@@ -41,6 +45,7 @@ impl Snippet {
     &self.source
   }
 
+  #[cfg(desktop)]
   pub fn create_bookmark(&self, app: &AppHandle) -> Result<BookmarkId> {
     NewBookmark::from(self).create(app)
   }
@@ -99,6 +104,7 @@ impl SnippetSource {
   }
 }
 
+#[cfg(desktop)]
 pub async fn search(
   app: AppHandle,
   kanji: KanjiChar,
@@ -107,6 +113,7 @@ pub async fn search(
   spawn_blocking(move || blocking_search(&app, kanji, source)).await?
 }
 
+#[cfg(desktop)]
 pub fn blocking_search(
   app: &AppHandle,
   kanji: KanjiChar,
@@ -128,6 +135,7 @@ pub fn blocking_search(
     .call()
 }
 
+#[cfg(desktop)]
 #[bon::builder]
 pub fn blocking_search_with_options(
   #[builder(start_fn)] app: &AppHandle,
@@ -206,6 +214,7 @@ pub fn blocking_search_with_options(
   Ok(snippets)
 }
 
+#[cfg(desktop)]
 fn should_skip(text: &str, min_len: usize, threshold: f64) -> bool {
   if text.is_empty() || text.starts_with('#') || text.starts_with('<') {
     return true;

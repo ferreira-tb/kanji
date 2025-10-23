@@ -1,6 +1,4 @@
-use crate::database::model::kanji::NewKanji;
 use crate::database::sql_types::{KanjiChar, SourceId};
-use crate::manager::ManagerExt;
 use anyhow::Result;
 use itertools::Itertools;
 use serde::Serialize;
@@ -11,6 +9,9 @@ use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering::Relaxed;
 use tauri::AppHandle;
 use tauri::async_runtime::spawn_blocking;
+
+#[cfg(desktop)]
+use {crate::database::model::kanji::NewKanji, crate::manager::ManagerExt};
 
 static IS_FIRST_SEARCH: AtomicBool = AtomicBool::new(true);
 
@@ -85,10 +86,12 @@ impl Level {
   }
 }
 
+#[cfg(desktop)]
 pub async fn search(app: AppHandle) -> Result<Vec<KanjiStats>> {
   spawn_blocking(move || blocking_search(&app)).await?
 }
 
+#[cfg(desktop)]
 fn blocking_search(app: &AppHandle) -> Result<Vec<KanjiStats>> {
   let database = app.database();
   let sources = database.get_enabled_sources()?;

@@ -1,10 +1,12 @@
 use crate::database::sql_types::{KanjiChar, QuizAnswerId, SourceId, Zoned};
-use crate::manager::ManagerExt;
 use anyhow::Result;
 use bon::Builder;
 use diesel::prelude::*;
 use serde::Serialize;
 use tauri::AppHandle;
+
+#[cfg(desktop)]
+use crate::manager::ManagerExt;
 
 #[derive(Identifiable, Queryable, Selectable, Clone, Debug, Serialize)]
 #[diesel(table_name = crate::database::schema::quiz_answer)]
@@ -37,6 +39,7 @@ pub struct NewQuizAnswer {
   source_id: Option<SourceId>,
 }
 
+#[cfg(desktop)]
 impl NewQuizAnswer {
   pub fn create(self, app: &AppHandle) -> Result<QuizAnswerId> {
     app.database().create_quiz_answer(&self)

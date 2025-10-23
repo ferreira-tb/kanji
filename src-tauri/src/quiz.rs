@@ -1,16 +1,20 @@
 use crate::database::sql_types::KanjiChar;
-use crate::manager::ManagerExt;
 use crate::settings::Settings;
 use crate::snippet::{self, Snippet};
 use anyhow::Result;
-use itertools::Itertools;
-use rand::seq::{IndexedRandom, IteratorRandom, SliceRandom};
 use serde::Serialize;
 use std::sync::Arc;
 use tauri::AppHandle;
-use tauri::async_runtime::spawn_blocking;
-use tokio::sync::{Mutex, Semaphore};
-use tokio::task::JoinSet;
+
+#[cfg(desktop)]
+use {
+  crate::manager::ManagerExt,
+  itertools::Itertools,
+  rand::seq::{IndexedRandom, IteratorRandom, SliceRandom},
+  tauri::async_runtime::spawn_blocking,
+  tokio::sync::{Mutex, Semaphore},
+  tokio::task::JoinSet,
+};
 
 const MARUMARU: &str = "◯";
 
@@ -18,6 +22,7 @@ const MARUMARU: &str = "◯";
 pub struct Quiz(Vec<QuizQuestion>);
 
 impl Quiz {
+  #[cfg(desktop)]
   pub async fn new<I>(app: AppHandle, kanjis: I) -> Result<Self>
   where
     I: IntoIterator<Item = KanjiChar>,
@@ -83,6 +88,7 @@ impl Quiz {
     Ok(Self(questions))
   }
 
+  #[cfg(desktop)]
   pub async fn random(app: AppHandle) -> Result<Self> {
     let chunk_size = Settings::get(&app)?.set_chunk_size;
     let kanjis = app
@@ -96,6 +102,7 @@ impl Quiz {
   }
 }
 
+#[cfg(desktop)]
 fn pick_options(answer: KanjiChar, pool: &[KanjiChar]) -> Vec<KanjiChar> {
   let mut rng = &mut rand::rng();
   let mut options = pool

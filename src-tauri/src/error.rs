@@ -1,7 +1,8 @@
-use crate::res;
-use axum::response::Response;
 use serde::Serialize;
 use std::fmt::Display;
+
+#[cfg(desktop)]
+use axum::response::Response;
 
 pub use std::error::Error as StdError;
 pub use std::result::Result as StdResult;
@@ -18,8 +19,9 @@ impl<T: Display> From<T> for Error {
   }
 }
 
+#[cfg(desktop)]
 impl From<Error> for Response {
   fn from(err: Error) -> Self {
-    res!(INTERNAL_SERVER_ERROR, err.0)
+    crate::res!(INTERNAL_SERVER_ERROR, err.0)
   }
 }

@@ -1,15 +1,20 @@
 use crate::database::sql_types::{Path, SourceId, SourceWeight, Zoned};
-use crate::manager::ManagerExt;
 use anyhow::Result;
 use bon::Builder;
 use diesel::prelude::*;
-use globset::{Glob, GlobBuilder, GlobSet, GlobSetBuilder};
 use serde::Serialize;
 use std::path::PathBuf;
-use std::sync::LazyLock;
 use tauri::AppHandle;
-use walkdir::{DirEntry, WalkDir};
 
+#[cfg(desktop)]
+use {
+  crate::manager::ManagerExt,
+  globset::{Glob, GlobBuilder, GlobSet, GlobSetBuilder},
+  std::sync::LazyLock,
+  walkdir::{DirEntry, WalkDir},
+};
+
+#[cfg(desktop)]
 static GLOBSET: LazyLock<GlobSet> = LazyLock::new(|| {
   GlobSetBuilder::new()
     .add(glob("*.md"))
@@ -32,6 +37,7 @@ pub struct Source {
   pub weight: SourceWeight,
 }
 
+#[cfg(desktop)]
 impl Source {
   pub fn walk(&self) -> Vec<PathBuf> {
     WalkDir::new(&*self.path)
@@ -64,12 +70,14 @@ pub struct NewSource<'a> {
   weight: SourceWeight,
 }
 
+#[cfg(desktop)]
 impl NewSource<'_> {
   pub fn create(self, app: &AppHandle) -> Result<SourceId> {
     app.database().create_source(&self)
   }
 }
 
+#[cfg(desktop)]
 fn glob(glob: &str) -> Glob {
   GlobBuilder::new(glob)
     .case_insensitive(true)

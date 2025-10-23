@@ -1,7 +1,9 @@
-mod migration;
 pub mod model;
 pub mod schema;
 pub mod sql_types;
+
+#[cfg(desktop)]
+mod migration;
 
 use crate::database::model::bookmark::{Bookmark, NewBookmark};
 use crate::database::model::kanji::NewKanji;
@@ -30,6 +32,7 @@ const URL: &str = env!("KANJI_DATABASE_URL");
 #[derive(Clone)]
 pub struct DatabaseHandle(Arc<Mutex<SqliteConnection>>);
 
+#[cfg(desktop)]
 impl DatabaseHandle {
   pub fn new() -> Result<Self> {
     let mut conn = SqliteConnection::establish(URL)?;

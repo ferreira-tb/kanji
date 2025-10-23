@@ -1,10 +1,12 @@
 use crate::database::sql_types::{KanjiChar, Zoned};
-use crate::manager::ManagerExt;
 use anyhow::Result;
 use bon::Builder;
 use diesel::prelude::*;
 use serde::Serialize;
 use tauri::AppHandle;
+
+#[cfg(desktop)]
+use crate::manager::ManagerExt;
 
 #[derive(Identifiable, Queryable, Selectable, Clone, Debug, Serialize)]
 #[diesel(table_name = crate::database::schema::kanji)]
@@ -29,6 +31,7 @@ pub struct NewKanji {
   updated_at: Zoned,
 }
 
+#[cfg(desktop)]
 impl NewKanji {
   pub fn create(self, app: &AppHandle) -> Result<()> {
     app.database().create_kanji(&self)
