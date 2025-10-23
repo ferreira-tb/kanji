@@ -31,7 +31,7 @@ class MainActivity : TauriActivity() {
 
   private fun hideStatusBar() {
     WindowCompat.getInsetsController(window, window.decorView).apply {
-      this.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE;
+      this.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
       this.hide(WindowInsetsCompat.Type.statusBars())
     }
   }
