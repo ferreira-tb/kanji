@@ -109,6 +109,15 @@ impl DatabaseHandle {
       .map_err(Into::into)
   }
 
+  pub fn get_sources_by(&self, ids: &[SourceId]) -> Result<Vec<Source>> {
+    use schema::source::dsl::*;
+    source
+      .select(Source::as_select())
+      .filter(id.eq_any(ids))
+      .load(&mut *self.conn())
+      .map_err(Into::into)
+  }
+
   pub fn get_enabled_sources(&self) -> Result<Vec<Source>> {
     use schema::source::dsl::*;
     source

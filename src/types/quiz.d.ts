@@ -13,7 +13,7 @@ interface QuizKindRandomChunk {
 
 interface QuizKindSource {
   readonly kind: 'source';
-  readonly id: SourceId;
+  readonly ids: readonly SourceId[];
 }
 
 interface QuizKindRandomSource {

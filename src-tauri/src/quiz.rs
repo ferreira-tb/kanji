@@ -29,7 +29,7 @@ impl Quiz {
     match kind {
       QuizKind::Chunk { chunk } => Self::from_chunk(app, chunk).await,
       QuizKind::RandomChunk => Self::from_random_chunk(app).await,
-      QuizKind::Source { id } => Self::from_source(app, id).await,
+      QuizKind::Source { ids } => Self::from_sources(app, ids).await,
       QuizKind::RandomSource => Self::from_random_source(app).await,
     }
   }
@@ -117,14 +117,14 @@ impl Quiz {
     Self::from_chunk(app, kanjis).await
   }
 
-  async fn from_source(app: AppHandle, id: SourceId) -> Result<Self> {
-    let source = app.database().get_source(id)?;
+  async fn from_sources(app: AppHandle, ids: Vec<SourceId>) -> Result<Self> {
+    let sources = app.database().get_sources_by(&ids)?;
     let stats = spawn_blocking({
       let app = app.clone();
-      let source = source.clone();
+      let sources = sources.clone();
       move || {
         blocking_search_with_options(&app)
-          .sources(&[source])
+          .sources(&sources)
           .call()
       }
     });
@@ -136,7 +136,7 @@ impl Quiz {
       .map(|stat| stat.character())
       .choose_multiple(&mut rand::rng(), chunk_size);
 
-    Self::from_chunk_with_sources(app, kanjis, vec![source]).await
+    Self::from_chunk_with_sources(app, kanjis, sources).await
   }
 
   async fn from_random_source(app: AppHandle) -> Result<Self> {
@@ -149,7 +149,7 @@ impl Quiz {
       bail!("No source found");
     };
 
-    Self::from_source(app, id).await
+    Self::from_sources(app, vec![id]).await
   }
 }
 
@@ -172,7 +172,7 @@ fn pick_options(answer: KanjiChar, pool: &[KanjiChar]) -> Vec<KanjiChar> {
 pub enum QuizKind {
   Chunk { chunk: Vec<KanjiChar> },
   RandomChunk,
-  Source { id: SourceId },
+  Source { ids: Vec<SourceId> },
   RandomSource,
 }
 

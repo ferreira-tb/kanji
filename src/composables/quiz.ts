@@ -104,8 +104,8 @@ export function create() {
     await start(() => commands.createQuiz({ kind: 'random-chunk' }));
   }
 
-  async function startSource(id: SourceId) {
-    await start(() => commands.createQuiz({ kind: 'source', id }));
+  async function startSource(ids: readonly SourceId[]) {
+    await start(() => commands.createQuiz({ kind: 'source', ids }));
   }
 
   async function startRandomSource() {

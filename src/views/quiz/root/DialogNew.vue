@@ -6,12 +6,19 @@ import { toPixel, unreachable } from '@tb-dev/utils';
 import { computed, nextTick, ref, useTemplateRef, type VNode, watchEffect } from 'vue';
 import {
   Button,
+  Checkbox,
+  cn,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
   ScrollArea,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  toBooleanCheckboxValue,
   VisuallyHidden,
 } from '@tb-dev/vue-components';
 
@@ -20,7 +27,9 @@ defineSlots<{
 }>();
 
 const { isLoading, ...quiz } = useQuiz();
+
 const { sources } = useSources();
+const selectedSources = ref<SourceId[]>([]);
 
 const enum State {
   Root = 0,
@@ -33,24 +42,27 @@ const open = ref(false);
 const content = useTemplateRef('contentEl');
 const contentHeight = useHeight(content);
 const contentClass = computed(() => {
-  let classList = 'w-80';
+  let classList = 'w-80 max-w-9/10 pb-2 ';
   switch (state.value) {
     case State.Root: {
-      classList += ' h-60';
+      classList += 'h-60';
       break;
     }
     case State.SourceList: {
-      classList += ' h-96 max-h-3/4';
+      classList += 'md:w-100 h-120 max-h-3/4';
       break;
     }
   }
 
-  return classList;
+  return cn(classList);
 });
 
 watchEffect(() => {
   if (!open.value) {
-    void nextTick(() => state.value = State.Root);
+    void nextTick(() => {
+      state.value = State.Root;
+      selectedSources.value = [];
+    });
   }
 });
 
@@ -76,9 +88,23 @@ async function start(quizKind: QuizKind['kind']) {
   }
 }
 
-async function startSource(id: SourceId) {
+async function startSource() {
   open.value = false;
-  await quiz.startSource(id);
+  if (selectedSources.value.length > 0) {
+    await quiz.startSource(selectedSources.value);
+  }
+}
+
+function onSourceChecked(id: SourceId, checked: boolean | 'indeterminate') {
+  checked = toBooleanCheckboxValue(checked);
+  if (checked && !selectedSources.value.includes(id)) {
+    selectedSources.value.push(id);
+  }
+  else if (!checked) {
+    selectedSources.value = selectedSources.value.filter((source) => {
+      return source !== id;
+    });
+  }
 }
 </script>
 
@@ -94,7 +120,7 @@ async function startSource(id: SourceId) {
         </DialogHeader>
       </VisuallyHidden>
 
-      <div v-if="open" ref="contentEl" class="size-full px-0 py-4 overflow-hidden">
+      <div v-if="open" ref="contentEl" class="size-full px-0 pt-4 overflow-hidden">
         <div v-if="state === State.Root" class="h-full flex justify-center items-center">
           <div class="h-max grid grid-cols-1 gap-2 md:gap-4">
             <Button
@@ -123,24 +149,41 @@ async function startSource(id: SourceId) {
           </div>
         </div>
 
-        <ScrollArea
-          v-else-if="state === State.SourceList"
-          :style="{ height: toPixel(contentHeight - 20) }"
-        >
-          <div class="flex flex-col gap-1 pr-4">
+        <div v-else-if="state === State.SourceList" class="flex flex-col gap-2 pr-4">
+          <ScrollArea :style="{ height: toPixel(contentHeight - 60) }">
+            <Table v-if="sources.length > 0">
+              <TableBody>
+                <TableRow v-for="source of sources" :key="source.id">
+                  <TableCell>
+                    <Checkbox
+                      :model-value="selectedSources.includes(source.id)"
+                      :disabled="isLoading"
+                      class="disabled:cursor-default"
+                      @update:model-value="(checked) => onSourceChecked(source.id, checked)"
+                    />
+                  </TableCell>
+
+                  <TableCell
+                    class="cursor-pointer select-none"
+                    @click="() => onSourceChecked(source.id, !selectedSources.includes(source.id))"
+                  >
+                    <span class="break-all wrap-anywhere">{{ source.name }}</span>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </ScrollArea>
+
+          <div class="flex justify-center items-center">
             <Button
-              v-for="source of sources"
-              :key="source.id"
-              variant="ghost"
               size="sm"
-              :disabled="isLoading"
-              class="justify-start"
-              @click="() => startSource(source.id)"
+              :disabled="isLoading || selectedSources.length === 0"
+              @click="startSource"
             >
-              <span>{{ source.name }}</span>
+              <span>Start</span>
             </Button>
           </div>
-        </ScrollArea>
+        </div>
       </div>
     </DialogContent>
   </Dialog>
