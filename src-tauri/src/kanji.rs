@@ -1,5 +1,6 @@
 use crate::database::sql_types::{KanjiChar, SourceId};
 use serde::Serialize;
+use std::sync::Arc;
 
 #[cfg(desktop)]
 use {
@@ -10,7 +11,6 @@ use {
   itertools::Itertools,
   std::collections::HashMap,
   std::fs,
-  std::sync::Arc,
   std::sync::atomic::AtomicBool,
   std::sync::atomic::Ordering::Relaxed,
   tauri::AppHandle,
