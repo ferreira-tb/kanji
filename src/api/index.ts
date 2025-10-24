@@ -6,8 +6,8 @@ export async function createBookmark(snippet: Snippet) {
   return data;
 }
 
-export async function createQuiz(kanjis: readonly KanjiChar[]) {
-  const response = await post('create-quiz', { kanjis });
+export async function createQuiz(kind: QuizKind) {
+  const response = await post('create-quiz', { kind });
   const data: Quiz = await response.json();
   return data;
 }
@@ -15,12 +15,6 @@ export async function createQuiz(kanjis: readonly KanjiChar[]) {
 export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, source: SourceId) {
   const response = await post('create-quiz-answer', { question, answer, source });
   const data: QuizAnswerId = await response.json();
-  return data;
-}
-
-export async function createRandomQuiz() {
-  const response = await get('create-random-quiz');
-  const data: Quiz = await response.json();
   return data;
 }
 

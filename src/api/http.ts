@@ -8,7 +8,11 @@ function url(endpoint: string) {
 }
 
 export async function get(endpoint: string) {
-  const response = await fetch(url(endpoint), { method: 'GET' });
+  const response = await fetch(url(endpoint), {
+    method: 'GET',
+    connectTimeout: 5000,
+  });
+
   if (response.ok) {
     return response;
   }
@@ -20,6 +24,7 @@ export async function get(endpoint: string) {
 export async function post(endpoint: string, body: Record<string, unknown>) {
   const response = await fetch(url(endpoint), {
     method: 'POST',
+    connectTimeout: 5000,
     body: JSON.stringify(body, null, 0),
     headers: {
       'Content-Type': 'application/json',

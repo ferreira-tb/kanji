@@ -11,12 +11,12 @@ export async function createBookmark(snippet: Snippet) {
   }
 }
 
-export async function createQuiz(kanjis: readonly KanjiChar[]) {
+export async function createQuiz(kind: QuizKind) {
   if (__DESKTOP__) {
-    return invoke<Quiz>('create_quiz', { kanjis });
+    return invoke<Quiz>('create_quiz', { kind });
   }
   else {
-    return api.createQuiz(kanjis);
+    return api.createQuiz(kind);
   }
 }
 
@@ -26,15 +26,6 @@ export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, s
   }
   else {
     return api.createQuizAnswer(question, answer, source);
-  }
-}
-
-export async function createRandomQuiz() {
-  if (__DESKTOP__) {
-    return invoke<Quiz>('create_random_quiz');
-  }
-  else {
-    return api.createRandomQuiz();
   }
 }
 

@@ -93,6 +93,14 @@ impl DatabaseHandle {
       .map_err(Into::into)
   }
 
+  pub fn get_source_ids(&self) -> Result<Vec<SourceId>> {
+    use schema::source::dsl::*;
+    source
+      .select(id)
+      .load(&mut *self.conn())
+      .map_err(Into::into)
+  }
+
   pub fn get_sources(&self) -> Result<Vec<Source>> {
     use schema::source::dsl::*;
     source

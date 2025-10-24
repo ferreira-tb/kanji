@@ -1,16 +1,19 @@
 use crate::database::sql_types::KanjiChar;
 use crate::settings::Settings;
 use crate::snippet::{self, Snippet};
-use anyhow::Result;
-use serde::Serialize;
-use std::sync::Arc;
-use tauri::AppHandle;
+use serde::{Deserialize, Serialize};
 
 #[cfg(desktop)]
 use {
+  crate::database::model::source::Source,
+  crate::database::sql_types::SourceId,
+  crate::kanji::blocking_search_with_options,
   crate::manager::ManagerExt,
+  anyhow::{Result, bail},
   itertools::Itertools,
   rand::seq::{IndexedRandom, IteratorRandom, SliceRandom},
+  std::sync::Arc,
+  tauri::AppHandle,
   tauri::async_runtime::spawn_blocking,
   tokio::sync::{Mutex, Semaphore},
   tokio::task::JoinSet,
@@ -21,15 +24,30 @@ const MARUMARU: &str = "◯";
 #[derive(Serialize)]
 pub struct Quiz(Vec<QuizQuestion>);
 
+#[cfg(desktop)]
 impl Quiz {
-  #[cfg(desktop)]
-  pub async fn new<I>(app: AppHandle, kanjis: I) -> Result<Self>
-  where
-    I: IntoIterator<Item = KanjiChar>,
-  {
+  pub async fn new(app: AppHandle, kind: QuizKind) -> Result<Self> {
+    match kind {
+      QuizKind::Chunk { chunk } => Self::from_chunk(app, chunk).await,
+      QuizKind::RandomChunk => Self::from_random_chunk(app).await,
+      QuizKind::Source { id } => Self::from_source(app, id).await,
+      QuizKind::RandomSource => Self::from_random_source(app).await,
+    }
+  }
+
+  async fn from_chunk(app: AppHandle, kanjis: Vec<KanjiChar>) -> Result<Self> {
+    let sources = app.database().get_enabled_sources()?;
+    Self::from_chunk_with_sources(app, kanjis, sources).await
+  }
+
+  async fn from_chunk_with_sources(
+    app: AppHandle,
+    kanjis: Vec<KanjiChar>,
+    sources: Vec<Source>,
+  ) -> Result<Self> {
     let db = app.database();
     let chars = Arc::from(db.get_kanji_chars()?);
-    let sources = Arc::from(db.get_enabled_sources()?);
+    let sources = Arc::from(sources);
     let questions = Arc::new(Mutex::new(Vec::new()));
     let semaphore = Arc::new(Semaphore::new(100));
     let settings = Arc::new(Settings::get(&app)?);
@@ -88,8 +106,7 @@ impl Quiz {
     Ok(Self(questions))
   }
 
-  #[cfg(desktop)]
-  pub async fn random(app: AppHandle) -> Result<Self> {
+  async fn from_random_chunk(app: AppHandle) -> Result<Self> {
     let chunk_size = Settings::get(&app)?.set_chunk_size;
     let kanjis = app
       .database()
@@ -98,7 +115,42 @@ impl Quiz {
       .copied()
       .collect_vec();
 
-    Self::new(app, kanjis).await
+    Self::from_chunk(app, kanjis).await
+  }
+
+  async fn from_source(app: AppHandle, id: SourceId) -> Result<Self> {
+    let source = app.database().get_source(id)?;
+    let stats = spawn_blocking({
+      let app = app.clone();
+      let source = source.clone();
+      move || {
+        blocking_search_with_options(&app)
+          .sources(&[source])
+          .call()
+      }
+    });
+
+    let chunk_size = Settings::get(&app)?.set_chunk_size;
+    let kanjis = stats
+      .await??
+      .into_iter()
+      .map(|stat| stat.character())
+      .choose_multiple(&mut rand::rng(), chunk_size);
+
+    Self::from_chunk_with_sources(app, kanjis, vec![source]).await
+  }
+
+  async fn from_random_source(app: AppHandle) -> Result<Self> {
+    let Some(id) = app
+      .database()
+      .get_source_ids()?
+      .choose(&mut rand::rng())
+      .copied()
+    else {
+      bail!("No source found");
+    };
+
+    Self::from_source(app, id).await
   }
 }
 
@@ -114,6 +166,15 @@ fn pick_options(answer: KanjiChar, pool: &[KanjiChar]) -> Vec<KanjiChar> {
   options.push(answer);
   options.shuffle(&mut rng);
   options
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(tag = "kind", rename_all = "kebab-case")]
+pub enum QuizKind {
+  Chunk { chunk: Vec<KanjiChar> },
+  RandomChunk,
+  Source { id: SourceId },
+  RandomSource,
 }
 
 #[derive(Debug, Serialize)]

@@ -24,8 +24,10 @@ export function useQuiz() {
       chosenAnswer: value.chosenAnswer,
       canAnswer: value.canAnswer,
       start: value.start,
-      startRandom: value.startRandom,
-      startWith: value.startWith,
+      startChunk: value.startChunk,
+      startRandomChunk: value.startRandomChunk,
+      startRandomSource: value.startRandomSource,
+      startSource: value.startSource,
       answer: value.answer,
       next: value.next,
       leave: value.leave,
@@ -67,7 +69,7 @@ export function create() {
     }
   });
 
-  async function startWith(f: () => Promise<Quiz>) {
+  async function start(f: () => Promise<Quiz>) {
     if (!active.value) {
       await mutex.acquire();
       try {
@@ -92,14 +94,22 @@ export function create() {
     }
   }
 
-  async function start(kanjis: readonly KanjiChar[]) {
-    if (kanjis.length > 0) {
-      await startWith(() => commands.createQuiz(kanjis));
+  async function startChunk(chunk: readonly KanjiChar[]) {
+    if (chunk.length > 0) {
+      await start(() => commands.createQuiz({ kind: 'chunk', chunk }));
     }
   }
 
-  function startRandom() {
-    return startWith(commands.createRandomQuiz);
+  async function startRandomChunk() {
+    await start(() => commands.createQuiz({ kind: 'random-chunk' }));
+  }
+
+  async function startSource(id: SourceId) {
+    await start(() => commands.createQuiz({ kind: 'source', id }));
+  }
+
+  async function startRandomSource() {
+    await start(() => commands.createQuiz({ kind: 'random-source' }));
   }
 
   async function answer(option: KanjiChar) {
@@ -214,9 +224,11 @@ export function create() {
     currentIndex: readonly(currentIndex),
     chosenAnswer: readonly(chosenAnswer),
     canAnswer: readonly(canAnswer),
+    startChunk,
+    startRandomChunk,
+    startRandomSource,
+    startSource,
     start,
-    startRandom,
-    startWith,
     answer,
     next,
     leave,

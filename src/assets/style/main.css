@@ -36,6 +36,13 @@ label:has(input[type="radio"]) {
   }
 }
 
+[data-slot="dialog-content"]:not(:has([data-slot="command"])) {
+  @apply px-2;
+
+  max-width: 90svw;
+  max-height: calc(75svh - var(--safe-bottom));
+}
+
 [data-scrollbarimpl] {
   @apply border-0!;
 }

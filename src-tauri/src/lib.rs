@@ -35,7 +35,6 @@ pub fn run() {
         command::create_bookmark,
         command::create_quiz,
         command::create_quiz_answer,
-        command::create_random_quiz,
         command::create_source,
         command::create_tray_icon,
         command::export_set,

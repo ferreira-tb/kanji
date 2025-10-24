@@ -18,7 +18,6 @@ pub(super) fn create() -> Router<AppHandle> {
     .route("/create-bookmark", post(create_bookmark))
     .route("/create-quiz", post(create_quiz))
     .route("/create-quiz-answer", post(create_quiz_answer))
-    .route("/create-random-quiz", get(create_random_quiz))
     .route("/create-source", post(create_source))
     .route("/get-bookmarks", get(get_bookmarks))
     .route("/get-quiz-answers", get(get_quiz_answers))
@@ -45,7 +44,7 @@ async fn create_bookmark(
 }
 
 async fn create_quiz(State(app): State<AppHandle>, Json(req): Json<CreateQuizRequest>) -> Response {
-  command::create_quiz(app, req.kanjis)
+  command::create_quiz(app, req.kind)
     .map_ok(|quiz| res!(OK, Json(quiz)))
     .unwrap_or_else(Response::from)
     .await
@@ -57,13 +56,6 @@ async fn create_quiz_answer(
 ) -> Response {
   command::create_quiz_answer(app, req.question, req.answer, req.source)
     .map_ok(|id| res!(OK, Json(id)))
-    .unwrap_or_else(Response::from)
-    .await
-}
-
-async fn create_random_quiz(State(app): State<AppHandle>) -> Response {
-  command::create_random_quiz(app)
-    .map_ok(|quiz| res!(OK, Json(quiz)))
     .unwrap_or_else(Response::from)
     .await
 }

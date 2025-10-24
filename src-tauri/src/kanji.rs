@@ -1,18 +1,23 @@
 use crate::database::sql_types::{KanjiChar, SourceId};
-use anyhow::Result;
-use itertools::Itertools;
 use serde::Serialize;
-use std::collections::HashMap;
-use std::fs;
-use std::sync::Arc;
-use std::sync::atomic::AtomicBool;
-use std::sync::atomic::Ordering::Relaxed;
-use tauri::AppHandle;
-use tauri::async_runtime::spawn_blocking;
 
 #[cfg(desktop)]
-use {crate::database::model::kanji::NewKanji, crate::manager::ManagerExt};
+use {
+  crate::database::model::kanji::NewKanji,
+  crate::database::model::source::Source,
+  crate::manager::ManagerExt,
+  anyhow::Result,
+  itertools::Itertools,
+  std::collections::HashMap,
+  std::fs,
+  std::sync::Arc,
+  std::sync::atomic::AtomicBool,
+  std::sync::atomic::Ordering::Relaxed,
+  tauri::AppHandle,
+  tauri::async_runtime::spawn_blocking,
+};
 
+#[cfg(desktop)]
 static IS_FIRST_SEARCH: AtomicBool = AtomicBool::new(true);
 
 #[derive(Serialize)]
@@ -93,8 +98,19 @@ pub async fn search(app: AppHandle) -> Result<Vec<KanjiStats>> {
 
 #[cfg(desktop)]
 fn blocking_search(app: &AppHandle) -> Result<Vec<KanjiStats>> {
+  let sources = app.database().get_enabled_sources()?;
+  blocking_search_with_options(app)
+    .sources(&sources)
+    .call()
+}
+
+#[cfg(desktop)]
+#[bon::builder]
+pub fn blocking_search_with_options(
+  #[builder(start_fn)] app: &AppHandle,
+  #[builder(default)] sources: &[Source],
+) -> Result<Vec<KanjiStats>> {
   let database = app.database();
-  let sources = database.get_enabled_sources()?;
   let mut kanjis: HashMap<KanjiChar, KanjiStats> = HashMap::new();
 
   for source in sources {
