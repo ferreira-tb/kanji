@@ -40,9 +40,6 @@ async function init() {
     catch (err) {
       handleError(err);
     }
-    finally {
-      await router.push({ name: 'home' satisfies Route });
-    }
   }
 
   app.mount('#app');

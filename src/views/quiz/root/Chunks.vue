@@ -8,7 +8,7 @@ defineProps<{
   disabled: boolean;
 }>();
 
-const { set, start } = useQuiz();
+const { set, startChunk } = useQuiz();
 
 const chunks = computed(() => set.value?.chunks ?? []);
 </script>
@@ -46,7 +46,7 @@ const chunks = computed(() => set.value?.chunks ?? []);
             variant="default"
             :disabled
             class="px-4"
-            @click="() => start(chunk.kanjis)"
+            @click="() => startChunk(chunk.kanjis)"
           >
             <span>Start</span>
           </Button>

@@ -12,7 +12,7 @@ use crate::database::sql_types::{
 use crate::error::{CResult, Error};
 use crate::kanji::{self, KanjiStats};
 use crate::manager::ManagerExt;
-use crate::quiz::Quiz;
+use crate::quiz::{Quiz, QuizKind};
 use crate::set::KanjiSet;
 use crate::snippet::{self, Snippet};
 use crate::tray;
@@ -36,8 +36,8 @@ pub async fn create_bookmark(app: AppHandle, snippet: Snippet) -> CResult<Bookma
 }
 
 #[tauri::command]
-pub async fn create_quiz(app: AppHandle, kanjis: Vec<KanjiChar>) -> CResult<Quiz> {
-  Quiz::new(app, kanjis)
+pub async fn create_quiz(app: AppHandle, kind: QuizKind) -> CResult<Quiz> {
+  Quiz::new(app, kind)
     .await
     .map_err(Into::into)
 }
@@ -56,11 +56,6 @@ pub async fn create_quiz_answer(
     .build()
     .create(&app)
     .map_err(Into::into)
-}
-
-#[tauri::command]
-pub async fn create_random_quiz(app: AppHandle) -> CResult<Quiz> {
-  Quiz::random(app).await.map_err(Into::into)
 }
 
 #[tauri::command]

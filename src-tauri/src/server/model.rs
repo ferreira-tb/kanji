@@ -1,4 +1,5 @@
 use crate::database::sql_types::{BookmarkId, KanjiChar, Path, SourceId, SourceWeight};
+use crate::quiz::QuizKind;
 use crate::snippet::Snippet;
 use serde::Deserialize;
 
@@ -11,7 +12,7 @@ pub struct CreateBookmarkRequest {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateQuizRequest {
-  pub kanjis: Vec<KanjiChar>,
+  pub kind: QuizKind,
 }
 
 #[derive(Debug, Deserialize)]
