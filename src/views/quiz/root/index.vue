@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import { go } from '@/router';
 import Chunks from './Chunks.vue';
-import { useTemplateRef } from 'vue';
 import Question from './Question.vue';
 import { toPixel } from '@tb-dev/utils';
-import DialogNew from './DialogNew.vue';
+import { ref, useTemplateRef } from 'vue';
 import { useHeightDiff } from '@tb-dev/vue';
 import { useQuiz } from '@/composables/quiz';
-import { Button, Loading, SidebarTrigger } from '@tb-dev/vue-components';
+import DialogSource from './DialogSource.vue';
+import { useSources } from '@/composables/sources';
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Loading,
+  SidebarTrigger,
+} from '@tb-dev/vue-components';
 
 const {
   set,
@@ -16,24 +25,70 @@ const {
   isLoading,
   isLoadingSet,
   loadSet,
+  startRandomChunk,
+  startRandomSource,
 } = useQuiz();
+
+const { sources } = useSources();
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
+
+const isSourceDialogOpen = ref(false);
 </script>
 
 <template>
   <div class="flex size-full flex-col gap-2">
     <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
       <SidebarTrigger />
+      <DialogSource v-model="isSourceDialogOpen" />
+
       <div class="flex items-center justify-center gap-2">
-        <DialogNew>
-          <template #trigger>
-            <Button v-if="!active" size="sm" variant="default" :disabled="isLoading">
+        <DropdownMenu v-if="!active">
+          <DropdownMenuTrigger as-child>
+            <Button size="sm" variant="default" :disabled="isLoading">
               <span>New</span>
             </Button>
-          </template>
-        </DialogNew>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent side="top" class="w-(--reka-dropdown-menu-trigger-width)">
+            <DropdownMenuItem as-child>
+              <Button
+                size="sm"
+                variant="ghost"
+                class="w-full justify-start font-normal"
+                :disabled="isLoading || sources.length === 0"
+                @click="() => void (isSourceDialogOpen = true)"
+              >
+                <span>Source</span>
+              </Button>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem as-child>
+              <Button
+                size="sm"
+                variant="ghost"
+                class="w-full justify-start font-normal"
+                :disabled="isLoading || sources.length === 0"
+                @click="startRandomSource"
+              >
+                <span>Random Source</span>
+              </Button>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem as-child>
+              <Button
+                size="sm"
+                variant="ghost"
+                class="w-full justify-start font-normal"
+                :disabled="isLoading"
+                @click="startRandomChunk"
+              >
+                <span>Random Chunk</span>
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <Button
           v-if="!active"

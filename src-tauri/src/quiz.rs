@@ -1,5 +1,4 @@
 use crate::database::sql_types::{KanjiChar, SourceId};
-use crate::settings::Settings;
 use crate::snippet::{self, Snippet};
 use serde::{Deserialize, Serialize};
 
@@ -8,6 +7,7 @@ use {
   crate::database::model::source::Source,
   crate::kanji::blocking_search_with_options,
   crate::manager::ManagerExt,
+  crate::settings::Settings,
   anyhow::{Result, bail},
   itertools::Itertools,
   rand::seq::{IndexedRandom, IteratorRandom, SliceRandom},

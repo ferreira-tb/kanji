@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { useHeight } from '@tb-dev/vue';
+import { toPixel } from '@tb-dev/utils';
 import { useQuiz } from '@/composables/quiz';
 import { useSources } from '@/composables/sources';
-import { toPixel, unreachable } from '@tb-dev/utils';
-import { computed, nextTick, ref, useTemplateRef, type VNode, watchEffect } from 'vue';
+import { ref, useTemplateRef, watchEffect } from 'vue';
 import {
   Button,
   Checkbox,
-  cn,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -22,73 +21,23 @@ import {
   VisuallyHidden,
 } from '@tb-dev/vue-components';
 
-defineSlots<{
-  trigger: () => VNode;
-}>();
+const open = defineModel<boolean>({ required: true });
 
 const { isLoading, ...quiz } = useQuiz();
 
 const { sources } = useSources();
 const selectedSources = ref<SourceId[]>([]);
 
-const enum State {
-  Root = 0,
-  SourceList = 1,
-}
-
-const state = ref<State>(State.Root);
-
-const open = ref(false);
 const content = useTemplateRef('contentEl');
 const contentHeight = useHeight(content);
-const contentClass = computed(() => {
-  let classList = 'w-80 max-w-9/10 pb-2 ';
-  switch (state.value) {
-    case State.Root: {
-      classList += 'h-60';
-      break;
-    }
-    case State.SourceList: {
-      classList += 'md:w-100 h-120 max-h-3/4';
-      break;
-    }
-  }
-
-  return cn(classList);
-});
 
 watchEffect(() => {
   if (!open.value) {
-    void nextTick(() => {
-      state.value = State.Root;
-      selectedSources.value = [];
-    });
+    selectedSources.value = [];
   }
 });
 
-async function start(quizKind: QuizKind['kind']) {
-  switch (quizKind) {
-    case 'random-chunk': {
-      open.value = false;
-      await quiz.startRandomChunk();
-      break;
-    }
-    case 'random-source': {
-      open.value = false;
-      await quiz.startRandomSource();
-      break;
-    }
-    case 'source': {
-      state.value = State.SourceList;
-      break;
-    }
-    default: {
-      unreachable();
-    }
-  }
-}
-
-async function startSource() {
+async function start() {
   open.value = false;
   if (selectedSources.value.length > 0) {
     await quiz.startSource(selectedSources.value);
@@ -110,46 +59,17 @@ function onSourceChecked(id: SourceId, checked: boolean | 'indeterminate') {
 
 <template>
   <Dialog v-model:open="open">
-    <DialogTrigger as-child>
-      <slot name="trigger"></slot>
-    </DialogTrigger>
-    <DialogContent :class="contentClass">
+    <DialogTrigger class="hidden"></DialogTrigger>
+
+    <DialogContent class="w-80 md:w-100 max-w-9/10 h-120 max-h-3/4 pb-2">
       <VisuallyHidden>
         <DialogHeader>
-          <DialogTitle>Start new quiz</DialogTitle>
+          <DialogTitle>Select Sources</DialogTitle>
         </DialogHeader>
       </VisuallyHidden>
 
-      <div v-if="open" ref="contentEl" class="size-full px-0 pt-4 overflow-hidden">
-        <div v-if="state === State.Root" class="h-full flex justify-center items-center">
-          <div class="h-max grid grid-cols-1 gap-2 md:gap-4">
-            <Button
-              size="sm"
-              :disabled="isLoading"
-              @click="() => start('random-chunk')"
-            >
-              <span>Random Chunk</span>
-            </Button>
-
-            <Button
-              size="sm"
-              :disabled="isLoading || sources.length === 0"
-              @click="() => start('source')"
-            >
-              <span>Source</span>
-            </Button>
-
-            <Button
-              size="sm"
-              :disabled="isLoading || sources.length === 0"
-              @click="() => start('random-source')"
-            >
-              <span>Random Source</span>
-            </Button>
-          </div>
-        </div>
-
-        <div v-else-if="state === State.SourceList" class="flex flex-col gap-2 pr-4">
+      <div ref="contentEl" class="size-full px-0 pt-4 overflow-hidden">
+        <div class="flex flex-col gap-2 pr-4">
           <ScrollArea :style="{ height: toPixel(contentHeight - 60) }">
             <Table v-if="sources.length > 0">
               <TableBody>
@@ -178,7 +98,7 @@ function onSourceChecked(id: SourceId, checked: boolean | 'indeterminate') {
             <Button
               size="sm"
               :disabled="isLoading || selectedSources.length === 0"
-              @click="startSource"
+              @click="start"
             >
               <span>Start</span>
             </Button>

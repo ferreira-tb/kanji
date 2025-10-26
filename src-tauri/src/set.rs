@@ -1,15 +1,15 @@
 use crate::database::sql_types::KanjiChar;
-use crate::settings::Settings;
-use anyhow::Result;
 use serde::Serialize;
-use tauri::AppHandle;
 
 #[cfg(desktop)]
 use {
   crate::kanji::{KanjiStats, search as search_kanji},
   crate::manager::ManagerExt,
+  crate::settings::Settings,
+  anyhow::Result,
   itertools::Itertools,
   std::path::Path as StdPath,
+  tauri::AppHandle,
   tokio::fs::File,
   tokio::io::AsyncWriteExt,
 };
@@ -23,11 +23,12 @@ pub struct KanjiSet {
   quiz_accuracy: f64,
 }
 
+#[cfg(desktop)]
 impl KanjiSet {
-  #[cfg(desktop)]
   pub async fn load(app: AppHandle) -> Result<Self> {
     let settings = Settings::get(&app)?;
     let mut kanjis = search_kanji(app.clone()).await?;
+    kanjis.sort_by_key(KanjiStats::character);
     kanjis.sort_by_key(KanjiStats::seen);
 
     let mut chunks = Vec::new();
@@ -82,7 +83,6 @@ impl KanjiSet {
     })
   }
 
-  #[cfg(desktop)]
   pub async fn export(self, app: AppHandle, folder: &StdPath) -> Result<()> {
     let settings = Settings::get(&app)?;
     let sets = KanjiSet::load(app).await?;
