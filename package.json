@@ -1,6 +1,6 @@
 {
   "name": "kanji",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "type": "module",
   "packageManager": "pnpm@10.19.0",
   "license": "GPL-3.0-only",
@@ -19,11 +19,11 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2.9.0",
-    "@tauri-apps/plugin-clipboard-manager": "^2.3.0",
-    "@tauri-apps/plugin-dialog": "^2.4.0",
-    "@tauri-apps/plugin-fs": "^2.4.2",
-    "@tauri-apps/plugin-http": "^2.5.2",
-    "@tauri-apps/plugin-process": "^2.3.0",
+    "@tauri-apps/plugin-clipboard-manager": "^2.3.2",
+    "@tauri-apps/plugin-dialog": "^2.4.2",
+    "@tauri-apps/plugin-fs": "^2.4.4",
+    "@tauri-apps/plugin-http": "^2.5.4",
+    "@tauri-apps/plugin-process": "^2.3.1",
     "@tauri-apps/plugin-updater": "^2.9.0",
     "@tauri-store/pinia": "^4.1.0",
     "@tb-dev/utils": "^7.0.17",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.16",
     "@tauri-apps/cli": "^2.9.1",
-    "@tb-dev/eslint-config": "^8.0.14",
+    "@tb-dev/eslint-config": "^8.1.0",
     "@types/node": "^24.9.1",
     "@vitejs/plugin-vue": "^6.0.1",
     "eslint": "^9.38.0",

@@ -2,9 +2,9 @@
 import { toPixel } from '@tb-dev/utils';
 import { formatZoned } from '@/lib/date';
 import { getQuizAnswers } from '@/commands';
-import { onActivated, useTemplateRef } from 'vue';
 import { useSources } from '@/composables/sources';
 import { asyncRef, useHeightDiff } from '@tb-dev/vue';
+import { onActivated, onDeactivated, useTemplateRef } from 'vue';
 import {
   Button,
   SidebarTrigger,
@@ -28,6 +28,8 @@ const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
 
 onActivated(load);
+
+onDeactivated(() => void (answers.value = []));
 </script>
 
 <template>
