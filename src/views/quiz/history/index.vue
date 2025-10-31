@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import { toPixel } from '@tb-dev/utils';
 import { formatZoned } from '@/lib/date';
 import { getQuizAnswers } from '@/commands';
@@ -15,6 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from '@tb-dev/vue-components';
+
+const router = useRouter();
 
 const {
   state: answers,
@@ -37,13 +40,11 @@ onDeactivated(() => void (answers.value = []));
     <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
       <SidebarTrigger />
       <div class="flex items-center justify-center gap-2">
-        <Button
-          size="sm"
-          variant="secondary"
-          :disabled="isLoading"
-          @click="load"
-        >
+        <Button size="sm" variant="secondary" :disabled="isLoading" @click="load">
           <span>Reload</span>
+        </Button>
+        <Button size="sm" variant="secondary" @click="() => router.back()">
+          <span>Back</span>
         </Button>
       </div>
     </div>

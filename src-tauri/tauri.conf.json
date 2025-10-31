@@ -1,6 +1,6 @@
 {
   "productName": "kanji",
-  "version": "6.0.4",
+  "version": "6.1.0",
   "identifier": "tsukilabs.kanji",
   "build": {
     "beforeDevCommand": "pnpm run vite:dev",
@@ -22,7 +22,7 @@
       },
       "csp": {
         "default-src": "'self'",
-        "connect-src": "ipc: http://ipc.localhost",
+        "connect-src": "ipc: http://ipc.localhost http://tauri.localhost",
         "img-src": "* blob:",
         "style-src": "'self' 'unsafe-inline'"
       }
