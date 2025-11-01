@@ -39,6 +39,12 @@ export async function getQuizAnswers() {
   return data;
 }
 
+export async function getQuizSourceStats() {
+  const response = await get('get-quiz-source-stats');
+  const data: readonly QuizSourceStats[] = await response.json();
+  return data;
+}
+
 export async function getSet() {
   const response = await get('get-set');
   const data: KanjiSet = await response.json();

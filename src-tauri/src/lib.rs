@@ -40,6 +40,7 @@ pub fn run() {
         command::export_set,
         command::get_bookmarks,
         command::get_quiz_answers,
+        command::get_quiz_source_stats,
         command::get_server_addr,
         command::get_set,
         command::get_sources,

@@ -18,6 +18,7 @@ use {
   tokio::task::JoinSet,
 };
 
+#[cfg(desktop)]
 const MARUMARU: &str = "◯";
 
 #[derive(Serialize)]
@@ -183,4 +184,35 @@ pub struct QuizQuestion {
   censored: String,
   answer: KanjiChar,
   options: Vec<KanjiChar>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct QuizSourceStats {
+  source: SourceId,
+  quizzes: u64,
+  correct_quiz_answers: u64,
+  quiz_accuracy: f64,
+}
+
+#[cfg(desktop)]
+impl QuizSourceStats {
+  pub fn new(app: &AppHandle, source: SourceId) -> Result<Self> {
+    let database = app.database();
+    let quizzes = database.count_quizzes_with_source(source)?;
+    let mut correct_quiz_answers = 0;
+    let mut quiz_accuracy = 0.0;
+
+    if quizzes > 0 {
+      correct_quiz_answers = database.count_correct_quizzes_with_source(source)?;
+      quiz_accuracy = (correct_quiz_answers as f64) / (quizzes as f64);
+    }
+
+    Ok(Self {
+      source,
+      quizzes,
+      correct_quiz_answers,
+      quiz_accuracy,
+    })
+  }
 }

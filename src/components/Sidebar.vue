@@ -161,6 +161,9 @@ function setCurrentSource(source: KanjiStatsSource) {
             <RouterLink to="/quiz/history" class="w-full">Quiz History</RouterLink>
           </DropdownMenuItem>
           <DropdownMenuItem>
+            <RouterLink to="/quiz/stats" class="w-full">Quiz Stats</RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
             <RouterLink to="/sources" class="w-full">Sources</RouterLink>
           </DropdownMenuItem>
           <DropdownMenuItem>

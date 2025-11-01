@@ -18,8 +18,6 @@ import {
   useSidebar,
 } from '@tb-dev/vue-components';
 
-const router = useRouter();
-
 const {
   state: answers,
   execute: load,
@@ -28,6 +26,7 @@ const {
 
 const { findSource } = useSources();
 
+const router = useRouter();
 const { isMobile } = useSidebar();
 
 const topbar = useTemplateRef('topbarEl');

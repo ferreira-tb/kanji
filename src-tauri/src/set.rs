@@ -51,7 +51,7 @@ impl KanjiSet {
       let mut quiz_accuracy = 0.0;
 
       if quizzes > 0 {
-        correct_quiz_answers = database.count_correct_quiz_answers_in(&kanjis)?;
+        correct_quiz_answers = database.count_correct_quizzes_in(&kanjis)?;
         quiz_accuracy = (correct_quiz_answers as f64) / (quizzes as f64);
       }
 

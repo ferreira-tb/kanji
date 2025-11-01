@@ -1,5 +1,3 @@
-type Route = 'bookmarks' | 'home' | 'quiz' | 'quiz-history' | 'settings' | 'snippets' | 'sources';
-
 interface Sorting {
   ascending: boolean;
 }

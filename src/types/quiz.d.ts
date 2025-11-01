@@ -36,3 +36,10 @@ interface QuizAnswer {
 }
 
 type QuizAnswerId = string;
+
+interface QuizSourceStats {
+  readonly source: SourceId;
+  readonly quizzes: number;
+  readonly correctQuizAnswers: number;
+  readonly quizAccuracy: number;
+}

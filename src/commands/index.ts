@@ -74,6 +74,15 @@ export async function getQuizAnswers() {
   }
 }
 
+export async function getQuizSourceStats() {
+  if (__DESKTOP__) {
+    return invoke<readonly QuizSourceStats[]>('get_quiz_source_stats');
+  }
+  else {
+    return api.getQuizSourceStats();
+  }
+}
+
 export async function getServerAddr() {
   if (__DESKTOP__) {
     return invoke<string>('get_server_addr');
