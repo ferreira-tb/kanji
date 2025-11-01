@@ -74,12 +74,12 @@ onDeactivated(() => void (answers.value = []));
                 <span>{{ answer }}</span>
               </TableCell>
               <TableCell>
-                <div class="flex flex-col">
+                <div class="flex flex-col gap-0.5">
                   <div class="text-muted-foreground text-xs">
-                    <span>{{ formatZoned(createdAt, 'dd/MM HH:mm') }}</span>
+                    {{ formatZoned(createdAt, 'dd/MM HH:mm') }}
                   </div>
                   <div class="break-all wrap-anywhere">
-                    <span>{{ findSource(sourceId)?.name ?? '' }}</span>
+                    {{ findSource(sourceId)?.name ?? '' }}
                   </div>
                 </div>
               </TableCell>
