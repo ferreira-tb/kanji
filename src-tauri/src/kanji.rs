@@ -157,7 +157,7 @@ pub fn blocking_search_with_options(
     kanji.quizzes = database.count_quizzes(kanji.character)?;
 
     if kanji.quizzes > 0 {
-      kanji.correct_quiz_answers = database.count_correct_quiz_answers(kanji.character)?;
+      kanji.correct_quiz_answers = database.count_correct_quizzes(kanji.character)?;
       kanji.quiz_accuracy = (kanji.correct_quiz_answers as f64) / (kanji.quizzes as f64);
     }
   }

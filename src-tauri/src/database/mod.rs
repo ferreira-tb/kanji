@@ -179,45 +179,66 @@ impl DatabaseHandle {
       .map_err(Into::into)
   }
 
-  pub fn count_quizzes(&self, kanji_char: KanjiChar) -> Result<u64> {
+  pub fn count_quizzes(&self, kanji: KanjiChar) -> Result<u64> {
     use schema::quiz_answer::dsl::*;
     quiz_answer
-      .filter(question.eq(kanji_char))
+      .filter(question.eq(kanji))
       .count()
       .get_result::<i64>(&mut *self.conn())
       .map(u64::try_from)?
       .map_err(Into::into)
   }
 
-  pub fn count_quizzes_in(&self, kanji_chars: &[KanjiChar]) -> Result<u64> {
+  pub fn count_quizzes_in(&self, kanjis: &[KanjiChar]) -> Result<u64> {
     use schema::quiz_answer::dsl::*;
     quiz_answer
-      .filter(question.eq_any(kanji_chars))
+      .filter(question.eq_any(kanjis))
       .count()
       .get_result::<i64>(&mut *self.conn())
       .map(u64::try_from)?
       .map_err(Into::into)
   }
 
-  pub fn count_correct_quiz_answers(&self, kanji_char: KanjiChar) -> Result<u64> {
+  pub fn count_quizzes_with_source(&self, source: SourceId) -> Result<u64> {
     use schema::quiz_answer::dsl::*;
     quiz_answer
-      .filter(question.eq(kanji_char))
-      .filter(answer.eq(kanji_char))
+      .filter(source_id.eq(source))
       .count()
       .get_result::<i64>(&mut *self.conn())
       .map(u64::try_from)?
       .map_err(Into::into)
   }
 
-  pub fn count_correct_quiz_answers_in(&self, kanji_chars: &[KanjiChar]) -> Result<u64> {
+  pub fn count_correct_quizzes(&self, kanji: KanjiChar) -> Result<u64> {
+    use schema::quiz_answer::dsl::*;
+    quiz_answer
+      .filter(question.eq(kanji))
+      .filter(answer.eq(kanji))
+      .count()
+      .get_result::<i64>(&mut *self.conn())
+      .map(u64::try_from)?
+      .map_err(Into::into)
+  }
+
+  pub fn count_correct_quizzes_in(&self, kanjis: &[KanjiChar]) -> Result<u64> {
     let mut count = 0u64;
-    for kanji_char in kanji_chars {
-      let correct = self.count_correct_quiz_answers(*kanji_char)?;
+    for kanji in kanjis {
+      let correct = self.count_correct_quizzes(*kanji)?;
       count = count.saturating_add(correct);
     }
 
     Ok(count)
+  }
+
+  pub fn count_correct_quizzes_with_source(&self, source: SourceId) -> Result<u64> {
+    use schema::quiz_answer::dsl::*;
+    quiz_answer
+      .filter(question.eq(answer))
+      .filter(source_id.eq(source))
+      .count()
+      .get_result::<i64>(&mut *self.conn())
+      .map(u64::try_from)?
+      .map_err(Into::into)
   }
 
   pub fn create_bookmark(&self, new: &NewBookmark) -> Result<BookmarkId> {

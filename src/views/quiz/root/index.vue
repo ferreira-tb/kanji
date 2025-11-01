@@ -8,11 +8,13 @@ import { useHeightDiff } from '@tb-dev/vue';
 import { useQuiz } from '@/composables/quiz';
 import DialogSource from './DialogSource.vue';
 import { useSources } from '@/composables/sources';
+import DropdownMenuButton from '@/components/DropdownMenuButton.vue';
 import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuGroup,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
   Loading,
   SidebarTrigger,
@@ -47,46 +49,36 @@ const isSourceDialogOpen = ref(false);
         <DropdownMenu v-if="!active">
           <DropdownMenuTrigger as-child>
             <Button size="sm" variant="default" :disabled="isLoading">
-              <span>New</span>
+              <span>Menu</span>
             </Button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent side="top" class="w-(--reka-dropdown-menu-trigger-width)">
-            <DropdownMenuItem as-child>
-              <Button
-                size="sm"
-                variant="ghost"
-                class="w-full justify-start font-normal"
+            <DropdownMenuGroup>
+              <DropdownMenuButton
                 :disabled="isLoading || sources.length === 0"
                 @click="() => void (isSourceDialogOpen = true)"
               >
                 <span>Source</span>
-              </Button>
-            </DropdownMenuItem>
+              </DropdownMenuButton>
 
-            <DropdownMenuItem as-child>
-              <Button
-                size="sm"
-                variant="ghost"
-                class="w-full justify-start font-normal"
+              <DropdownMenuButton
                 :disabled="isLoading || sources.length === 0"
                 @click="startRandomSource"
               >
                 <span>Random Source</span>
-              </Button>
-            </DropdownMenuItem>
+              </DropdownMenuButton>
 
-            <DropdownMenuItem as-child>
-              <Button
-                size="sm"
-                variant="ghost"
-                class="w-full justify-start font-normal"
-                :disabled="isLoading"
-                @click="startRandomChunk"
-              >
+              <DropdownMenuButton :disabled="isLoading" @click="startRandomChunk">
                 <span>Random Chunk</span>
-              </Button>
-            </DropdownMenuItem>
+              </DropdownMenuButton>
+            </DropdownMenuGroup>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuButton @click="() => go('quiz-history')">
+              <span>History</span>
+            </DropdownMenuButton>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -98,16 +90,6 @@ const isSourceDialogOpen = ref(false);
           @click="loadSet"
         >
           <span>Reload</span>
-        </Button>
-
-        <Button
-          size="sm"
-          variant="secondary"
-          role="link"
-          tabindex="0"
-          @click="() => go('quiz-history')"
-        >
-          <span>History</span>
         </Button>
       </div>
     </div>

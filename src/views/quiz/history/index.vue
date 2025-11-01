@@ -15,9 +15,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  useSidebar,
 } from '@tb-dev/vue-components';
-
-const router = useRouter();
 
 const {
   state: answers,
@@ -26,6 +25,9 @@ const {
 } = asyncRef([], getQuizAnswers, { immediate: false });
 
 const { findSource } = useSources();
+
+const router = useRouter();
+const { isMobile } = useSidebar();
 
 const topbar = useTemplateRef('topbarEl');
 const contentHeight = useHeightDiff(topbar);
@@ -56,9 +58,9 @@ onDeactivated(() => void (answers.value = []));
       <Table v-if="answers.length > 0">
         <TableHeader>
           <TableRow>
-            <TableHead>Question</TableHead>
-            <TableHead>Answer</TableHead>
-            <TableHead class="max-lg:hidden"></TableHead>
+            <TableHead>{{ isMobile ? 'Q' : 'Question' }}</TableHead>
+            <TableHead>{{ isMobile ? 'A' : 'Answer' }}</TableHead>
+            <TableHead>Source</TableHead>
             <TableHead>Date</TableHead>
           </TableRow>
         </TableHeader>
@@ -71,7 +73,7 @@ onDeactivated(() => void (answers.value = []));
             <TableCell :class="question === answer ? 'text-green-500' : 'text-red-500'">
               <span>{{ answer }}</span>
             </TableCell>
-            <TableCell class="max-lg:hidden">
+            <TableCell class="break-all wrap-anywhere">
               <span v-if="sourceId">{{ findSource(sourceId)?.name ?? '' }}</span>
             </TableCell>
             <TableCell>

@@ -43,6 +43,10 @@ label:has(input[type="radio"]) {
   max-height: calc(75svh - var(--safe-bottom));
 }
 
+[data-slot="dropdown-menu-label"] {
+  @apply select-none;
+}
+
 [data-scrollbarimpl] {
   @apply border-0!;
 }

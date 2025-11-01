@@ -21,6 +21,7 @@ pub(super) fn create() -> Router<AppHandle> {
     .route("/create-source", post(create_source))
     .route("/get-bookmarks", get(get_bookmarks))
     .route("/get-quiz-answers", get(get_quiz_answers))
+    .route("/get-quiz-source-stats", get(get_quiz_source_stats))
     .route("/get-set", get(get_set))
     .route("/get-sources", get(get_sources))
     .route("/rename-source", post(rename_source))
@@ -80,6 +81,13 @@ async fn get_bookmarks(State(app): State<AppHandle>) -> Response {
 async fn get_quiz_answers(State(app): State<AppHandle>) -> Response {
   command::get_quiz_answers(app)
     .map_ok(|answers| res!(OK, Json(answers)))
+    .unwrap_or_else(Response::from)
+    .await
+}
+
+async fn get_quiz_source_stats(State(app): State<AppHandle>) -> Response {
+  command::get_quiz_source_stats(app)
+    .map_ok(|stats| res!(OK, Json(stats)))
     .unwrap_or_else(Response::from)
     .await
 }

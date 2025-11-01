@@ -10,7 +10,7 @@ import { useKanjiStore } from '@/stores/kanji';
 import { ChevronUpIcon } from 'lucide-vue-next';
 import { useKanjis } from '@/composables/kanji';
 import { useRanking } from '@/composables/ranking';
-import { computed, onBeforeMount, useTemplateRef } from 'vue';
+import { computed, onBeforeMount, useTemplateRef, watch } from 'vue';
 import {
   Badge,
   Button,
@@ -24,6 +24,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  useSidebar,
 } from '@tb-dev/vue-components';
 
 const store = useKanjiStore();
@@ -32,7 +33,9 @@ const ranking = useRanking(currentKanji);
 
 const { kanjis, loading, load, next, previous } = useKanjis();
 
+const sidebar = useSidebar();
 const route = useRoute();
+const routeName = computed(() => String(route.name));
 
 const contentEl = useTemplateRef('content');
 const contentHeight = useHeight(contentEl);
@@ -43,9 +46,15 @@ const listHeight = computed(() => contentHeight.value - actionHeight.value);
 
 onBeforeMount(load);
 
+watch(routeName, () => {
+  if (sidebar.isMobile.value) {
+    sidebar.setOpenMobile(false);
+  }
+});
+
 function setCurrentSource(source: KanjiStatsSource) {
   currentSource.value = source;
-  if (route.name !== ('snippets' satisfies Route)) {
+  if (routeName.value !== ('snippets' satisfies Route)) {
     go('snippets');
   }
 }
@@ -132,7 +141,7 @@ function setCurrentSource(source: KanjiStatsSource) {
         <DropdownMenuTrigger as-child>
           <div class="pb-safe">
             <Button variant="outline" class="w-full">
-              <span>{{ capitalCase(String(route.name)) }}</span>
+              <span>{{ capitalCase(routeName) }}</span>
               <ChevronUpIcon class="ml-auto" />
             </Button>
           </div>
@@ -147,6 +156,12 @@ function setCurrentSource(source: KanjiStatsSource) {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <RouterLink to="/quiz" class="w-full">Quiz</RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <RouterLink to="/quiz/history" class="w-full">Quiz History</RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <RouterLink to="/quiz/stats" class="w-full">Quiz Stats</RouterLink>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <RouterLink to="/sources" class="w-full">Sources</RouterLink>

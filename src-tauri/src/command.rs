@@ -12,7 +12,7 @@ use crate::database::sql_types::{
 use crate::error::{CResult, Error};
 use crate::kanji::{self, KanjiStats};
 use crate::manager::ManagerExt;
-use crate::quiz::{Quiz, QuizKind};
+use crate::quiz::{Quiz, QuizKind, QuizSourceStats};
 use crate::set::KanjiSet;
 use crate::snippet::{self, Snippet};
 use crate::tray;
@@ -106,6 +106,21 @@ pub async fn get_quiz_answers(app: AppHandle) -> CResult<Vec<QuizAnswer>> {
     app
       .database()
       .get_quiz_answers()
+      .map_err(Into::into)
+  });
+
+  task.await?
+}
+
+#[tauri::command]
+pub async fn get_quiz_source_stats(app: AppHandle) -> CResult<Vec<QuizSourceStats>> {
+  let task = spawn_blocking(move || {
+    app
+      .database()
+      .get_source_ids()?
+      .into_iter()
+      .map(|source| QuizSourceStats::new(&app, source))
+      .try_collect()
       .map_err(Into::into)
   });
 

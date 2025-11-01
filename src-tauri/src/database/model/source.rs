@@ -1,16 +1,16 @@
 use crate::database::sql_types::{Path, SourceId, SourceWeight, Zoned};
-use anyhow::Result;
 use bon::Builder;
 use diesel::prelude::*;
 use serde::Serialize;
-use std::path::PathBuf;
-use tauri::AppHandle;
 
 #[cfg(desktop)]
 use {
   crate::manager::ManagerExt,
+  anyhow::Result,
   globset::{Glob, GlobBuilder, GlobSet, GlobSetBuilder},
+  std::path::PathBuf,
   std::sync::LazyLock,
+  tauri::AppHandle,
   walkdir::{DirEntry, WalkDir},
 };
 
