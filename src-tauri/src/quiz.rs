@@ -215,4 +215,8 @@ impl QuizSourceStats {
       quiz_accuracy,
     })
   }
+
+  pub fn quizzes(&self) -> u64 {
+    self.quizzes
+  }
 }

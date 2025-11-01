@@ -61,24 +61,29 @@ onDeactivated(() => void (answers.value = []));
             <TableHead>{{ isMobile ? 'Q' : 'Question' }}</TableHead>
             <TableHead>{{ isMobile ? 'A' : 'Answer' }}</TableHead>
             <TableHead>Source</TableHead>
-            <TableHead>Date</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           <TableRow v-for="({ id, question, answer, sourceId, createdAt }) of answers" :key="id">
-            <TableCell>
-              <span>{{ question }}</span>
-            </TableCell>
-            <TableCell :class="question === answer ? 'text-green-500' : 'text-red-500'">
-              <span>{{ answer }}</span>
-            </TableCell>
-            <TableCell class="break-all wrap-anywhere">
-              <span v-if="sourceId">{{ findSource(sourceId)?.name ?? '' }}</span>
-            </TableCell>
-            <TableCell>
-              <span>{{ formatZoned(createdAt, 'dd/MM HH:mm') }}</span>
-            </TableCell>
+            <template v-if="sourceId">
+              <TableCell>
+                <span>{{ question }}</span>
+              </TableCell>
+              <TableCell :class="question === answer ? 'text-green-500' : 'text-red-500'">
+                <span>{{ answer }}</span>
+              </TableCell>
+              <TableCell>
+                <div class="flex flex-col">
+                  <div class="text-muted-foreground text-xs">
+                    <span>{{ formatZoned(createdAt, 'dd/MM HH:mm') }}</span>
+                  </div>
+                  <div class="break-all wrap-anywhere">
+                    <span>{{ findSource(sourceId)?.name ?? '' }}</span>
+                  </div>
+                </div>
+              </TableCell>
+            </template>
           </TableRow>
         </TableBody>
       </Table>

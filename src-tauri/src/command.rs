@@ -115,13 +115,17 @@ pub async fn get_quiz_answers(app: AppHandle) -> CResult<Vec<QuizAnswer>> {
 #[tauri::command]
 pub async fn get_quiz_source_stats(app: AppHandle) -> CResult<Vec<QuizSourceStats>> {
   let task = spawn_blocking(move || {
-    app
+    let mut stats: Vec<QuizSourceStats> = app
       .database()
       .get_source_ids()?
       .into_iter()
       .map(|source| QuizSourceStats::new(&app, source))
-      .try_collect()
-      .map_err(Into::into)
+      .try_collect()?;
+
+    stats.sort_by_key(QuizSourceStats::quizzes);
+    stats.reverse();
+
+    Ok(stats)
   });
 
   task.await?

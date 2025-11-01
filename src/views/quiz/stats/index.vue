@@ -11,6 +11,7 @@ import {
   Button,
   Card,
   CardContent,
+  Loading,
   SidebarTrigger,
   Table,
   TableBody,
@@ -21,13 +22,13 @@ import {
   useSidebar,
 } from '@tb-dev/vue-components';
 
-const { set } = useQuiz();
+const { set, isLoadingSet } = useQuiz();
 const { findSource } = useSources();
 
 const {
   state: stats,
   execute: load,
-  isLoading,
+  isLoading: isLoadingStats,
 } = asyncRef([], getQuizSourceStats, { immediate: false });
 
 const router = useRouter();
@@ -46,7 +47,7 @@ onDeactivated(() => void (stats.value = []));
     <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
       <SidebarTrigger />
       <div class="flex items-center justify-center gap-2">
-        <Button size="sm" variant="secondary" :disabled="isLoading" @click="load">
+        <Button size="sm" variant="secondary" :disabled="isLoadingStats" @click="load">
           <span>Reload</span>
         </Button>
         <Button size="sm" variant="secondary" @click="() => router.back()">
@@ -59,7 +60,10 @@ onDeactivated(() => void (stats.value = []));
       class="overflow-x-hidden overflow-y-auto pb-safe-12 px-1 md:px-6"
       :style="{ height: toPixel(contentHeight) }"
     >
-      <div class="flex flex-col gap-4">
+      <div v-if="isLoadingSet || isLoadingStats" class="size-full">
+        <Loading />
+      </div>
+      <div v-else class="flex flex-col gap-4">
         <div class="flex items-center justify-center">
           <Card v-if="set && set.quizzes > 0" class="w-full md:max-w-96 p-0">
             <CardContent class="p-2 md:pr-8">
