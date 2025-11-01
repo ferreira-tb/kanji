@@ -58,7 +58,7 @@ onDeactivated(() => void (answers.value = []));
           <TableRow>
             <TableHead>Question</TableHead>
             <TableHead>Answer</TableHead>
-            <TableHead class="max-lg:hidden"></TableHead>
+            <TableHead class="max-lg:hidden">Source</TableHead>
             <TableHead>Date</TableHead>
           </TableRow>
         </TableHeader>
