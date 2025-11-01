@@ -76,6 +76,9 @@ const isSourceDialogOpen = ref(false);
 
             <DropdownMenuSeparator />
 
+            <DropdownMenuButton @click="() => go('quiz-stats')">
+              <span>Stats</span>
+            </DropdownMenuButton>
             <DropdownMenuButton @click="() => go('quiz-history')">
               <span>History</span>
             </DropdownMenuButton>
