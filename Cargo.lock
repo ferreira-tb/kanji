@@ -2356,7 +2356,7 @@ dependencies = [
 
 [[package]]
 name = "kanji"
-version = "6.2.4"
+version = "6.2.5"
 dependencies = [
  "anyhow",
  "axum",
@@ -4903,8 +4903,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-pinia"
 version = "4.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07c76f51c6eb150047ae2fe3b4fcd8b0c9310807c8d59042eb5371b74163325a"
+source = "git+https://github.com/ferreira-tb/tauri-store?branch=main#ce93dfbfb23252f79e7897f1c764565abf775ea2"
 dependencies = [
  "serde",
  "tauri",
@@ -4914,9 +4913,8 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-prevent-default"
-version = "3.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22e133889986e498b0377e4999d6c45e7aff41ae808c87265a11e3f544748abe"
+version = "4.0.1"
+source = "git+https://github.com/ferreira-tb/tauri-plugin-prevent-default?branch=main#41dc82c65917c19087ecd127f7aa0cee0cddcdeb"
 dependencies = [
  "bitflags 2.10.0",
  "itertools",
@@ -5055,8 +5053,7 @@ dependencies = [
 [[package]]
 name = "tauri-store"
 version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aee4e469de686b5ca47838ca6dd99c1b98cbf574848fb4f987eecd11d7c965f1"
+source = "git+https://github.com/ferreira-tb/tauri-store?branch=main#ce93dfbfb23252f79e7897f1c764565abf775ea2"
 dependencies = [
  "dashmap",
  "futures",
@@ -5075,8 +5072,7 @@ dependencies = [
 [[package]]
 name = "tauri-store-macros"
 version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90c61be15c39f0abf599c33946f97fdd736346719fc3bbdd4c8acf196f110e06"
+source = "git+https://github.com/ferreira-tb/tauri-store?branch=main#ce93dfbfb23252f79e7897f1c764565abf775ea2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5086,8 +5082,7 @@ dependencies = [
 [[package]]
 name = "tauri-store-utils"
 version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "855375aae57c8c81bb89c847716e4ec1130fab7e0628310cfd173136f4382080"
+source = "git+https://github.com/ferreira-tb/tauri-store?branch=main#ce93dfbfb23252f79e7897f1c764565abf775ea2"
 dependencies = [
  "parking_lot",
  "semver",

@@ -4,7 +4,7 @@ members = ["src-tauri"]
 
 [workspace.package]
 edition = "2024"
-rust-version = "1.92"
+rust-version = "1.93"
 
 [profile.release]
 codegen-units = 1

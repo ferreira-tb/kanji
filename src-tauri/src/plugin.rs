@@ -16,10 +16,11 @@ pub fn prevent_default() -> TauriPlugin<Wry> {
   use tauri_plugin_prevent_default::{Builder, Flags, PlatformOptions};
   Builder::new()
     .with_flags(Flags::debug())
-    .platform(PlatformOptions {
-      general_autofill: false,
-      password_autosave: false,
-    })
+    .platform(
+      PlatformOptions::new()
+        .general_autofill(false)
+        .password_autosave(false),
+    )
     .build()
 }
 

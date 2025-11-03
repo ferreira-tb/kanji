@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "6.2.4"
+version = "6.2.5"
 publish = false
 
 [package.edition]
@@ -67,7 +67,8 @@ version = "2.9"
 features = ["image-png", "protocol-asset", "rustls-tls", "tray-icon"]
 
 [dependencies.tauri-plugin-pinia]
-version = "4"
+git = "https://github.com/ferreira-tb/tauri-store"
+branch = "main"
 features = ["marshaler-toml"]
 
 [dependencies.tokio]
@@ -88,7 +89,8 @@ version = "0.8"
 features = ["macros"]
 
 [target.'cfg(not(target_os = "android"))'.dependencies.tauri-plugin-prevent-default]
-version = "3"
+git = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
+branch = "main"
 features = ["platform-windows"]
 
 [target.'cfg(not(target_os = "android"))'.dependencies.tower]
