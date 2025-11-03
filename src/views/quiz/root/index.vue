@@ -1,10 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { go } from '@/router';
 import Chunks from './Chunks.vue';
 import Question from './Question.vue';
-import { toPixel } from '@tb-dev/utils';
-import { ref, useTemplateRef } from 'vue';
-import { useHeightDiff } from '@tb-dev/vue';
 import { useQuiz } from '@/composables/quiz';
 import DialogSource from './DialogSource.vue';
 import { useSources } from '@/composables/sources';
@@ -33,15 +31,12 @@ const {
 
 const { sources } = useSources();
 
-const topbar = useTemplateRef('topbarEl');
-const contentHeight = useHeightDiff(topbar);
-
 const isSourceDialogOpen = ref(false);
 </script>
 
 <template>
   <div class="flex size-full flex-col gap-2">
-    <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
+    <div class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
       <SidebarTrigger />
       <DialogSource v-model="isSourceDialogOpen" />
 
@@ -97,10 +92,7 @@ const isSourceDialogOpen = ref(false);
       </div>
     </div>
 
-    <div
-      class="flex flex-col gap-2 overflow-x-hidden overflow-y-auto px-1 md:px-6 pb-safe-12"
-      :style="{ height: toPixel(contentHeight) }"
-    >
+    <div class="flex flex-col gap-2 overflow-x-hidden overflow-y-auto px-1 md:px-6 pb-safe-12">
       <div v-if="isLoadingSet" class="size-full">
         <Loading />
       </div>

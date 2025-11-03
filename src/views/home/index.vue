@@ -158,11 +158,7 @@ function onCardClick(kanji: DeepReadonly<KanjiStats>) {
         </Card>
       </div>
 
-      <div
-        v-if="isPaginationEnabled"
-        ref="pagination"
-        class="py-3 flex justify-center"
-      >
+      <div v-if="isPaginationEnabled" ref="pagination" class="flex justify-center py-3">
         <Pagination
           #default="{ page }"
           v-model:page="currentPage"

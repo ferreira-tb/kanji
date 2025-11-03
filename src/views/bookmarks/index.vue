@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
-import { toPixel } from '@tb-dev/utils';
-import { useHeightDiff } from '@tb-dev/vue';
 import { useSources } from '@/composables/sources';
 import { useSettingsStore } from '@/stores/settings';
 import { useBookmarks } from '@/composables/bookmarks';
@@ -19,9 +16,6 @@ const {
 
 const { findSource } = useSources();
 
-const topbar = useTemplateRef('topbarEl');
-const contentHeight = useHeightDiff(topbar);
-
 function onContentClick(bookmark: Bookmark) {
   if (settings.clipboard) {
     writeText(bookmark.snippet).err();
@@ -31,7 +25,7 @@ function onContentClick(bookmark: Bookmark) {
 
 <template>
   <div class="flex size-full flex-col gap-2">
-    <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
+    <div class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
       <SidebarTrigger />
 
       <div class="flex items-center justify-center gap-2">
@@ -41,10 +35,7 @@ function onContentClick(bookmark: Bookmark) {
       </div>
     </div>
 
-    <div
-      class="flex flex-col gap-2 md:gap-4 overflow-x-hidden overflow-y-auto px-1 md:px-6 pb-safe-12"
-      :style="{ height: toPixel(contentHeight) }"
-    >
+    <div class="flex flex-col gap-2 md:gap-4 overflow-x-hidden overflow-y-auto px-1 md:px-6 pb-safe-12">
       <div v-if="loading" class="size-full">
         <Loading />
       </div>

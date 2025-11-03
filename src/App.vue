@@ -42,9 +42,7 @@ onMounted(async () => {
       <div class="size-full overflow-hidden p-0">
         <RouterView #default="{ Component }">
           <template v-if="Component">
-            <KeepAlive>
-              <component :is="Component" />
-            </KeepAlive>
+            <component :is="Component" />
           </template>
         </RouterView>
       </div>

@@ -1,8 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import * as commands from '@/commands';
-import { toPixel } from '@tb-dev/utils';
-import { useHeightDiff } from '@tb-dev/vue';
-import { computed, useTemplateRef } from 'vue';
 import { useKanjis } from '@/composables/kanji';
 import { useSources } from '@/composables/sources';
 import {
@@ -37,8 +35,6 @@ const loading = computed(() => {
 });
 
 const desktop = globalThis.__DESKTOP__;
-const topbar = useTemplateRef('topbarEl');
-const contentHeight = useHeightDiff(topbar);
 
 async function load() {
   await loadSources();
@@ -64,7 +60,7 @@ function toggle(source: Source) {
 
 <template>
   <div class="flex size-full flex-col gap-2">
-    <div ref="topbarEl" class="flex h-14 w-full items-center justify-between gap-4 px-2 md:px-6 py-4">
+    <div class="flex h-14 w-full items-center justify-between gap-4 px-2 md:px-6 py-4">
       <SidebarTrigger />
       <div class="flex items-center justify-center gap-2">
         <Button
@@ -87,10 +83,7 @@ function toggle(source: Source) {
       </div>
     </div>
 
-    <div
-      class="overflow-x-hidden overflow-y-auto pb-safe-12 px-1 md:px-6"
-      :style="{ height: toPixel(contentHeight) }"
-    >
+    <div class="overflow-x-hidden overflow-y-auto pb-safe-12 px-1 md:px-6">
       <Table v-if="sources.length > 0">
         <TableHeader>
           <TableRow>

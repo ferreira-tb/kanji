@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { open } from '@/commands';
 import { storeToRefs } from 'pinia';
-import { toPixel } from '@tb-dev/utils';
+import { handleError } from '@tb-dev/vue';
+import { nextTick, onActivated } from 'vue';
 import { useKanjiStore } from '@/stores/kanji';
 import { useSnippets } from '@/composables/snippets';
 import { useSettingsStore } from '@/stores/settings';
-import { handleError, useHeightDiff } from '@tb-dev/vue';
-import { nextTick, onActivated, useTemplateRef } from 'vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { Button, Card, CardContent, Loading, SidebarTrigger } from '@tb-dev/vue-components';
 
@@ -16,9 +15,6 @@ const { currentKanji, currentSource } = storeToRefs(store);
 const settings = useSettingsStore();
 
 const { snippets, load, loading } = useSnippets();
-
-const topbar = useTemplateRef('topbarEl');
-const contentHeight = useHeightDiff(topbar);
 
 onActivated(async () => {
   try {
@@ -39,7 +35,7 @@ function onContentClick(snippet: Snippet) {
 
 <template>
   <div class="flex size-full flex-col gap-2">
-    <div ref="topbarEl" class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
+    <div class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
       <SidebarTrigger />
 
       <div class="flex items-center justify-center gap-2">
@@ -62,10 +58,7 @@ function onContentClick(snippet: Snippet) {
       </div>
     </div>
 
-    <div
-      class="flex flex-col gap-2 md:gap-4 overflow-x-hidden overflow-y-auto px-1 md:px-6 pb-safe-12"
-      :style="{ height: toPixel(contentHeight) }"
-    >
+    <div class="flex flex-col gap-2 md:gap-4 overflow-x-hidden overflow-y-auto px-1 md:px-6 pb-safe-12">
       <div v-if="loading" class="size-full">
         <Loading />
       </div>
