@@ -11,13 +11,12 @@ export const useSettingsStore = defineStore('settings', () => {
 
   const snippetLimit = ref(1000);
   const snippetMinLen = ref(5);
-  const snippetKanjiThreshold = ref(0.2);
   const shuffleSnippets = ref(true);
 
   const setFileName = ref('Kanji Set.txt');
   const setChunkSize = ref(25);
 
-  if (!__DESKTOP__) {
+  if (__MOBILE__) {
     watchEffect(() => {
       localStorage.setItem(BASE_URL_KEY, baseUrl.value ?? '');
     });
@@ -28,7 +27,6 @@ export const useSettingsStore = defineStore('settings', () => {
     hideOnClose,
     snippetLimit,
     snippetMinLen,
-    snippetKanjiThreshold,
     shuffleSnippets,
     setFileName,
     setChunkSize,

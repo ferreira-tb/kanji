@@ -16,13 +16,15 @@ useColorMode({
   writeDefaults: true,
 });
 
-onKeyDown('F1', () => go('home'));
-onKeyDown('F2', () => go('snippets'));
-onKeyDown('F3', () => go('quiz'));
-onKeyDown('F4', () => go('sources'));
-onKeyDown('F6', () => go('bookmarks'));
-onKeyDown('F7', () => go('settings'));
-onKeyDown('Escape', () => exit(0).err(), { enabled: __DESKTOP__ });
+if (__DESKTOP__) {
+  onKeyDown('F1', () => go('home'));
+  onKeyDown('F2', () => go('snippets'));
+  onKeyDown('F3', () => go('quiz'));
+  onKeyDown('F4', () => go('sources'));
+  onKeyDown('F6', () => go('bookmarks'));
+  onKeyDown('F7', () => go('settings'));
+  onKeyDown('Escape', () => exit(0).err());
+}
 
 onMounted(async () => {
   try {

@@ -69,7 +69,6 @@ impl Quiz {
               .sources(&sources)
               .limit(1)
               .min_len(settings.snippet_min_len)
-              .threshold(settings.snippet_kanji_threshold)
               .shuffle(true)
               .call()
           });

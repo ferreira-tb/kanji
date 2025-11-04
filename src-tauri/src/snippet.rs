@@ -51,7 +51,7 @@ impl Snippet {
   }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SnippetId(u64);
 
 impl SnippetId {
@@ -130,7 +130,6 @@ pub fn blocking_search(
     .sources(&sources)
     .limit(settings.snippet_limit)
     .min_len(settings.snippet_min_len)
-    .threshold(settings.snippet_kanji_threshold)
     .shuffle(settings.shuffle_snippets)
     .call()
 }
@@ -143,7 +142,6 @@ pub fn blocking_search_with_options(
   #[builder(default)] sources: &[Source],
   #[builder(default = Settings::DEFAULT_SNIPPET_LIMIT)] limit: usize,
   #[builder(default = Settings::DEFAULT_SNIPPET_MIN_LEN)] min_len: usize,
-  #[builder(default = Settings::DEFAULT_SNIPPET_KANJI_THRESHOLD)] threshold: f64,
   #[builder(default = Settings::DEFAULT_SHUFFLE_SNIPPETS)] shuffle: bool,
 ) -> Result<Vec<Snippet>> {
   let mut snippets = Vec::new();
@@ -165,7 +163,7 @@ pub fn blocking_search_with_options(
         let Ok(text) = text else { continue };
 
         let text = text.trim();
-        if !should_skip(text, min_len, threshold) {
+        if !should_skip(text, min_len) {
           let bytes = text.as_bytes();
           if finder.find(bytes).is_some() {
             let name = Arc::clone(&name);
@@ -215,25 +213,21 @@ pub fn blocking_search_with_options(
 }
 
 #[cfg(desktop)]
-fn should_skip(text: &str, min_len: usize, threshold: f64) -> bool {
+fn should_skip(text: &str, min_len: usize) -> bool {
   if text.is_empty() || text.starts_with('#') || text.starts_with('<') {
     return true;
   }
 
-  let mut chars: u32 = 0;
-  let mut matches: u32 = 0;
+  let mut matches: usize = 0;
   for char in text.chars() {
-    chars = chars.saturating_add(1);
     if is_kanji(char) {
       matches = matches.saturating_add(1);
     }
+
+    if matches >= min_len {
+      return true;
+    }
   }
 
-  if (matches as usize) < min_len {
-    true
-  } else {
-    let chars = f64::from(chars);
-    let matches = f64::from(matches);
-    chars < 1.0 || (matches / chars) < threshold
-  }
+  false
 }
