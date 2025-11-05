@@ -225,9 +225,9 @@ fn should_skip(text: &str, min_len: usize) -> bool {
     }
 
     if matches >= min_len {
-      return true;
+      return false;
     }
   }
 
-  false
+  true
 }
