@@ -70,6 +70,7 @@ impl Quiz {
               .limit(1)
               .min_len(settings.snippet_min_len)
               .shuffle(true)
+              .ignore_source_weight(settings.ignore_source_weight)
               .call()
           });
 

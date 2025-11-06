@@ -39,6 +39,11 @@ const settings = useSettingsStore();
       <span>Shuffle snippets</span>
     </Label>
 
+    <Label>
+      <Checkbox v-model="settings.ignoreSourceWeight" />
+      <span>Ignore source weight</span>
+    </Label>
+
     <Label class="max-w-70">
       <span>Limit</span>
       <NumberField

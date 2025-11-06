@@ -12,6 +12,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const snippetLimit = ref(1000);
   const snippetMinLen = ref(5);
   const shuffleSnippets = ref(true);
+  const ignoreSourceWeight = ref(false);
 
   const setFileName = ref('Kanji Set.txt');
   const setChunkSize = ref(25);
@@ -28,6 +29,7 @@ export const useSettingsStore = defineStore('settings', () => {
     snippetLimit,
     snippetMinLen,
     shuffleSnippets,
+    ignoreSourceWeight,
     setFileName,
     setChunkSize,
     baseUrl,

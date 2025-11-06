@@ -131,6 +131,7 @@ pub fn blocking_search(
     .limit(settings.snippet_limit)
     .min_len(settings.snippet_min_len)
     .shuffle(settings.shuffle_snippets)
+    .ignore_source_weight(settings.ignore_source_weight)
     .call()
 }
 
@@ -143,6 +144,7 @@ pub fn blocking_search_with_options(
   #[builder(default = Settings::DEFAULT_SNIPPET_LIMIT)] limit: usize,
   #[builder(default = Settings::DEFAULT_SNIPPET_MIN_LEN)] min_len: usize,
   #[builder(default = Settings::DEFAULT_SHUFFLE_SNIPPETS)] shuffle: bool,
+  #[builder(default = Settings::DEFAULT_IGNORE_SOURCE_WEIGHT)] ignore_source_weight: bool,
 ) -> Result<Vec<Snippet>> {
   let mut snippets = Vec::new();
   let db = app.database();
@@ -195,13 +197,23 @@ pub fn blocking_search_with_options(
     .collect();
 
   let mut rng = rand::rng();
-  let chosen = snippets
-    .iter()
-    .map(|snippet| (snippet.id, snippet.source.weight))
-    .collect_vec()
-    .choose_multiple_weighted(&mut rng, limit, |(_, weight)| *weight)?
-    .map(|(id, _)| *id)
-    .collect::<HashSet<_>>();
+  let chosen: HashSet<SnippetId> = if ignore_source_weight {
+    snippets
+      .iter()
+      .map(|snippet| snippet.id)
+      .collect_vec()
+      .choose_multiple(&mut rng, limit)
+      .copied()
+      .collect()
+  } else {
+    snippets
+      .iter()
+      .map(|snippet| (snippet.id, snippet.source.weight))
+      .collect_vec()
+      .choose_multiple_weighted(&mut rng, limit, |(_, weight)| *weight)?
+      .map(|(id, _)| *id)
+      .collect()
+  };
 
   snippets.retain(|snippet| chosen.contains(&snippet.id));
 
