@@ -25,40 +25,40 @@ use tauri::{AppHandle, Manager};
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   #[cfg(desktop)]
-  let builder = {
-    tauri::Builder::default()
-      .plugin(plugin::prevent_default())
-      .plugin(plugin::single_instance())
-      .plugin(plugin::window_state())
-      .plugin(tauri_plugin_updater::Builder::new().build())
-      .invoke_handler(tauri::generate_handler![
-        command::create_bookmark,
-        command::create_quiz,
-        command::create_quiz_answer,
-        command::create_source,
-        command::create_tray_icon,
-        command::export_set,
-        command::get_bookmarks,
-        command::get_quiz_answers,
-        command::get_quiz_source_stats,
-        command::get_server_addr,
-        command::get_set,
-        command::get_sources,
-        command::open,
-        command::pick_folders,
-        command::rename_source,
-        command::remove_bookmark,
-        command::remove_source,
-        command::search_kanji,
-        command::search_snippets,
-        command::set_source_weight,
-        command::show_window,
-        command::toggle_source
-      ])
-  };
+  let builder = tauri::Builder::default()
+    .plugin(plugin::prevent_default())
+    .plugin(plugin::single_instance())
+    .plugin(tauri_plugin_updater::Builder::new().build())
+    .invoke_handler(tauri::generate_handler![
+      command::create_bookmark,
+      command::create_quiz,
+      command::create_quiz_answer,
+      command::create_source,
+      command::create_tray_icon,
+      command::export_set,
+      command::get_bookmarks,
+      command::get_quiz_answers,
+      command::get_quiz_source_stats,
+      command::get_server_addr,
+      command::get_set,
+      command::get_sources,
+      command::open,
+      command::pick_folders,
+      command::rename_source,
+      command::remove_bookmark,
+      command::remove_source,
+      command::search_kanji,
+      command::search_snippets,
+      command::set_source_weight,
+      command::show_window,
+      command::toggle_source
+    ]);
 
   #[cfg(mobile)]
   let builder = tauri::Builder::default();
+
+  #[cfg(debug_assertions)]
+  let builder = builder.plugin(plugin::log());
 
   builder
     .plugin(plugin::pinia())

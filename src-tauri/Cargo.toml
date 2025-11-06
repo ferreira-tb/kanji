@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "7.0.1"
+version = "7.1.0"
 publish = false
 
 [package.edition]
@@ -29,6 +29,7 @@ tauri-plugin-clipboard-manager = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
 tauri-plugin-http = "2"
+tauri-plugin-log = "2"
 tauri-plugin-persisted-scope = "2"
 tauri-plugin-process = "2"
 walkdir = "2.5"
@@ -53,6 +54,10 @@ features = ["serde"]
 [dependencies.libsqlite3-sys]
 version = "0.35"
 features = ["bundled"]
+
+[dependencies.log]
+version = "0.4"
+features = ["release_max_level_off"]
 
 [dependencies.rand]
 version = "0.9"
@@ -80,9 +85,8 @@ version = "1.18"
 features = ["serde", "v7"]
 
 [target.'cfg(not(target_os = "android"))'.dependencies]
-tauri-plugin-single-instance = "2.3"
-tauri-plugin-updater = "2.9"
-tauri-plugin-window-state = "2.4"
+tauri-plugin-single-instance = "2"
+tauri-plugin-updater = "2"
 
 [target.'cfg(not(target_os = "android"))'.dependencies.axum]
 version = "0.8"

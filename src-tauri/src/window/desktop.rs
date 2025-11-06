@@ -18,6 +18,7 @@ pub fn open(app: &AppHandle) -> Result<()> {
     .resizable(true)
     .maximizable(true)
     .minimizable(true)
+    .maximized(true)
     .visible(false)
     .prevent_overflow()
     .build()?;

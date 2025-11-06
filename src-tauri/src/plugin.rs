@@ -1,11 +1,23 @@
 use tauri::Wry;
 use tauri::plugin::TauriPlugin;
-use tauri_plugin_pinia::PrettyTomlMarshaler;
 
 #[cfg(desktop)]
 use {crate::window::desktop::WindowExt, anyhow::Result};
 
+#[cfg(debug_assertions)]
+pub fn log() -> TauriPlugin<Wry> {
+  use tauri_plugin_log::{Target, TargetKind};
+
+  tauri_plugin_log::Builder::new()
+    .clear_targets()
+    .target(Target::new(TargetKind::Stderr))
+    .target(Target::new(TargetKind::Webview))
+    .build()
+}
+
 pub fn pinia() -> TauriPlugin<Wry> {
+  use tauri_plugin_pinia::PrettyTomlMarshaler;
+
   tauri_plugin_pinia::Builder::new()
     .marshaler_of("settings", Box::new(PrettyTomlMarshaler))
     .build()
@@ -14,12 +26,17 @@ pub fn pinia() -> TauriPlugin<Wry> {
 #[cfg(desktop)]
 pub fn prevent_default() -> TauriPlugin<Wry> {
   use tauri_plugin_prevent_default::{Builder, Flags, PlatformOptions};
+
   Builder::new()
     .with_flags(Flags::debug())
     .platform(
       PlatformOptions::new()
+        .browser_accelerator_keys(cfg!(debug_assertions))
+        .default_context_menus(cfg!(debug_assertions))
+        .default_script_dialogs(cfg!(debug_assertions))
         .general_autofill(false)
-        .password_autosave(false),
+        .password_autosave(false)
+        .zoom_control(false),
     )
     .build()
 }
@@ -34,13 +51,4 @@ pub fn single_instance() -> TauriPlugin<Wry> {
       window.set_focus()?;
     };
   })
-}
-
-#[cfg(desktop)]
-pub fn window_state() -> TauriPlugin<Wry> {
-  use tauri_plugin_window_state::StateFlags as Flags;
-
-  tauri_plugin_window_state::Builder::new()
-    .with_state_flags(Flags::MAXIMIZED | Flags::POSITION)
-    .build()
 }

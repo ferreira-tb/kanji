@@ -10,6 +10,7 @@ import { createPinia } from 'pinia';
 import { handleError } from '@/lib/error';
 import { checkForUpdates } from '@/lib/updater';
 import { TauriPluginPinia } from '@tauri-store/pinia';
+import { attachConsole } from '@tauri-apps/plugin-log';
 import { setCurrentApp, setErrorHandler } from '@tb-dev/vue';
 
 const app = createApp(App);
@@ -33,13 +34,14 @@ app.use(router);
 app.use(pinia);
 
 async function init() {
-  if (__DESKTOP__) {
-    try {
-      await checkForUpdates();
+  try {
+    await checkForUpdates();
+    if (__DEBUG_ASSERTIONS__) {
+      await attachConsole();
     }
-    catch (err) {
-      handleError(err);
-    }
+  }
+  catch (err) {
+    handleError(err);
   }
 
   app.mount('#app');

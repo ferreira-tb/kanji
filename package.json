@@ -1,13 +1,13 @@
 {
   "name": "kanji",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "type": "module",
   "packageManager": "pnpm@10.20.0",
   "license": "GPL-3.0-only",
   "private": true,
   "scripts": {
     "build": "pwsh scripts/build.ps1",
-    "clippy": "cargo clippy --workspace",
+    "clippy": "cargo +nightly clippy --workspace",
     "dev": "cargo tauri dev",
     "eslint": "eslint . --config eslint.config.ts",
     "format": "dprint fmt && cargo fmt --all",
@@ -23,6 +23,7 @@
     "@tauri-apps/plugin-dialog": "^2.4.2",
     "@tauri-apps/plugin-fs": "^2.4.4",
     "@tauri-apps/plugin-http": "^2.5.4",
+    "@tauri-apps/plugin-log": "^2.7.1",
     "@tauri-apps/plugin-process": "^2.3.1",
     "@tauri-apps/plugin-updater": "^2.9.0",
     "@tauri-store/pinia": "^4.1.0",
@@ -36,7 +37,7 @@
     "lucide-vue-next": "^0.552.0",
     "pinia": "^3.0.4",
     "tw-animate-css": "^1.4.0",
-    "vue": "^3.5.22",
+    "vue": "^3.5.23",
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
@@ -49,7 +50,7 @@
     "tailwindcss": "^4.1.16",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
-    "vite": "^7.2.0",
+    "vite": "^7.2.1",
     "vue-tsc": "^3.1.3"
   }
 }
