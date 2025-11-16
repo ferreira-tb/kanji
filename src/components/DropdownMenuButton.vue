@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { MaybePromise } from '@tb-dev/utils';
-import { Button, DropdownMenuItem, cn } from '@tb-dev/vue-components';
 import type { VNode } from 'vue';
+import type { MaybePromise } from '@tb-dev/utils';
+import { Button, cn, DropdownMenuItem } from '@tb-dev/vue-components';
 
 defineProps<{
   buttonClass?: string;

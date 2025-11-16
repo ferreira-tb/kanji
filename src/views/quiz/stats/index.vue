@@ -77,7 +77,7 @@ onDeactivated(() => void (stats.value = []));
         <div class="flex flex-col gap-4">
           <Table v-if="stats.length > 0">
             <TableHeader>
-              <TableRow>
+              <TableRow class="bg-background hover:bg-background">
                 <TableHead>Source</TableHead>
                 <TableHead>{{ isMobile ? 'Q' : 'Quizzes' }}</TableHead>
                 <TableHead>{{ isMobile ? '%' : 'Accuracy' }}</TableHead>

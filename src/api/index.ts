@@ -27,6 +27,12 @@ export async function createSource(source?: Option<string | string[]>) {
   }
 }
 
+export async function createSourceGroup(name: string) {
+  const response = await post('create-source-group', { name });
+  const data: SourceGroupId = await response.json();
+  return data;
+}
+
 export async function getBookmarks() {
   const response = await get('get-bookmarks');
   const data: readonly Bookmark[] = await response.json();
@@ -51,14 +57,46 @@ export async function getSet() {
   return data;
 }
 
-export async function getSources() {
-  const response = await get('get-sources');
+export async function getSource(id: SourceId) {
+  const response = await post('get-source', { id });
+  const data: Source = await response.json();
+  return data;
+}
+
+export async function getSourceGroup(id: SourceGroupId) {
+  const response = await post('get-source-group', { id });
+  const data: SourceGroup = await response.json();
+  return data;
+}
+
+export async function getSourceGroupIds() {
+  const response = await get('get-source-group-ids');
+  const data: readonly SourceGroupId[] = await response.json();
+  return data;
+}
+
+export async function getSourceGroupSourceIds(id: SourceGroupId) {
+  const response = await post('get-source-group-source-ids', { id });
+  const data: SourceId[] = await response.json();
+  return data;
+}
+
+export async function getSourceGroupSources(id: SourceGroupId) {
+  const response = await post('get-source-group-sources', { id });
   const data: readonly Source[] = await response.json();
   return data;
 }
 
-export async function renameSource(id: SourceId, name: string) {
-  await post('rename-source', { id, name });
+export async function getSourceGroups() {
+  const response = await get('get-source-groups');
+  const data: readonly SourceGroup[] = await response.json();
+  return data;
+}
+
+export async function getSources() {
+  const response = await get('get-sources');
+  const data: readonly Source[] = await response.json();
+  return data;
 }
 
 export async function removeBookmark(id: BookmarkId) {
@@ -73,6 +111,20 @@ export async function removeSource(id: SourceId) {
   return data;
 }
 
+export async function removeSourceGroup(id: SourceGroupId) {
+  const response = await post('remove-source-group', { id });
+  const data: number = await response.json();
+  return data;
+}
+
+export async function renameSource(id: SourceId, name: string) {
+  await post('rename-source', { id, name });
+}
+
+export async function renameSourceGroup(id: SourceGroupId, name: string) {
+  await post('rename-source-group', { id, name });
+}
+
 export async function searchKanji() {
   const response = await get('search-kanji');
   const data: KanjiStats[] = await response.json();
@@ -83,6 +135,10 @@ export async function searchSnippets(kanji: KanjiChar, source?: Option<SourceId>
   const response = await post('search-snippets', { kanji, source });
   const data: Snippet[] = await response.json();
   return data;
+}
+
+export async function setSourceGroupSources(id: SourceGroupId, sources: readonly SourceId[]) {
+  await post('set-source-group-sources', { id, sources });
 }
 
 export async function setSourceWeight(id: SourceId, weight: SourceWeight) {

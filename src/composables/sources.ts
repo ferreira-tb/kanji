@@ -22,7 +22,7 @@ export function useSources() {
   });
 }
 
-export function create() {
+function create() {
   const sources = ref<readonly Source[]>([]);
   const { locked, ...mutex } = useMutex();
 

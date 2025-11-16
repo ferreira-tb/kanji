@@ -4,8 +4,9 @@ import { go } from '@/router';
 import Chunks from './Chunks.vue';
 import Question from './Question.vue';
 import { useQuiz } from '@/composables/quiz';
-import DialogSource from './DialogSource.vue';
-import { useSources } from '@/composables/sources';
+import DialogTextChunk from './DialogTextChunk.vue';
+import DialogSources from '@/components/DialogSources.vue';
+import DialogSourceGroups from '@/components/DialogSourceGroups.vue';
 import DropdownMenuButton from '@/components/DropdownMenuButton.vue';
 import {
   Button,
@@ -25,20 +26,63 @@ const {
   isLoading,
   isLoadingSet,
   loadSet,
+  startChunk,
   startRandomChunk,
   startRandomSource,
+  startSource,
+  startRandomSourceGroup,
+  startSourceGroup,
 } = useQuiz();
 
-const { sources } = useSources();
+const isDialogTextChunkOpen = ref(false);
 
-const isSourceDialogOpen = ref(false);
+const isDialogSourcesOpen = ref(false);
+const selectedSources = ref<SourceId[]>([]);
+
+const isDialogSourceGroupsOpen = ref(false);
+const selectedSourceGroups = ref<SourceGroupId[]>([]);
+
+async function onSourceStart(ids: readonly SourceId[]) {
+  if (ids.length > 0) {
+    await startSource(ids);
+  }
+}
+
+async function onSourceGroupStart(ids: readonly SourceGroupId[]) {
+  if (ids.length > 0) {
+    await startSourceGroup(ids);
+  }
+}
 </script>
 
 <template>
   <div class="flex size-full flex-col gap-2">
     <div class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
       <SidebarTrigger />
-      <DialogSource v-model="isSourceDialogOpen" />
+
+      <DialogTextChunk
+        v-model:open="isDialogTextChunkOpen"
+        :disabled="isLoading"
+        @start="(chars) => startChunk(chars)"
+      />
+
+      <DialogSources
+        v-model:open="isDialogSourcesOpen"
+        v-model:selected="selectedSources"
+        confirm-label="Start"
+        :disabled="isLoading"
+        disable-if-empty
+        @confirm="onSourceStart"
+      />
+
+      <DialogSourceGroups
+        v-model:open="isDialogSourceGroupsOpen"
+        v-model:selected="selectedSourceGroups"
+        confirm-label="Start"
+        :disabled="isLoading"
+        disable-if-empty
+        @confirm="onSourceGroupStart"
+      />
 
       <div class="flex items-center justify-center gap-2">
         <DropdownMenu v-if="!active">
@@ -48,24 +92,30 @@ const isSourceDialogOpen = ref(false);
             </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent side="top" class="w-(--reka-dropdown-menu-trigger-width)">
+          <DropdownMenuContent side="top" class="min-w-(--reka-dropdown-menu-trigger-width)">
             <DropdownMenuGroup>
-              <DropdownMenuButton
-                :disabled="isLoading || sources.length === 0"
-                @click="() => void (isSourceDialogOpen = true)"
-              >
-                <span>Source</span>
-              </DropdownMenuButton>
-
-              <DropdownMenuButton
-                :disabled="isLoading || sources.length === 0"
-                @click="startRandomSource"
-              >
-                <span>Random Source</span>
+              <DropdownMenuButton :disabled="isLoading" @click="() => void (isDialogTextChunkOpen = true)">
+                <span>Chunk</span>
               </DropdownMenuButton>
 
               <DropdownMenuButton :disabled="isLoading" @click="startRandomChunk">
                 <span>Random Chunk</span>
+              </DropdownMenuButton>
+
+              <DropdownMenuButton :disabled="isLoading" @click="() => void (isDialogSourcesOpen = true)">
+                <span>Source</span>
+              </DropdownMenuButton>
+
+              <DropdownMenuButton :disabled="isLoading" @click="startRandomSource">
+                <span>Random Source</span>
+              </DropdownMenuButton>
+
+              <DropdownMenuButton :disabled="isLoading" @click="() => void (isDialogSourceGroupsOpen = true)">
+                <span>Source Group</span>
+              </DropdownMenuButton>
+
+              <DropdownMenuButton :disabled="isLoading" @click="startRandomSourceGroup">
+                <span>Random Source Group</span>
               </DropdownMenuButton>
             </DropdownMenuGroup>
 

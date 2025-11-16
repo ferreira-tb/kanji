@@ -27,7 +27,9 @@ export function useQuiz() {
       startChunk: value.startChunk,
       startRandomChunk: value.startRandomChunk,
       startRandomSource: value.startRandomSource,
+      startRandomSourceGroup: value.startRandomSourceGroup,
       startSource: value.startSource,
+      startSourceGroup: value.startSourceGroup,
       answer: value.answer,
       next: value.next,
       leave: value.leave,
@@ -38,7 +40,7 @@ export function useQuiz() {
   });
 }
 
-export function create() {
+function create() {
   const quiz = shallowRef<Option<Quiz>>();
   const quizSize = ref<Option<number>>();
   const active = ref(false);
@@ -110,6 +112,14 @@ export function create() {
 
   async function startRandomSource() {
     await start(() => commands.createQuiz({ kind: 'random-source' }));
+  }
+
+  async function startSourceGroup(ids: readonly SourceGroupId[]) {
+    await start(() => commands.createQuiz({ kind: 'source-group', ids }));
+  }
+
+  async function startRandomSourceGroup() {
+    await start(() => commands.createQuiz({ kind: 'random-source-group' }));
   }
 
   async function answer(option: KanjiChar) {
@@ -227,7 +237,9 @@ export function create() {
     startChunk,
     startRandomChunk,
     startRandomSource,
+    startRandomSourceGroup,
     startSource,
+    startSourceGroup,
     start,
     answer,
     next,

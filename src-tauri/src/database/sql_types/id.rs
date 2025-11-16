@@ -61,4 +61,4 @@ macro_rules! impl_u32 {
   }
 }
 
-impl_u32!(BookmarkId, SourceId);
+impl_u32!(BookmarkId, SourceId, SourceGroupId);

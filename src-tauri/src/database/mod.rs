@@ -3,30 +3,28 @@ pub mod schema;
 pub mod sql_types;
 
 #[cfg(desktop)]
+mod backup;
+#[cfg(desktop)]
+mod r#impl;
+#[cfg(desktop)]
 mod migration;
 
-use crate::database::model::bookmark::{Bookmark, NewBookmark};
-use crate::database::model::kanji::NewKanji;
-use crate::database::model::quiz_answer::{NewQuizAnswer, QuizAnswer};
-use crate::database::model::source::{NewSource, Source};
-use crate::database::sql_types::{
-  BookmarkId,
-  KanjiChar,
-  QuizAnswerId,
-  SourceId,
-  SourceWeight,
-  Zoned,
-};
-use anyhow::Result;
 use diesel::Connection;
-use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::sync::{Arc, Mutex};
 
-#[cfg(debug_assertions)]
+#[cfg(desktop)]
+use {anyhow::Result, std::sync::MutexGuard};
+
+#[cfg(all(desktop, debug_assertions))]
 const URL: &str = env!("KANJI_DATABASE_URL_DEBUG");
-#[cfg(not(debug_assertions))]
+#[cfg(all(desktop, not(debug_assertions)))]
 const URL: &str = env!("KANJI_DATABASE_URL");
+
+#[cfg(all(desktop, debug_assertions))]
+const BACKUP_DIR: &str = env!("KANJI_BACKUP_DIR_DEBUG");
+#[cfg(all(desktop, not(debug_assertions)))]
+const BACKUP_DIR: &str = env!("KANJI_BACKUP_DIR");
 
 #[must_use]
 #[derive(Clone)]
@@ -35,6 +33,7 @@ pub struct DatabaseHandle(Arc<Mutex<SqliteConnection>>);
 #[cfg(desktop)]
 impl DatabaseHandle {
   pub fn new() -> Result<Self> {
+    backup::run(false)?;
     let mut conn = SqliteConnection::establish(URL)?;
     migration::run_pending_migrations(&mut conn);
     Ok(Self(Arc::new(Mutex::new(conn))))
@@ -45,233 +44,5 @@ impl DatabaseHandle {
       .0
       .lock()
       .expect("connection mutex is poisoned")
-  }
-
-  pub fn create_kanji(&self, new: &NewKanji) -> Result<()> {
-    use schema::kanji::dsl::*;
-    diesel::insert_into(kanji)
-      .values(new)
-      .execute(&mut *self.conn())
-      .map(drop)
-      .map_err(Into::into)
-  }
-
-  pub fn get_kanji_chars(&self) -> Result<Vec<KanjiChar>> {
-    use schema::kanji::dsl::*;
-    kanji
-      .select(id)
-      .load(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn has_kanji(&self, kanji_char: KanjiChar) -> Result<bool> {
-    use schema::kanji::dsl::*;
-    kanji
-      .find(kanji_char)
-      .select(id)
-      .first::<KanjiChar>(&mut *self.conn())
-      .optional()
-      .map(|it| it.is_some())
-      .map_err(Into::into)
-  }
-
-  pub fn create_source(&self, new: &NewSource) -> Result<SourceId> {
-    use schema::source::dsl::*;
-    diesel::insert_into(source)
-      .values(new)
-      .returning(id)
-      .get_result(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn get_source(&self, source_id: SourceId) -> Result<Source> {
-    use schema::source::dsl::*;
-    source
-      .find(source_id)
-      .select(Source::as_select())
-      .first(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn get_source_ids(&self) -> Result<Vec<SourceId>> {
-    use schema::source::dsl::*;
-    source
-      .select(id)
-      .load(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn get_sources(&self) -> Result<Vec<Source>> {
-    use schema::source::dsl::*;
-    source
-      .select(Source::as_select())
-      .load(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn get_sources_by(&self, ids: &[SourceId]) -> Result<Vec<Source>> {
-    use schema::source::dsl::*;
-    source
-      .select(Source::as_select())
-      .filter(id.eq_any(ids))
-      .load(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn get_enabled_sources(&self) -> Result<Vec<Source>> {
-    use schema::source::dsl::*;
-    source
-      .filter(enabled.eq(true))
-      .select(Source::as_select())
-      .load(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn remove_source(&self, source_id: SourceId) -> Result<usize> {
-    use schema::source::dsl::*;
-    diesel::delete(source.find(source_id))
-      .execute(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn rename_source(&self, source_id: SourceId, new_name: &str) -> Result<()> {
-    use schema::source::dsl::*;
-    diesel::update(source.find(source_id))
-      .set((name.eq(new_name), updated_at.eq(Zoned::now())))
-      .execute(&mut *self.conn())
-      .map(drop)
-      .map_err(Into::into)
-  }
-
-  pub fn set_source_weight(&self, source_id: SourceId, new_weight: SourceWeight) -> Result<()> {
-    use schema::source::dsl::*;
-    diesel::update(source.find(source_id))
-      .set((weight.eq(new_weight), updated_at.eq(Zoned::now())))
-      .execute(&mut *self.conn())
-      .map(drop)
-      .map_err(Into::into)
-  }
-
-  pub fn toggle_source(&self, source_id: SourceId, is_enabled: bool) -> Result<()> {
-    use schema::source::dsl::*;
-    diesel::update(source.find(source_id))
-      .set((enabled.eq(is_enabled), updated_at.eq(Zoned::now())))
-      .execute(&mut *self.conn())
-      .map(drop)
-      .map_err(Into::into)
-  }
-
-  pub fn create_quiz_answer(&self, new: &NewQuizAnswer) -> Result<QuizAnswerId> {
-    use schema::quiz_answer::dsl::*;
-    diesel::insert_into(quiz_answer)
-      .values(new)
-      .returning(id)
-      .get_result(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn get_quiz_answers(&self) -> Result<Vec<QuizAnswer>> {
-    use schema::quiz_answer::dsl::*;
-    quiz_answer
-      .select(QuizAnswer::as_select())
-      .order(id.desc())
-      .load(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn count_quizzes(&self, kanji: KanjiChar) -> Result<u64> {
-    use schema::quiz_answer::dsl::*;
-    quiz_answer
-      .filter(question.eq(kanji))
-      .count()
-      .get_result::<i64>(&mut *self.conn())
-      .map(u64::try_from)?
-      .map_err(Into::into)
-  }
-
-  pub fn count_quizzes_in(&self, kanjis: &[KanjiChar]) -> Result<u64> {
-    use schema::quiz_answer::dsl::*;
-    quiz_answer
-      .filter(question.eq_any(kanjis))
-      .count()
-      .get_result::<i64>(&mut *self.conn())
-      .map(u64::try_from)?
-      .map_err(Into::into)
-  }
-
-  pub fn count_quizzes_with_source(&self, source: SourceId) -> Result<u64> {
-    use schema::quiz_answer::dsl::*;
-    quiz_answer
-      .filter(source_id.eq(source))
-      .count()
-      .get_result::<i64>(&mut *self.conn())
-      .map(u64::try_from)?
-      .map_err(Into::into)
-  }
-
-  pub fn count_correct_quizzes(&self, kanji: KanjiChar) -> Result<u64> {
-    use schema::quiz_answer::dsl::*;
-    quiz_answer
-      .filter(question.eq(kanji))
-      .filter(answer.eq(kanji))
-      .count()
-      .get_result::<i64>(&mut *self.conn())
-      .map(u64::try_from)?
-      .map_err(Into::into)
-  }
-
-  pub fn count_correct_quizzes_in(&self, kanjis: &[KanjiChar]) -> Result<u64> {
-    let mut count = 0u64;
-    for kanji in kanjis {
-      let correct = self.count_correct_quizzes(*kanji)?;
-      count = count.saturating_add(correct);
-    }
-
-    Ok(count)
-  }
-
-  pub fn count_correct_quizzes_with_source(&self, source: SourceId) -> Result<u64> {
-    use schema::quiz_answer::dsl::*;
-    quiz_answer
-      .filter(question.eq(answer))
-      .filter(source_id.eq(source))
-      .count()
-      .get_result::<i64>(&mut *self.conn())
-      .map(u64::try_from)?
-      .map_err(Into::into)
-  }
-
-  pub fn create_bookmark(&self, new: &NewBookmark) -> Result<BookmarkId> {
-    use schema::bookmark::dsl::*;
-    diesel::insert_into(bookmark)
-      .values(new)
-      .returning(id)
-      .get_result(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn get_bookmark_id(&self, text: &str) -> Result<Option<BookmarkId>> {
-    use schema::bookmark::dsl::*;
-    bookmark
-      .filter(snippet.eq(text))
-      .select(id)
-      .first::<BookmarkId>(&mut *self.conn())
-      .optional()
-      .map_err(Into::into)
-  }
-
-  pub fn get_bookmarks(&self) -> Result<Vec<Bookmark>> {
-    use schema::bookmark::dsl::*;
-    bookmark
-      .select(Bookmark::as_select())
-      .load(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn remove_bookmark(&self, bookmark_id: BookmarkId) -> Result<usize> {
-    use schema::bookmark::dsl::*;
-    diesel::delete(bookmark.find(bookmark_id))
-      .execute(&mut *self.conn())
-      .map_err(Into::into)
   }
 }

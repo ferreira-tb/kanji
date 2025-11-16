@@ -167,6 +167,9 @@ function setCurrentSource(source: KanjiStatsSource) {
             <RouterLink to="/sources" class="w-full">Sources</RouterLink>
           </DropdownMenuItem>
           <DropdownMenuItem>
+            <RouterLink to="/source-groups" class="w-full">Source Groups</RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
             <RouterLink to="/bookmarks" class="w-full">Bookmarks</RouterLink>
           </DropdownMenuItem>
           <DropdownMenuItem>

@@ -1,14 +1,14 @@
-use crate::database::sql_types::{KanjiChar, SourceId};
+use crate::database::sql_types::{KanjiChar, SourceGroupId, SourceId};
 use crate::snippet::{self, Snippet};
 use serde::{Deserialize, Serialize};
 
 #[cfg(desktop)]
 use {
   crate::database::model::source::Source,
-  crate::kanji::blocking_search_with_options,
+  crate::kanji::{blocking_search_with_options, is_kanji},
   crate::manager::ManagerExt,
   crate::settings::Settings,
-  anyhow::{Result, bail},
+  anyhow::{Error, Result, bail},
   itertools::Itertools,
   rand::seq::{IndexedRandom, IteratorRandom, SliceRandom},
   std::sync::Arc,
@@ -32,6 +32,8 @@ impl Quiz {
       QuizKind::RandomChunk => Self::from_random_chunk(app).await,
       QuizKind::Source { ids } => Self::from_sources(app, ids).await,
       QuizKind::RandomSource => Self::from_random_source(app).await,
+      QuizKind::SourceGroup { ids } => Self::from_source_groups(app, ids).await,
+      QuizKind::RandomSourceGroup => Self::from_random_source_group(app).await,
     }
   }
 
@@ -54,6 +56,8 @@ impl Quiz {
 
     let mut set: JoinSet<Result<()>> = kanjis
       .into_iter()
+      .filter(|kanji| is_kanji(**kanji))
+      .unique()
       .map(|kanji| {
         let app = app.clone();
         let chars = Arc::clone(&chars);
@@ -152,6 +156,40 @@ impl Quiz {
 
     Self::from_sources(app, vec![id]).await
   }
+
+  async fn from_source_groups(app: AppHandle, ids: Vec<SourceGroupId>) -> Result<Self> {
+    let sources = spawn_blocking({
+      let app = app.clone();
+      move || {
+        let database = app.database();
+        let sources = ids
+          .into_iter()
+          .map(|id| database.get_source_group_source_ids(id))
+          .try_collect::<_, Vec<Vec<SourceId>>, _>()?
+          .into_iter()
+          .flatten()
+          .unique()
+          .collect_vec();
+
+        Ok::<_, Error>(sources)
+      }
+    });
+
+    Self::from_sources(app, sources.await??).await
+  }
+
+  async fn from_random_source_group(app: AppHandle) -> Result<Self> {
+    let Some(id) = app
+      .database()
+      .get_source_group_ids()?
+      .choose(&mut rand::rng())
+      .copied()
+    else {
+      bail!("No source group found");
+    };
+
+    Self::from_source_groups(app, vec![id]).await
+  }
 }
 
 #[cfg(desktop)]
@@ -175,6 +213,8 @@ pub enum QuizKind {
   RandomChunk,
   Source { ids: Vec<SourceId> },
   RandomSource,
+  SourceGroup { ids: Vec<SourceGroupId> },
+  RandomSourceGroup,
 }
 
 #[derive(Debug, Serialize)]

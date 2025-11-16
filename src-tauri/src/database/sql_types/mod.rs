@@ -5,7 +5,7 @@ mod source_weight;
 mod uuid;
 mod zoned;
 
-pub use id::{BookmarkId, SourceId};
+pub use id::{BookmarkId, SourceGroupId, SourceId};
 pub use kanji_char::KanjiChar;
 pub use path::Path;
 pub use source_weight::SourceWeight;

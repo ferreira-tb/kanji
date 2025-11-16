@@ -1,12 +1,10 @@
 use crate::database::sql_types::{KanjiChar, Zoned};
-use anyhow::Result;
 use bon::Builder;
 use diesel::prelude::*;
 use serde::Serialize;
-use tauri::AppHandle;
 
 #[cfg(desktop)]
-use crate::manager::ManagerExt;
+use {crate::manager::ManagerExt, anyhow::Result, tauri::AppHandle};
 
 #[derive(Identifiable, Queryable, Selectable, Clone, Debug, Serialize)]
 #[diesel(table_name = crate::database::schema::kanji)]

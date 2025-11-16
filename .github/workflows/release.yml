@@ -8,6 +8,7 @@ on:
 
 env:
   KANJI_DATABASE_URL: ${{ secrets.KANJI_DATABASE_URL }}
+  KANJI_BACKUP_DIR: ${{ secrets.KANJI_BACKUP_DIR }}
 
 jobs:
   release-desktop:
@@ -42,3 +43,4 @@ jobs:
           prerelease: false
           includeUpdaterJson: true
           updaterJsonPreferNsis: true
+          generateReleaseNotes: true

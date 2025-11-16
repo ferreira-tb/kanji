@@ -49,6 +49,11 @@ export const router = createRouter({
       name: 'sources' satisfies Route,
       path: '/sources',
     },
+    {
+      component: () => import('@/views/source-groups/index.vue'),
+      name: 'source-groups' satisfies Route,
+      path: '/source-groups',
+    },
   ],
 });
 
