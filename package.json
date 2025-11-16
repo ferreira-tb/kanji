@@ -1,6 +1,6 @@
 {
   "name": "kanji",
-  "version": "7.3.0",
+  "version": "7.3.1",
   "type": "module",
   "packageManager": "pnpm@10.22.0",
   "license": "GPL-3.0-only",
@@ -28,7 +28,7 @@
     "@tauri-apps/plugin-updater": "^2.9.0",
     "@tauri-store/pinia": "^4.1.0",
     "@tb-dev/utils": "^7.0.18",
-    "@tb-dev/vue": "^3.3.4",
+    "@tb-dev/vue": "^3.4.0",
     "@tb-dev/vue-components": "^7.0.0",
     "@vueuse/core": "^14.0.0",
     "change-case": "^5.4.4",

@@ -20,16 +20,21 @@ class MainActivity : TauriActivity() {
   override fun onResume() {
     super.onResume()
     this.hideStatusBar()
+    this.setNightMode()
   }
 
   override fun onConfigurationChanged(newConfig: Configuration) {
     super.onConfigurationChanged(newConfig)
     this.hideStatusBar()
+    this.setNightMode()
   }
 
   override fun onWindowFocusChanged(hasFocus: Boolean) {
     super.onWindowFocusChanged(hasFocus)
-    if (hasFocus) this.hideStatusBar()
+    if (hasFocus) {
+      this.hideStatusBar()
+      this.setNightMode()
+    }
   }
 
   private fun hideStatusBar() {
