@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { open } from '@/commands';
+import { openVs } from '@/commands';
 import { storeToRefs } from 'pinia';
 import { handleError } from '@tb-dev/vue';
 import { nextTick, onActivated } from 'vue';
@@ -68,7 +68,7 @@ function onContentClick(snippet: Snippet) {
             <div class="flex flex-col gap-2">
               <div
                 class="text-muted-foreground cursor-pointer text-xs"
-                @click="() => open(snippet.source.path, snippet.source.line)"
+                @click="() => openVs(snippet.source.path, snippet.source.line)"
               >
                 <span>{{ `${snippet.source.path}:${snippet.source.line}` }}</span>
               </div>

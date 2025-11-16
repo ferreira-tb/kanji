@@ -1,6 +1,12 @@
 type Quiz = readonly QuizQuestion[];
 
-type QuizKind = QuizKindChunk | QuizKindRandomChunk | QuizKindSource | QuizKindRandomSource;
+type QuizKind =
+  | QuizKindChunk
+  | QuizKindRandomChunk
+  | QuizKindSource
+  | QuizKindRandomSource
+  | QuizKindSourceGroup
+  | QuizKindRandomSourceGroup;
 
 interface QuizKindChunk {
   readonly kind: 'chunk';
@@ -18,6 +24,15 @@ interface QuizKindSource {
 
 interface QuizKindRandomSource {
   readonly kind: 'random-source';
+}
+
+interface QuizKindSourceGroup {
+  readonly kind: 'source-group';
+  readonly ids: readonly SourceGroupId[];
+}
+
+interface QuizKindRandomSourceGroup {
+  readonly kind: 'random-source-group';
 }
 
 interface QuizQuestion {

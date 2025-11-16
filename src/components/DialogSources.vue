@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { useHeight } from '@tb-dev/vue';
-import { toPixel } from '@tb-dev/utils';
-import { useQuiz } from '@/composables/quiz';
 import { useSources } from '@/composables/sources';
-import { ref, useTemplateRef, watchEffect } from 'vue';
+import { type MaybePromise, toPixel } from '@tb-dev/utils';
+import { computed, useTemplateRef, watchEffect } from 'vue';
 import {
   Button,
   Checkbox,
@@ -21,36 +20,40 @@ import {
   VisuallyHidden,
 } from '@tb-dev/vue-components';
 
-const open = defineModel<boolean>({ required: true });
+const props = defineProps<{
+  confirmLabel: string;
+  disabled: boolean;
+  disableIfEmpty: boolean;
+  onConfirm: (sourceIds: readonly SourceId[]) => MaybePromise<void>;
+}>();
 
-const { isLoading, ...quiz } = useQuiz();
+const open = defineModel<boolean>('open', { required: true });
+const selected = defineModel<SourceId[]>('selected', { required: true });
 
-const { sources } = useSources();
-const selectedSources = ref<SourceId[]>([]);
+const { sources, loading } = useSources();
+const shouldDisable = computed(() => props.disabled || loading.value);
 
 const content = useTemplateRef('contentEl');
 const contentHeight = useHeight(content);
 
 watchEffect(() => {
   if (!open.value) {
-    selectedSources.value = [];
+    selected.value = [];
   }
 });
 
-async function start() {
+async function confirm() {
   open.value = false;
-  if (selectedSources.value.length > 0) {
-    await quiz.startSource(selectedSources.value);
-  }
+  await props.onConfirm(selected.value);
 }
 
 function onSourceChecked(id: SourceId, checked: boolean | 'indeterminate') {
   checked = toBooleanCheckboxValue(checked);
-  if (checked && !selectedSources.value.includes(id)) {
-    selectedSources.value.push(id);
+  if (checked && !selected.value.includes(id)) {
+    selected.value.push(id);
   }
   else if (!checked) {
-    selectedSources.value = selectedSources.value.filter((source) => {
+    selected.value = selected.value.filter((source) => {
       return source !== id;
     });
   }
@@ -74,18 +77,18 @@ function onSourceChecked(id: SourceId, checked: boolean | 'indeterminate') {
             <Table v-if="sources.length > 0">
               <TableBody>
                 <TableRow v-for="source of sources" :key="source.id">
-                  <TableCell>
+                  <TableCell class="w-max pr-2!">
                     <Checkbox
-                      :model-value="selectedSources.includes(source.id)"
-                      :disabled="isLoading"
+                      :model-value="selected.includes(source.id)"
+                      :disabled="shouldDisable"
                       class="disabled:cursor-default"
                       @update:model-value="(checked) => onSourceChecked(source.id, checked)"
                     />
                   </TableCell>
 
                   <TableCell
-                    class="cursor-pointer select-none"
-                    @click="() => onSourceChecked(source.id, !selectedSources.includes(source.id))"
+                    class="w-full cursor-pointer select-none"
+                    @click="() => onSourceChecked(source.id, !selected.includes(source.id))"
                   >
                     <span class="break-all wrap-anywhere">{{ source.name }}</span>
                   </TableCell>
@@ -94,13 +97,22 @@ function onSourceChecked(id: SourceId, checked: boolean | 'indeterminate') {
             </Table>
           </ScrollArea>
 
-          <div class="flex justify-center items-center">
+          <div class="flex justify-center items-center gap-2">
             <Button
               size="sm"
-              :disabled="isLoading || selectedSources.length === 0"
-              @click="start"
+              variant="default"
+              :disabled="shouldDisable || (disableIfEmpty && selected.length === 0)"
+              @click="confirm"
             >
-              <span>Start</span>
+              <span>{{ confirmLabel }}</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              :disabled="shouldDisable"
+              @click="() => void (selected = [])"
+            >
+              <span>Clear</span>
             </Button>
           </div>
         </div>

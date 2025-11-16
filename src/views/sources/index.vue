@@ -86,7 +86,7 @@ function toggle(source: Source) {
     <div class="overflow-x-hidden overflow-y-auto pb-safe-12 px-1 md:px-6">
       <Table v-if="sources.length > 0">
         <TableHeader>
-          <TableRow>
+          <TableRow class="bg-background hover:bg-background">
             <TableHead></TableHead>
             <TableHead>Path</TableHead>
             <TableHead class="max-md:hidden">Name</TableHead>
@@ -115,6 +115,7 @@ function toggle(source: Source) {
                   v-model="source.name"
                   type="text"
                   :disabled="loading"
+                  spellcheck="false"
                   @change="() => rename(source)"
                 />
               </div>

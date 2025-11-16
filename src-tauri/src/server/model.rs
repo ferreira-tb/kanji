@@ -1,4 +1,11 @@
-use crate::database::sql_types::{BookmarkId, KanjiChar, Path, SourceId, SourceWeight};
+use crate::database::sql_types::{
+  BookmarkId,
+  KanjiChar,
+  Path,
+  SourceGroupId,
+  SourceId,
+  SourceWeight,
+};
 use crate::quiz::QuizKind;
 use crate::snippet::Snippet;
 use serde::Deserialize;
@@ -31,9 +38,32 @@ pub struct CreateSourceRequest {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RenameSourceRequest {
-  pub id: SourceId,
+pub struct CreateSourceGroupRequest {
   pub name: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GetSourceRequest {
+  pub id: SourceId,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GetSourceGroupRequest {
+  pub id: SourceGroupId,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GetSourceGroupSourceIdsRequest {
+  pub id: SourceGroupId,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GetSourceGroupSourcesRequest {
+  pub id: SourceGroupId,
 }
 
 #[derive(Debug, Deserialize)]
@@ -50,9 +80,36 @@ pub struct RemoveSourceRequest {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct RemoveSourceGroupRequest {
+  pub id: SourceGroupId,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RenameSourceRequest {
+  pub id: SourceId,
+  pub name: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RenameSourceGroupRequest {
+  pub id: SourceGroupId,
+  pub name: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SearchSnippetsRequest {
   pub kanji: KanjiChar,
   pub source: Option<SourceId>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SetSourceGroupSourcesRequest {
+  pub id: SourceGroupId,
+  pub sources: Vec<SourceId>,
 }
 
 #[derive(Debug, Deserialize)]

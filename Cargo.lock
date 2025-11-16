@@ -2306,9 +2306,9 @@ dependencies = [
 
 [[package]]
 name = "image"
-version = "0.25.8"
+version = "0.25.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "529feb3e6769d234375c4cf1ee2ce713682b8e76538cb13f9fc23e1400a591e7"
+checksum = "e6506c6c10786659413faa717ceebcb8f70731c0a60cbae39795fdf114519c1a"
 dependencies = [
  "bytemuck",
  "byteorder-lite",
@@ -2501,7 +2501,7 @@ dependencies = [
 
 [[package]]
 name = "kanji"
-version = "7.2.2"
+version = "7.3.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -2518,6 +2518,7 @@ dependencies = [
  "log",
  "memchr",
  "rand 0.9.2",
+ "semver",
  "serde",
  "serde_json",
  "tauri",

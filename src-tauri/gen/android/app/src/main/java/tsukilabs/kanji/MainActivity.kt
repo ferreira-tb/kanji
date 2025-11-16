@@ -3,6 +3,8 @@ package tsukilabs.kanji
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -12,6 +14,7 @@ class MainActivity : TauriActivity() {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
     this.hideStatusBar()
+    this.setNightMode()
   }
 
   override fun onResume() {
@@ -34,5 +37,9 @@ class MainActivity : TauriActivity() {
       this.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
       this.hide(WindowInsetsCompat.Type.statusBars())
     }
+  }
+
+  private fun setNightMode() {
+    AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
   }
 }

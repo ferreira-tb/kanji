@@ -1,4 +1,5 @@
-import { formatDate } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { type DateArg, formatDate, formatDistanceToNow } from 'date-fns';
 
 const ZONE_REGEX = /\[.+?\]/;
 
@@ -8,4 +9,10 @@ export function fromZoned(zoned: string) {
 
 export function formatZoned(zoned: string, format: string) {
   return formatDate(fromZoned(zoned), format);
+}
+
+export function since(timestamp: DateArg<Date>) {
+  return formatDistanceToNow(timestamp, {
+    locale: { formatDistance: ja.formatDistance },
+  });
 }

@@ -1,13 +1,13 @@
 {
   "name": "kanji",
-  "version": "7.2.2",
+  "version": "7.3.0",
   "type": "module",
   "packageManager": "pnpm@10.22.0",
   "license": "GPL-3.0-only",
   "private": true,
   "scripts": {
     "build": "pwsh scripts/build.ps1",
-    "clippy": "cargo +nightly clippy --workspace",
+    "clippy": "cargo clippy --workspace",
     "dev": "cargo tauri dev",
     "eslint": "eslint . --config eslint.config.ts",
     "format": "dprint fmt && cargo fmt --all",
@@ -51,6 +51,6 @@
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "vite": "^7.2.2",
-    "vue-tsc": "^3.1.3"
+    "vue-tsc": "^3.1.4"
   }
 }

@@ -72,7 +72,7 @@ async function answer(option: KanjiChar) {
 
 function open() {
   if (source.value && !props.disabled) {
-    commands.open(source.value.path, source.value.line).err();
+    commands.openVs(source.value.path, source.value.line).err();
   }
 }
 

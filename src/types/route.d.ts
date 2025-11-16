@@ -6,4 +6,5 @@ type Route =
   | 'quiz-stats'
   | 'settings'
   | 'snippets'
-  | 'sources';
+  | 'sources'
+  | 'source-groups';

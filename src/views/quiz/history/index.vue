@@ -45,7 +45,7 @@ onDeactivated(() => void (answers.value = []));
     <div class="overflow-x-hidden overflow-y-auto pb-safe-12 px-1 md:px-6">
       <Table v-if="answers.length > 0">
         <TableHeader>
-          <TableRow>
+          <TableRow class="bg-background hover:bg-background">
             <TableHead>{{ isMobile ? 'Q' : 'Question' }}</TableHead>
             <TableHead>{{ isMobile ? 'A' : 'Answer' }}</TableHead>
             <TableHead>Source</TableHead>
