@@ -32,7 +32,7 @@ pub fn run() {
     .invoke_handler(tauri::generate_handler![
       command::create_tray_icon,
       command::get_server_addr,
-      command::open_vs,
+      command::open_editor,
       command::pick_folders,
       command::show_window,
       command::bookmark::create_bookmark,

@@ -2501,7 +2501,7 @@ dependencies = [
 
 [[package]]
 name = "kanji"
-version = "7.3.1"
+version = "7.4.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -2521,6 +2521,7 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
+ "strum",
  "tauri",
  "tauri-build",
  "tauri-plugin-clipboard-manager",

@@ -1,21 +1,26 @@
 use anyhow::Result;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use strum::AsRefStr;
 use tauri::AppHandle;
 use tauri_plugin_pinia::ManagerExt as _;
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Settings {
+  pub editor: Editor,
   pub hide_on_close: bool,
+
   pub snippet_limit: usize,
   pub snippet_min_len: usize,
   pub shuffle_snippets: bool,
   pub ignore_source_weight: bool,
+
   pub set_file_name: Box<str>,
   pub set_chunk_size: usize,
 }
 
 impl Settings {
+  pub const DEFAULT_EDITOR: Editor = Editor::Code;
   pub const DEFAULT_HIDE_ON_CLOSE: bool = false;
   pub const DEFAULT_SNIPPET_LIMIT: usize = 1000;
   pub const DEFAULT_SNIPPET_MIN_LEN: usize = 5;
@@ -34,6 +39,7 @@ impl Settings {
 impl Default for Settings {
   fn default() -> Self {
     Self {
+      editor: Self::DEFAULT_EDITOR,
       hide_on_close: Self::DEFAULT_HIDE_ON_CLOSE,
       snippet_limit: Self::DEFAULT_SNIPPET_LIMIT,
       snippet_min_len: Self::DEFAULT_SNIPPET_MIN_LEN,
@@ -42,5 +48,23 @@ impl Default for Settings {
       set_file_name: Box::from("Kanji Set.txt"),
       set_chunk_size: Self::DEFAULT_SET_CHUNK_SIZE,
     }
+  }
+}
+
+#[derive(Clone, Copy, Debug, Default, AsRefStr, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+#[strum(serialize_all = "kebab-case")]
+pub enum Editor {
+  #[default]
+  Code,
+  CodeInsiders,
+  Zed,
+}
+
+impl Editor {
+  pub fn get(app: &AppHandle) -> Self {
+    app
+      .pinia()
+      .get_or_default("settings", "editor")
   }
 }

@@ -1,30 +1,25 @@
+import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { ref, watchEffect } from 'vue';
-
-export const BASE_URL_KEY = 'kanji:base-url';
 
 export const useSettingsStore = defineStore('settings', () => {
-  const baseUrl = ref(localStorage.getItem(BASE_URL_KEY));
-
+  const baseUrl = ref<string>();
   const clipboard = ref(true);
-  const hideOnClose = ref(false);
 
-  const snippetLimit = ref(1000);
-  const snippetMinLen = ref(5);
-  const shuffleSnippets = ref(true);
-  const ignoreSourceWeight = ref(false);
+  const editor = ref(__DEFAULT_SETTINGS__.editor);
+  const hideOnClose = ref(__DEFAULT_SETTINGS__.hideOnClose);
 
-  const setFileName = ref('Kanji Set.txt');
-  const setChunkSize = ref(25);
+  const snippetLimit = ref(__DEFAULT_SETTINGS__.snippetLimit);
+  const snippetMinLen = ref(__DEFAULT_SETTINGS__.snippetMinLen);
+  const shuffleSnippets = ref(__DEFAULT_SETTINGS__.shuffleSnippets);
+  const ignoreSourceWeight = ref(__DEFAULT_SETTINGS__.ignoreSourceWeight);
 
-  if (__MOBILE__) {
-    watchEffect(() => {
-      localStorage.setItem(BASE_URL_KEY, baseUrl.value ?? '');
-    });
-  }
+  const setFileName = ref(__DEFAULT_SETTINGS__.setFileName);
+  const setChunkSize = ref(__DEFAULT_SETTINGS__.setChunkSize);
 
   return {
+    baseUrl,
     clipboard,
+    editor,
     hideOnClose,
     snippetLimit,
     snippetMinLen,
@@ -32,11 +27,5 @@ export const useSettingsStore = defineStore('settings', () => {
     ignoreSourceWeight,
     setFileName,
     setChunkSize,
-    baseUrl,
   };
-}, {
-  tauri: {
-    filterKeys: ['baseUrl'],
-    filterKeysStrategy: 'omit',
-  },
 });

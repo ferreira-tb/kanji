@@ -9,7 +9,7 @@ use tauri::AppHandle;
 pub async fn create_source_group(app: AppHandle, name: String) -> CResult<SourceGroupId> {
   let name = name.trim();
   if name.is_empty() {
-    return Err(Error::from("source group name is empty"));
+    return Err(Error::from("Source group name must not be empty"));
   }
 
   NewSourceGroup::builder()

@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import Last from './LastChunk.vue';
-import type { LastChunk } from './types';
+import { since } from '@/lib/date';
 import { formatPercent } from '@/lib/intl';
 import { useQuiz } from '@/composables/quiz';
 import { localRef, useBreakpoints } from '@tb-dev/vue';
-import { Button, Card, CardContent } from '@tb-dev/vue-components';
+import { Badge, Button, Card, CardContent } from '@tb-dev/vue-components';
 
 defineProps<{
   disabled: boolean;
@@ -16,6 +15,11 @@ const { set, startChunk } = useQuiz();
 const chunks = computed(() => set.value?.chunks ?? []);
 
 const { md } = useBreakpoints();
+
+interface LastChunk {
+  readonly id: KanjiSetChunkId;
+  readonly date: number;
+}
 
 const last = localRef<Option<LastChunk>>('kanji:quiz-last-chunk', null, {
   deep: true,
@@ -40,13 +44,17 @@ async function start(chunk: KanjiSetChunk) {
           <div class="flex flex-col gap-1">
             <div class="flex justify-start items-center gap-2">
               <h1>Chunk {{ chunk.id }}</h1>
-              <Last v-if="md && last && chunk.id === last.id" :date="last.date" />
+              <Badge v-if="md && last && chunk.id === last.id" variant="outline">
+                <span>{{ since(last.date) }}</span>
+              </Badge>
             </div>
 
-            <h2 v-if="md" class="text-muted-foreground">
-              <span>{{ chunk.kanjis.join('') }}</span>
+            <h2 class="text-muted-foreground">
+              <span v-if="md">{{ chunk.kanjis.join('') }}</span>
+              <template v-else-if="last && chunk.id === last.id">
+                <span class="text-xs">{{ since(last.date) }}</span>
+              </template>
             </h2>
-            <Last v-else-if="last && chunk.id === last.id" :date="last.date" />
           </div>
 
           <div v-if="chunk.quizzes > 0" class="grid grid-cols-2 gap-4 px-2 md:px-4">

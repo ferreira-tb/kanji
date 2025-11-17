@@ -33,18 +33,14 @@ setErrorHandler(handleError, app);
 app.use(router);
 app.use(pinia);
 
-async function init() {
-  try {
-    await checkForUpdates();
-    if (__DEBUG_ASSERTIONS__) {
-      await attachConsole();
-    }
+try {
+  await checkForUpdates();
+  if (__DEBUG_ASSERTIONS__) {
+    await attachConsole();
   }
-  catch (err) {
-    handleError(err);
-  }
-
-  app.mount('#app');
+}
+catch (err) {
+  handleError(err);
 }
 
-void init();
+app.mount('#app');

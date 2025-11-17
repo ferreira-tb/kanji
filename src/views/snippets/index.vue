@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { openVs } from '@/commands';
 import { storeToRefs } from 'pinia';
+import { openEditor } from '@/commands';
 import { handleError } from '@tb-dev/vue';
 import { nextTick, onActivated } from 'vue';
 import { useKanjiStore } from '@/stores/kanji';
@@ -68,7 +68,7 @@ function onContentClick(snippet: Snippet) {
             <div class="flex flex-col gap-2">
               <div
                 class="text-muted-foreground cursor-pointer text-xs"
-                @click="() => openVs(snippet.source.path, snippet.source.line)"
+                @click="() => openEditor(snippet.source.path, snippet.source.line)"
               >
                 <span>{{ `${snippet.source.path}:${snippet.source.line}` }}</span>
               </div>

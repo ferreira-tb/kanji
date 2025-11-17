@@ -1,10 +1,10 @@
 import { panic } from '@tb-dev/utils';
 import { fetch } from '@tauri-apps/plugin-http';
-import { BASE_URL_KEY } from '@/stores/settings';
+import { useSettingsStore } from '@/stores/settings';
 
-function url(endpoint: string) {
-  const base = localStorage.getItem(BASE_URL_KEY);
-  return base ? `http://${base}/${endpoint}` : panic('Missing API url.');
+export function url(endpoint: string) {
+  const base = useSettingsStore().baseUrl;
+  return base ? `http://${base}/${endpoint}` : panic('Missing base url');
 }
 
 export async function get(endpoint: string) {

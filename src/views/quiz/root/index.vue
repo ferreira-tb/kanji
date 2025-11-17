@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { go } from '@/router';
 import Chunks from './Chunks.vue';
 import Question from './Question.vue';
 import { useQuiz } from '@/composables/quiz';
@@ -13,7 +12,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   Loading,
   SidebarTrigger,
@@ -118,15 +116,6 @@ async function onSourceGroupStart(ids: readonly SourceGroupId[]) {
                 <span>Random Source Group</span>
               </DropdownMenuButton>
             </DropdownMenuGroup>
-
-            <DropdownMenuSeparator />
-
-            <DropdownMenuButton @click="() => go('quiz-stats')">
-              <span>Stats</span>
-            </DropdownMenuButton>
-            <DropdownMenuButton @click="() => go('quiz-history')">
-              <span>History</span>
-            </DropdownMenuButton>
           </DropdownMenuContent>
         </DropdownMenu>
 

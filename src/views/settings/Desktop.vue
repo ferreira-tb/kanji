@@ -9,6 +9,11 @@ import {
   NumberFieldDecrement,
   NumberFieldIncrement,
   NumberFieldInput,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Separator,
 } from '@tb-dev/vue-components';
 
@@ -18,16 +23,29 @@ const settings = useSettingsStore();
 <template>
   <div class="flex flex-col gap-4">
     <h2 class="text-xl">General</h2>
-    <div class="flex flex-col gap-2">
-      <Label>
-        <Checkbox v-model="settings.clipboard" />
-        <span>Copy to clipboard</span>
-      </Label>
-      <Label>
-        <Checkbox v-model="settings.hideOnClose" />
-        <span>Hide on close</span>
-      </Label>
-    </div>
+    <Label>
+      <Checkbox v-model="settings.clipboard" />
+      <span>Copy to clipboard</span>
+    </Label>
+
+    <Label>
+      <Checkbox v-model="settings.hideOnClose" />
+      <span>Hide on close</span>
+    </Label>
+
+    <Label class="max-w-70">
+      <span>Editor</span>
+      <Select v-model="settings.editor">
+        <SelectTrigger class="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="code">Code</SelectItem>
+          <SelectItem value="code-insiders">Code Insiders</SelectItem>
+          <SelectItem value="zed">Zed</SelectItem>
+        </SelectContent>
+      </Select>
+    </Label>
   </div>
 
   <Separator />
@@ -82,7 +100,7 @@ const settings = useSettingsStore();
   <Separator />
 
   <div class="flex flex-col gap-4">
-    <h2 class="text-xl">Set</h2>
+    <h2 class="text-xl">Kanji Set</h2>
     <Label class="max-w-70">
       <span>File name</span>
       <Input v-model="settings.setFileName" type="text" />
