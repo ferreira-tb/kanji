@@ -142,6 +142,7 @@ function setSources(sources: readonly SourceId[]) {
                 <Button
                   variant="destructive"
                   size="sm"
+                  class="max-md:hidden"
                   @click="() => removeSourceGroup(group.id)"
                 >
                   <span>Remove</span>

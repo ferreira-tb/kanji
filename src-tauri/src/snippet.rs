@@ -7,7 +7,6 @@ use std::path::Path as StdPath;
 use std::sync::Arc;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering::Relaxed;
-use tauri::AppHandle;
 
 #[cfg(desktop)]
 use {
@@ -20,6 +19,7 @@ use {
   rand::seq::{IndexedRandom, SliceRandom},
   std::fs::File,
   std::io::BufRead,
+  tauri::AppHandle,
   tauri::async_runtime::spawn_blocking,
 };
 

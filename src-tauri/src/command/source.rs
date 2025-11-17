@@ -8,7 +8,7 @@ use tauri::AppHandle;
 pub async fn create_source(app: AppHandle, source: Path) -> CResult<SourceId> {
   let name: Option<String> = try { source.file_stem()?.to_str()?.to_owned() };
   let Some(name) = name else {
-    return Err(Error::from(format!("invalid source: {source}")));
+    return Err(Error::from(format!("Invalid source: {source}")));
   };
 
   NewSource::builder(source)
@@ -28,20 +28,10 @@ pub async fn get_source(app: AppHandle, id: SourceId) -> CResult<Source> {
 
 #[tauri::command]
 pub async fn get_sources(app: AppHandle) -> CResult<Vec<Source>> {
-  let mut sources = app.database().get_sources()?;
-  sources.sort_by(|a, b| {
-    if let Some(dir_a) = a.path.file_stem()
-      && let Some(dir_b) = b.path.file_stem()
-      && let Some(dir_a) = dir_a.to_str()
-      && let Some(dir_b) = dir_b.to_str()
-    {
-      dir_a.cmp(dir_b)
-    } else {
-      a.name.cmp(&b.name)
-    }
-  });
-
-  Ok(sources)
+  app
+    .database()
+    .get_sources()
+    .map_err(Into::into)
 }
 
 #[tauri::command]

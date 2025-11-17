@@ -4,6 +4,7 @@ import type { PromiseSet } from '@tb-dev/utils';
 
 declare global {
   var __DEBUG_ASSERTIONS__: boolean;
+  var __DEFAULT_SETTINGS__: Settings;
   var __DESKTOP__: boolean;
   var __MOBILE__: boolean;
   var __VERSION__: string;

@@ -35,6 +35,7 @@ impl DatabaseHandle {
     use schema::source::dsl::*;
     source
       .select(Source::as_select())
+      .order(name.asc())
       .load(&mut *self.conn())
       .map_err(Into::into)
   }
@@ -44,6 +45,7 @@ impl DatabaseHandle {
     source
       .select(Source::as_select())
       .filter(id.eq_any(ids))
+      .order(name.asc())
       .load(&mut *self.conn())
       .map_err(Into::into)
   }
@@ -51,8 +53,9 @@ impl DatabaseHandle {
   pub fn get_enabled_sources(&self) -> Result<Vec<Source>> {
     use schema::source::dsl::*;
     source
-      .filter(enabled.eq(true))
       .select(Source::as_select())
+      .filter(enabled.eq(true))
+      .order(name.asc())
       .load(&mut *self.conn())
       .map_err(Into::into)
   }

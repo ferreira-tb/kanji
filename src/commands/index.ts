@@ -173,9 +173,9 @@ export async function getSources() {
   }
 }
 
-export async function openVs(path: string, line: number) {
+export async function openEditor(path: string, line: number) {
   if (__DESKTOP__) {
-    await invoke('open_vs', { path, line });
+    await invoke('open_editor', { path, line });
   }
 }
 

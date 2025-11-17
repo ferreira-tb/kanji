@@ -47,6 +47,7 @@ impl DatabaseHandle {
       .filter(source_group_id.eq(group_id))
       .inner_join(schema::source::table)
       .select(Source::as_select())
+      .order(schema::source::name.asc())
       .load(&mut *self.conn())
       .map_err(Into::into)
   }
