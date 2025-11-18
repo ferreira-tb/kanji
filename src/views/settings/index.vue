@@ -13,7 +13,11 @@ const version = globalThis.__VERSION__;
 </script>
 
 <template>
-  <div class="flex size-full flex-col gap-2">
+  <div class="relative flex size-full flex-col gap-2">
+    <div class="fixed bottom-2 right-2 text-muted-foreground text-xs">
+      <span>{{ `v${version}` }}</span>
+    </div>
+
     <div class="flex h-14 w-full items-center justify-between px-2 md:px-6 py-4">
       <SidebarTrigger />
 
@@ -26,7 +30,6 @@ const version = globalThis.__VERSION__;
             </Button>
           </div>
         </template>
-        <span v-else class="text-muted-foreground text-sm">{{ `v${version}` }}</span>
       </div>
     </div>
 

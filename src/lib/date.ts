@@ -16,3 +16,7 @@ export function since(timestamp: DateArg<Date>) {
     locale: { formatDistance: ja.formatDistance },
   });
 }
+
+export function sinceZoned(zoned: string) {
+  return since(fromZoned(zoned));
+}

@@ -11,7 +11,13 @@ const settings = useSettingsStore();
     <div class="flex flex-col gap-2">
       <Label class="max-w-70">
         <span>Base URL</span>
-        <Input v-model="settings.baseUrl" type="text" />
+        <Input
+          v-model="settings.baseUrl"
+          type="text"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+        />
       </Label>
     </div>
   </div>

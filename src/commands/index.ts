@@ -2,6 +2,15 @@ import * as api from '@/api';
 import { clamp } from 'es-toolkit';
 import { invoke } from '@tauri-apps/api/core';
 
+export async function clearQuizChunkHistory() {
+  if (__DESKTOP__) {
+    return invoke<number>('clear_quiz_chunk_history');
+  }
+  else {
+    return api.clearQuizChunkHistory();
+  }
+}
+
 export async function createBookmark(snippet: Snippet) {
   if (__DESKTOP__) {
     return invoke<BookmarkId>('create_bookmark', { snippet });
@@ -26,6 +35,15 @@ export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, s
   }
   else {
     return api.createQuizAnswer(question, answer, source);
+  }
+}
+
+export async function createQuizChunkHistoryEntry(id: KanjiSetChunkId) {
+  if (__DESKTOP__) {
+    await invoke('create_quiz_chunk_history_entry', { id });
+  }
+  else {
+    await api.createQuizChunkHistoryEntry(id);
   }
 }
 
@@ -80,6 +98,15 @@ export async function getQuizAnswers() {
   }
   else {
     return api.getQuizAnswers();
+  }
+}
+
+export async function getQuizChunkHistoryEntries() {
+  if (__DESKTOP__) {
+    return invoke<readonly QuizChunkHistoryEntry[]>('get_quiz_chunk_history_entries');
+  }
+  else {
+    return api.getQuizChunkHistoryEntries();
   }
 }
 

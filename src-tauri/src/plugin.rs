@@ -1,8 +1,9 @@
-use tauri::Wry;
+use anyhow::Result;
 use tauri::plugin::TauriPlugin;
+use tauri::{AppHandle, Manager, Wry};
 
 #[cfg(desktop)]
-use {crate::window::desktop::WindowExt, anyhow::Result};
+use crate::window::desktop::WindowExt;
 
 #[cfg(debug_assertions)]
 pub fn log() -> TauriPlugin<Wry> {
@@ -15,12 +16,15 @@ pub fn log() -> TauriPlugin<Wry> {
     .build()
 }
 
-pub fn pinia() -> TauriPlugin<Wry> {
+pub fn pinia(app: &AppHandle) -> Result<TauriPlugin<Wry>> {
   use tauri_plugin_pinia::PrettyTomlMarshaler;
 
-  tauri_plugin_pinia::Builder::new()
+  let plugin = tauri_plugin_pinia::Builder::new()
+    .path_of("settings", app.path().app_config_dir()?.join("settings"))
     .marshaler_of("settings", Box::new(PrettyTomlMarshaler))
-    .build()
+    .build();
+
+  Ok(plugin)
 }
 
 #[cfg(desktop)]

@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "7.4.0"
+version = "7.5.0"
 publish = false
 
 [package.edition]
@@ -36,7 +36,7 @@ walkdir = "2.5"
 
 [dependencies.derive_more]
 version = "2.0"
-features = ["deref", "display"]
+features = ["deref", "display", "from", "into"]
 
 [dependencies.diesel]
 version = "2.3"
@@ -62,6 +62,10 @@ features = ["release_max_level_off"]
 [dependencies.rand]
 version = "0.9"
 features = ["nightly", "simd_support"]
+
+[dependencies.semver]
+version = "1.0"
+features = ["serde"]
 
 [dependencies.serde]
 version = "1.0"
@@ -95,10 +99,6 @@ tauri-plugin-updater = "2"
 [target."cfg(windows)".dependencies.axum]
 version = "0.8"
 features = ["macros"]
-
-[target."cfg(windows)".dependencies.semver]
-version = "1.0"
-features = ["serde"]
 
 [target."cfg(windows)".dependencies.tauri-plugin-prevent-default]
 git = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"

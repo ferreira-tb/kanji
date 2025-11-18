@@ -1,11 +1,20 @@
 use crate::database::model::quiz_answer::{NewQuizAnswer, QuizAnswer};
-use crate::database::sql_types::{KanjiChar, QuizAnswerId, SourceId};
+use crate::database::model::quiz_chunk_history::{NewQuizChunkHistoryEntry, QuizChunkHistoryEntry};
+use crate::database::sql_types::{KanjiChar, KanjiSetChunkId, QuizAnswerId, SourceId};
 use crate::error::CResult;
 use crate::manager::ManagerExt;
 use crate::quiz::{Quiz, QuizKind, QuizSourceStats};
 use itertools::Itertools;
 use tauri::AppHandle;
 use tauri::async_runtime::spawn_blocking;
+
+#[tauri::command]
+pub async fn clear_quiz_chunk_history(app: AppHandle) -> CResult<usize> {
+  app
+    .database()
+    .clear_quiz_chunk_history()
+    .map_err(Into::into)
+}
 
 #[tauri::command]
 pub async fn create_quiz(app: AppHandle, kind: QuizKind) -> CResult<Quiz> {
@@ -31,6 +40,14 @@ pub async fn create_quiz_answer(
 }
 
 #[tauri::command]
+pub async fn create_quiz_chunk_history_entry(app: AppHandle, id: KanjiSetChunkId) -> CResult<()> {
+  NewQuizChunkHistoryEntry::builder(id)
+    .build()
+    .create(&app)
+    .map_err(Into::into)
+}
+
+#[tauri::command]
 pub async fn get_quiz_answers(app: AppHandle) -> CResult<Vec<QuizAnswer>> {
   let task = spawn_blocking(move || {
     app
@@ -40,6 +57,14 @@ pub async fn get_quiz_answers(app: AppHandle) -> CResult<Vec<QuizAnswer>> {
   });
 
   task.await?
+}
+
+#[tauri::command]
+pub async fn get_quiz_chunk_history_entries(app: AppHandle) -> CResult<Vec<QuizChunkHistoryEntry>> {
+  app
+    .database()
+    .get_quiz_chunk_history_entries()
+    .map_err(Into::into)
 }
 
 #[tauri::command]

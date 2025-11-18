@@ -34,11 +34,12 @@ pub async fn get_server_addr(app: AppHandle) -> SocketAddrV4 {
 
 #[tauri::command]
 pub async fn open_editor(app: AppHandle, path: PathBuf, line: u32) -> CResult<()> {
+  let editor = Editor::get(&app);
   let path = format!("{}:{}", path.to_string_lossy(), line);
-  let args: &[&str] = match Editor::get(&app) {
-    Editor::Code => &[Editor::Code.as_ref(), "--goto", path.as_str()],
-    Editor::CodeInsiders => &[Editor::CodeInsiders.as_ref(), "--goto", path.as_str()],
-    Editor::Zed => &[Editor::Zed.as_ref(), path.as_str()],
+  let args: &[&str] = match editor {
+    Editor::Code => &[editor.as_ref(), "--goto", path.as_str()],
+    Editor::CodeInsiders => &[editor.as_ref(), "--goto", path.as_str()],
+    Editor::Zed => &[editor.as_ref(), path.as_str()],
   };
 
   Command::new("pwsh")

@@ -58,3 +58,9 @@ interface QuizSourceStats {
   readonly correctQuizAnswers: number;
   readonly quizAccuracy: number;
 }
+
+interface QuizChunkHistoryEntry {
+  readonly id: KanjiSetChunkId;
+  readonly lastQuiz: string;
+  readonly lastQuizVersion: string;
+}

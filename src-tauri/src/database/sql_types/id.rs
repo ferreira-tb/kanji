@@ -30,6 +30,12 @@ macro_rules! impl_u32 {
       #[diesel(sql_type = Integer)]
       pub struct $name(NonZeroU32);
 
+      impl $name {
+        pub const unsafe fn new_unchecked(value: u32) -> Self {
+          Self(unsafe { NonZeroU32::new_unchecked(value) })
+        }
+      }
+
       impl FromSql<Integer, Sqlite> for $name
       where
         i32: FromSql<Integer, Sqlite>,
@@ -61,4 +67,4 @@ macro_rules! impl_u32 {
   }
 }
 
-impl_u32!(BookmarkId, SourceId, SourceGroupId);
+impl_u32!(BookmarkId, KanjiSetChunkId, SourceId, SourceGroupId);

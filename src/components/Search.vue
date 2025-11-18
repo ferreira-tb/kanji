@@ -8,7 +8,16 @@ const search = defineModel<Option<string>>({ required: true });
 <template>
   <div class="w-48 lg:w-60 xl:w-96">
     <div class="relative flex w-full items-center">
-      <Input v-model.trim="search" type="text" placeholder="Search" class="w-full pl-10" />
+      <Input
+        v-model="search"
+        type="text"
+        placeholder="Search"
+        autocapitalize="off"
+        autocomplete="off"
+        spellcheck="false"
+        class="w-full pl-10"
+      />
+
       <span class="absolute inset-y-0 start-0 flex items-center justify-center px-2">
         <SearchIcon class="text-muted-foreground size-6" />
       </span>

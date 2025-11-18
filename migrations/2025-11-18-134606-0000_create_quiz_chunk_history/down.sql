@@ -1,0 +1,1 @@
+DROP TABLE quiz_chunk_history;

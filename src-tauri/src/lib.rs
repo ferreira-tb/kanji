@@ -42,9 +42,12 @@ pub fn run() {
       command::kanji::get_set,
       command::kanji::search_kanji,
       command::kanji::search_snippets,
+      command::quiz::clear_quiz_chunk_history,
       command::quiz::create_quiz,
       command::quiz::create_quiz_answer,
+      command::quiz::create_quiz_chunk_history_entry,
       command::quiz::get_quiz_answers,
+      command::quiz::get_quiz_chunk_history_entries,
       command::quiz::get_quiz_source_stats,
       command::source::create_source,
       command::source::get_source,
@@ -71,7 +74,6 @@ pub fn run() {
   let builder = builder.plugin(plugin::log());
 
   builder
-    .plugin(plugin::pinia())
     .plugin(tauri_plugin_clipboard_manager::init())
     .plugin(tauri_plugin_fs::init())
     .plugin(tauri_plugin_dialog::init())
@@ -92,6 +94,8 @@ fn setup(app: &AppHandle) -> BoxResult<()> {
     app.manage(DatabaseHandle::new()?);
     app.manage(Server::serve(app)?);
   }
+
+  app.plugin(plugin::pinia(app)?)?;
 
   #[cfg(desktop)]
   window::desktop::open(app)?;

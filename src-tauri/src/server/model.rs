@@ -1,6 +1,7 @@
 use crate::database::sql_types::{
   BookmarkId,
   KanjiChar,
+  KanjiSetChunkId,
   Path,
   SourceGroupId,
   SourceId,
@@ -28,6 +29,12 @@ pub struct CreateQuizAnswerRequest {
   pub question: KanjiChar,
   pub answer: KanjiChar,
   pub source: Option<SourceId>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateQuizChunkHistoryEntry {
+  pub id: KanjiSetChunkId,
 }
 
 #[derive(Debug, Deserialize)]
