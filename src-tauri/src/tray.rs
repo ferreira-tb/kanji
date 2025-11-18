@@ -4,7 +4,7 @@ use tauri::menu::{Menu, MenuBuilder, PredefinedMenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent};
 use tauri::{AppHandle, Manager, Wry, include_image};
 
-const ID: &str = "app-tray-icon";
+const ID: &str = "kanji-tray-icon";
 
 struct TrayMenu(Menu<Wry>);
 

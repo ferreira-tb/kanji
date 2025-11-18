@@ -1,4 +1,4 @@
-use crate::database::sql_types::KanjiChar;
+use crate::database::sql_types::{KanjiChar, KanjiSetChunkId};
 use serde::Serialize;
 
 #[cfg(desktop)]
@@ -38,20 +38,20 @@ impl KanjiSet {
       .rev()
       .chunks(settings.set_chunk_size);
 
-    let database = app.database();
+    let db = app.database();
     for (id, chunk) in (1u32..).zip(&iter) {
-      let id = KanjiSetChunkId(id);
+      let id = unsafe { KanjiSetChunkId::new_unchecked(id) };
       let kanjis = chunk
         .into_iter()
         .collect_vec()
         .into_boxed_slice();
 
-      let quizzes = database.count_quizzes_in(&kanjis)?;
+      let quizzes = db.count_quizzes_in(&kanjis)?;
       let mut correct_quiz_answers = 0;
       let mut quiz_accuracy = 0.0;
 
       if quizzes > 0 {
-        correct_quiz_answers = database.count_correct_quizzes_in(&kanjis)?;
+        correct_quiz_answers = db.count_correct_quizzes_in(&kanjis)?;
         quiz_accuracy = (correct_quiz_answers as f64) / (quizzes as f64);
       }
 
@@ -111,6 +111,3 @@ pub struct KanjiSetChunk {
   correct_quiz_answers: u64,
   quiz_accuracy: f64,
 }
-
-#[derive(Debug, Serialize)]
-pub struct KanjiSetChunkId(u32);

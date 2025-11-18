@@ -1,5 +1,11 @@
 import { get, post } from '@/api/http';
 
+export async function clearQuizChunkHistory() {
+  const response = await get('clear-quiz-chunk-history');
+  const data: number = await response.json();
+  return data;
+}
+
 export async function createBookmark(snippet: Snippet) {
   const response = await post('create-bookmark', { snippet });
   const data: BookmarkId = await response.json();
@@ -16,6 +22,10 @@ export async function createQuizAnswer(question: KanjiChar, answer: KanjiChar, s
   const response = await post('create-quiz-answer', { question, answer, source });
   const data: QuizAnswerId = await response.json();
   return data;
+}
+
+export async function createQuizChunkHistoryEntry(id: KanjiSetChunkId) {
+  await post('create-quiz-chunk-history-entry', { id });
 }
 
 export async function createSource(source?: Option<string | string[]>) {
@@ -42,6 +52,12 @@ export async function getBookmarks() {
 export async function getQuizAnswers() {
   const response = await get('get-quiz-answers');
   const data: readonly QuizAnswer[] = await response.json();
+  return data;
+}
+
+export async function getQuizChunkHistoryEntries() {
+  const response = await get('get-quiz-chunk-history-entries');
+  const data: readonly QuizChunkHistoryEntry[] = await response.json();
   return data;
 }
 

@@ -103,7 +103,13 @@ const settings = useSettingsStore();
     <h2 class="text-xl">Kanji Set</h2>
     <Label class="max-w-70">
       <span>File name</span>
-      <Input v-model="settings.setFileName" type="text" />
+      <Input
+        v-model="settings.setFileName"
+        type="text"
+        spellcheck="false"
+        autocapitalize="off"
+        autocomplete="off"
+      />
     </Label>
 
     <Label class="max-w-70">

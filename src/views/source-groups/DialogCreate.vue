@@ -52,7 +52,14 @@ async function create() {
       <div class="flex flex-col gap-4 px-2 py-8">
         <Label>
           <span>Name</span>
-          <Input v-model="name" type="text" :disabled spellcheck="false" />
+          <Input
+            v-model="name"
+            type="text"
+            :disabled
+            autocapitalize="off"
+            autocomplete="off"
+            spellcheck="false"
+          />
         </Label>
 
         <div class="flex justify-center items-center">

@@ -110,7 +110,7 @@ pub fn blocking_search_with_options(
   #[builder(start_fn)] app: &AppHandle,
   #[builder(default)] sources: &[Source],
 ) -> Result<Vec<KanjiStats>> {
-  let database = app.database();
+  let db = app.database();
   let mut kanjis: HashMap<KanjiChar, KanjiStats> = HashMap::new();
 
   for source in sources {
@@ -154,10 +154,10 @@ pub fn blocking_search_with_options(
       kanji.level = Level::from_ratio(kanji.ratio);
     }
 
-    kanji.quizzes = database.count_quizzes(kanji.character)?;
+    kanji.quizzes = db.count_quizzes(kanji.character)?;
 
     if kanji.quizzes > 0 {
-      kanji.correct_quiz_answers = database.count_correct_quizzes(kanji.character)?;
+      kanji.correct_quiz_answers = db.count_correct_quizzes(kanji.character)?;
       kanji.quiz_accuracy = (kanji.correct_quiz_answers as f64) / (kanji.quizzes as f64);
     }
   }
@@ -166,7 +166,7 @@ pub fn blocking_search_with_options(
   if IS_FIRST_SEARCH.load(Relaxed) {
     IS_FIRST_SEARCH.store(false, Relaxed);
     for kanji in &kanjis {
-      if !database.has_kanji(kanji.character)? {
+      if !db.has_kanji(kanji.character)? {
         NewKanji::builder(kanji.character)
           .build()
           .create(app)?;

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { since } from '@/lib/date';
+import * as commands from '@/commands';
+import { sinceZoned } from '@/lib/date';
+import { computed, onMounted } from 'vue';
 import { formatPercent } from '@/lib/intl';
 import { useQuiz } from '@/composables/quiz';
-import { localRef, useBreakpoints } from '@tb-dev/vue';
+import { useBreakpoints } from '@tb-dev/vue';
+import { useQuizChunkHistory } from '@/composables/quiz-chunk-history';
 import { Badge, Button, Card, CardContent } from '@tb-dev/vue-components';
 
 defineProps<{
@@ -16,24 +18,16 @@ const chunks = computed(() => set.value?.chunks ?? []);
 
 const { md } = useBreakpoints();
 
-interface LastChunk {
-  readonly id: KanjiSetChunkId;
-  readonly date: number;
-}
-
-const last = localRef<Option<LastChunk>>('kanji:quiz-last-chunk', null, {
-  deep: true,
-  initOnMounted: true,
-  listenToStorageChanges: false,
-  writeDefaults: true,
-});
+const { quizChunkHistory, loadQuizChunkHistoryEntries } = useQuizChunkHistory();
 
 async function start(chunk: KanjiSetChunk) {
   if (chunk.kanjis.length > 0) {
-    last.value = { id: chunk.id, date: Date.now() };
+    await commands.createQuizChunkHistoryEntry(chunk.id);
     await startChunk(chunk.kanjis);
   }
 }
+
+onMounted(() => loadQuizChunkHistoryEntries().err());
 </script>
 
 <template>
@@ -44,16 +38,16 @@ async function start(chunk: KanjiSetChunk) {
           <div class="flex flex-col gap-1">
             <div class="flex justify-start items-center gap-2">
               <h1>Chunk {{ chunk.id }}</h1>
-              <Badge v-if="md && last && chunk.id === last.id" variant="outline">
-                <span>{{ since(last.date) }}</span>
+              <Badge v-if="md && quizChunkHistory.has(chunk.id)" variant="outline">
+                <span>{{ sinceZoned(quizChunkHistory.get(chunk.id)!.lastQuiz) }}</span>
               </Badge>
             </div>
 
             <h2 class="text-muted-foreground">
               <span v-if="md">{{ chunk.kanjis.join('') }}</span>
-              <template v-else-if="last && chunk.id === last.id">
-                <span class="text-xs">{{ since(last.date) }}</span>
-              </template>
+              <span v-else-if="quizChunkHistory.has(chunk.id)" class="text-xs">
+                {{ sinceZoned(quizChunkHistory.get(chunk.id)!.lastQuiz) }}
+              </span>
             </h2>
           </div>
 

@@ -22,7 +22,7 @@ if (__DESKTOP__) {
       autoStart: true,
       saveOnChange: true,
       saveStrategy: 'debounce',
-      saveInterval: 1000,
+      saveInterval: 500,
     }),
   );
 }

@@ -6,32 +6,31 @@ use diesel::serialize::{self as ser, IsNull, Output, ToSql};
 use diesel::sql_types::Text;
 use diesel::sqlite::Sqlite;
 use serde::Serialize;
-use std::str::FromStr;
 
 #[derive(FromSqlRow, AsExpression, Clone, Debug, Deref, Display, From, Into, Serialize)]
 #[diesel(sql_type = Text)]
-pub struct Zoned(jiff::Zoned);
+pub struct Version(semver::Version);
 
-impl Zoned {
-  pub fn now() -> Self {
-    Self(jiff::Zoned::now())
+impl Version {
+  pub fn current() -> Self {
+    Self(semver::Version::parse(env!("CARGO_PKG_VERSION")).unwrap())
   }
 }
 
-impl Default for Zoned {
+impl Default for Version {
   fn default() -> Self {
-    Self::now()
+    Self::current()
   }
 }
 
-impl FromSql<Text, Sqlite> for Zoned {
+impl FromSql<Text, Sqlite> for Version {
   fn from_sql(bytes: <Sqlite as Backend>::RawValue<'_>) -> de::Result<Self> {
     let value = <String as FromSql<Text, Sqlite>>::from_sql(bytes)?;
-    Ok(Zoned(jiff::Zoned::from_str(value.as_str())?))
+    Ok(Version(semver::Version::parse(value.as_str())?))
   }
 }
 
-impl ToSql<Text, Sqlite> for Zoned
+impl ToSql<Text, Sqlite> for Version
 where
   String: ToSql<Text, Sqlite>,
 {

@@ -16,13 +16,16 @@ pub(super) fn create() -> Router<AppHandle> {
     .allow_origin(Any);
 
   Router::new()
+    .route("/clear-quiz-chunk-history", get(clear_quiz_chunk_history))
     .route("/create-bookmark", post(create_bookmark))
     .route("/create-quiz", post(create_quiz))
     .route("/create-quiz-answer", post(create_quiz_answer))
+    .route("/create-quiz-chunk-history-entry", post(create_quiz_chunk_history_entry))
     .route("/create-source", post(create_source))
     .route("/create-source-group", post(create_source_group))
     .route("/get-bookmarks", get(get_bookmarks))
     .route("/get-quiz-answers", get(get_quiz_answers))
+    .route("/get-quiz-chunk-history-entries", get(get_quiz_chunk_history_entries))
     .route("/get-quiz-source-stats", get(get_quiz_source_stats))
     .route("/get-set", get(get_set))
     .route("/get-source", post(get_source))
@@ -43,6 +46,13 @@ pub(super) fn create() -> Router<AppHandle> {
     .route("/set-source-weight", post(set_source_weight))
     .route("/toggle-source", post(toggle_source))
     .layer(cors)
+}
+
+async fn clear_quiz_chunk_history(State(app): State<AppHandle>) -> Response {
+  command::quiz::clear_quiz_chunk_history(app)
+    .map_ok(|rows| res!(OK, Json(rows)))
+    .unwrap_or_else(Response::from)
+    .await
 }
 
 async fn create_bookmark(
@@ -68,6 +78,16 @@ async fn create_quiz_answer(
 ) -> Response {
   command::quiz::create_quiz_answer(app, req.question, req.answer, req.source)
     .map_ok(|id| res!(CREATED, Json(id)))
+    .unwrap_or_else(Response::from)
+    .await
+}
+
+async fn create_quiz_chunk_history_entry(
+  State(app): State<AppHandle>,
+  Json(req): Json<CreateQuizChunkHistoryEntry>,
+) -> Response {
+  command::quiz::create_quiz_chunk_history_entry(app, req.id)
+    .map_ok(|()| res!(CREATED))
     .unwrap_or_else(Response::from)
     .await
 }
@@ -102,6 +122,13 @@ async fn get_bookmarks(State(app): State<AppHandle>) -> Response {
 async fn get_quiz_answers(State(app): State<AppHandle>) -> Response {
   command::quiz::get_quiz_answers(app)
     .map_ok(|answers| res!(OK, Json(answers)))
+    .unwrap_or_else(Response::from)
+    .await
+}
+
+async fn get_quiz_chunk_history_entries(State(app): State<AppHandle>) -> Response {
+  command::quiz::get_quiz_chunk_history_entries(app)
+    .map_ok(|entries| res!(OK, Json(entries)))
     .unwrap_or_else(Response::from)
     .await
 }
