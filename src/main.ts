@@ -16,16 +16,14 @@ import { setCurrentApp, setErrorHandler } from '@tb-dev/vue';
 const app = createApp(App);
 const pinia = createPinia();
 
-if (__DESKTOP__) {
-  pinia.use(
-    TauriPluginPinia({
-      autoStart: true,
-      saveOnChange: true,
-      saveStrategy: 'debounce',
-      saveInterval: 500,
-    }),
-  );
-}
+pinia.use(
+  TauriPluginPinia({
+    autoStart: true,
+    saveOnChange: true,
+    saveStrategy: 'debounce',
+    saveInterval: 500,
+  }),
+);
 
 setCurrentApp(app);
 setErrorHandler(handleError, app);
