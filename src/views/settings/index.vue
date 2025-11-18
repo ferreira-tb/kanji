@@ -14,7 +14,7 @@ const version = globalThis.__VERSION__;
 
 <template>
   <div class="relative flex size-full flex-col gap-2">
-    <div class="fixed bottom-2 right-2 text-muted-foreground text-xs">
+    <div class="fixed bottom-safe-2 right-2 text-muted-foreground text-xs">
       <span>{{ `v${version}` }}</span>
     </div>
 

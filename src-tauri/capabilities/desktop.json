@@ -3,7 +3,7 @@
   "identifier": "desktop",
   "description": "Desktop capabilities",
   "windows": ["*"],
-  "platforms": ["linux", "macOS", "windows"],
+  "platforms": ["windows"],
   "permissions": [
     "updater:allow-check",
     "updater:allow-download",

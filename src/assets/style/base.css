@@ -192,3 +192,11 @@
 @utility pl-safe-* {
   padding-left: calc(var(--safe-left) + calc(var(--spacing, 0.25rem) * --value(integer)));
 }
+
+@utility bottom-safe {
+  bottom: var(--safe-bottom);
+}
+
+@utility bottom-safe-* {
+  bottom: calc(var(--safe-bottom) + calc(var(--spacing, 0.25rem) * --value(integer)));
+}
