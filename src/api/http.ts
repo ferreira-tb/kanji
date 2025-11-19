@@ -1,9 +1,9 @@
 import { panic } from '@tb-dev/utils';
 import { fetch } from '@tauri-apps/plugin-http';
-import { useSettingsStore } from '@/stores/settings';
+import { BASE_URL_KEY } from '@/stores/settings';
 
 export function url(endpoint: string) {
-  const base = useSettingsStore().baseUrl;
+  const base = localStorage.getItem(BASE_URL_KEY);
   return base ? `http://${base}/${endpoint}` : panic('Missing base url');
 }
 
