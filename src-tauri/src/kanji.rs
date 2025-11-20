@@ -6,19 +6,14 @@ use std::sync::Arc;
 use {
   crate::database::model::kanji::NewKanji,
   crate::database::model::source::Source,
+  crate::database::sql_types::Zoned,
   crate::manager::ManagerExt,
   anyhow::Result,
-  itertools::Itertools,
   std::collections::HashMap,
   std::fs,
-  std::sync::atomic::AtomicBool,
-  std::sync::atomic::Ordering::Relaxed,
   tauri::AppHandle,
   tauri::async_runtime::spawn_blocking,
 };
-
-#[cfg(desktop)]
-static IS_FIRST_SEARCH: AtomicBool = AtomicBool::new(true);
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -148,6 +143,7 @@ pub fn blocking_search_with_options(
     .map(|kanji| u64::from(kanji.seen))
     .fold(0u64, u64::saturating_add) as f64;
 
+  let now = Zoned::now();
   for kanji in kanjis.values_mut() {
     if total.is_normal() {
       kanji.ratio = f64::from(kanji.seen) / total;
@@ -160,21 +156,15 @@ pub fn blocking_search_with_options(
       kanji.correct_quiz_answers = db.count_correct_quizzes(kanji.character)?;
       kanji.quiz_accuracy = (kanji.correct_quiz_answers as f64) / (kanji.quizzes as f64);
     }
+
+    NewKanji::builder(kanji.character)
+      .created_at(now.clone())
+      .updated_at(now.clone())
+      .build()
+      .create(app)?;
   }
 
-  let kanjis = kanjis.into_values().collect_vec();
-  if IS_FIRST_SEARCH.load(Relaxed) {
-    IS_FIRST_SEARCH.store(false, Relaxed);
-    for kanji in &kanjis {
-      if !db.has_kanji(kanji.character)? {
-        NewKanji::builder(kanji.character)
-          .build()
-          .create(app)?;
-      }
-    }
-  }
-
-  Ok(kanjis)
+  Ok(kanjis.into_values().collect())
 }
 
 pub const fn is_kanji(c: char) -> bool {

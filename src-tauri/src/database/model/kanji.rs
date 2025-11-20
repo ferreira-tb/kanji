@@ -22,10 +22,10 @@ pub struct NewKanji {
   #[builder(start_fn)]
   id: KanjiChar,
 
-  #[builder(skip = Zoned::now())]
+  #[builder(default)]
   created_at: Zoned,
 
-  #[builder(skip = Zoned::now())]
+  #[builder(default)]
   updated_at: Zoned,
 }
 

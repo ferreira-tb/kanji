@@ -161,10 +161,10 @@ impl Quiz {
     let sources = spawn_blocking({
       let app = app.clone();
       move || {
-        let database = app.database();
+        let db = app.database();
         let sources = ids
           .into_iter()
-          .map(|id| database.get_source_group_source_ids(id))
+          .map(|id| db.get_source_group_source_ids(id))
           .try_collect::<_, Vec<Vec<SourceId>>, _>()?
           .into_iter()
           .flatten()
@@ -238,13 +238,13 @@ pub struct QuizSourceStats {
 #[cfg(desktop)]
 impl QuizSourceStats {
   pub fn new(app: &AppHandle, source: SourceId) -> Result<Self> {
-    let database = app.database();
-    let quizzes = database.count_quizzes_with_source(source)?;
+    let db = app.database();
+    let quizzes = db.count_quizzes_with_source(source)?;
     let mut correct_quiz_answers = 0;
     let mut quiz_accuracy = 0.0;
 
     if quizzes > 0 {
-      correct_quiz_answers = database.count_correct_quizzes_with_source(source)?;
+      correct_quiz_answers = db.count_correct_quizzes_with_source(source)?;
       quiz_accuracy = (correct_quiz_answers as f64) / (quizzes as f64);
     }
 
