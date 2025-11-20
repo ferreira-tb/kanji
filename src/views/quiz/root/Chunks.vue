@@ -35,7 +35,7 @@ onMounted(() => loadQuizChunkHistoryEntries().err());
     <CardContent class="p-2 md:pr-8">
       <div class="flex justify-between items-center gap-4 md:gap-8 xl:gap-12">
         <div class="w-full flex justify-between items-center gap-4">
-          <div class="flex flex-col gap-1">
+          <div class="flex flex-col gap-0.5 md:gap-1">
             <div class="flex justify-start items-center gap-2">
               <h1>Chunk {{ chunk.id }}</h1>
               <Badge v-if="md && quizChunkHistory.has(chunk.id)" variant="outline">

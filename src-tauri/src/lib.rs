@@ -74,6 +74,7 @@ pub fn run() {
   let builder = builder.plugin(plugin::log());
 
   builder
+    .plugin(plugin::pinia())
     .plugin(tauri_plugin_clipboard_manager::init())
     .plugin(tauri_plugin_fs::init())
     .plugin(tauri_plugin_dialog::init())
@@ -94,8 +95,6 @@ fn setup(app: &AppHandle) -> BoxResult<()> {
     app.manage(DatabaseHandle::new()?);
     app.manage(Server::serve(app)?);
   }
-
-  app.plugin(plugin::pinia(app)?)?;
 
   #[cfg(desktop)]
   window::desktop::open(app)?;

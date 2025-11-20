@@ -146,8 +146,8 @@ pub fn blocking_search_with_options(
   #[builder(default = Settings::DEFAULT_SHUFFLE_SNIPPETS)] shuffle: bool,
   #[builder(default = Settings::DEFAULT_IGNORE_SOURCE_WEIGHT)] ignore_source_weight: bool,
 ) -> Result<Vec<Snippet>> {
-  let mut snippets = Vec::new();
   let db = app.database();
+  let mut snippets = Vec::new();
 
   let mut buf = [0u8; 4];
   let finder = Finder::new(kanji.encode_utf8(&mut buf));

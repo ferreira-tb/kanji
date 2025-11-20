@@ -9,6 +9,8 @@ impl DatabaseHandle {
     use schema::kanji::dsl::*;
     diesel::insert_into(kanji)
       .values(new)
+      .on_conflict(id)
+      .do_nothing()
       .execute(&mut *self.conn())
       .map(drop)
       .map_err(Into::into)
@@ -19,17 +21,6 @@ impl DatabaseHandle {
     kanji
       .select(id)
       .load(&mut *self.conn())
-      .map_err(Into::into)
-  }
-
-  pub fn has_kanji(&self, kanji_char: KanjiChar) -> Result<bool> {
-    use schema::kanji::dsl::*;
-    kanji
-      .find(kanji_char)
-      .select(id)
-      .first::<KanjiChar>(&mut *self.conn())
-      .optional()
-      .map(|it| it.is_some())
       .map_err(Into::into)
   }
 }

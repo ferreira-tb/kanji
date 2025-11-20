@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "7.5.2"
+version = "7.5.3"
 publish = false
 
 [package.edition]
