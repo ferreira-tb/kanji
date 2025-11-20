@@ -28,8 +28,8 @@ pinia.use(
 setCurrentApp(app);
 setErrorHandler(handleError, app);
 
-app.use(router);
 app.use(pinia);
+app.use(router);
 
 try {
   await checkForUpdates();

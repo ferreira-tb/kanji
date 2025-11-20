@@ -1,6 +1,6 @@
 import { panic } from '@tb-dev/utils';
 import { fetch } from '@tauri-apps/plugin-http';
-import { BASE_URL_KEY } from '@/stores/settings';
+import { BASE_URL_KEY } from '@/lib/local-storage';
 
 export function url(endpoint: string) {
   const base = localStorage.getItem(BASE_URL_KEY);

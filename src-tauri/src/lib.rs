@@ -74,7 +74,7 @@ pub fn run() {
   let builder = builder.plugin(plugin::log());
 
   builder
-    .plugin(plugin::pinia())
+    .plugin(tauri_plugin_pinia::init())
     .plugin(tauri_plugin_clipboard_manager::init())
     .plugin(tauri_plugin_fs::init())
     .plugin(tauri_plugin_dialog::init())

@@ -16,14 +16,6 @@ pub fn log() -> TauriPlugin<Wry> {
     .build()
 }
 
-pub fn pinia() -> TauriPlugin<Wry> {
-  use tauri_plugin_pinia::PrettyTomlMarshaler;
-
-  tauri_plugin_pinia::Builder::new()
-    .marshaler_of("settings", Box::new(PrettyTomlMarshaler))
-    .build()
-}
-
 #[cfg(desktop)]
 pub fn prevent_default() -> TauriPlugin<Wry> {
   use tauri_plugin_prevent_default::{Builder, Flags, PlatformOptions};
