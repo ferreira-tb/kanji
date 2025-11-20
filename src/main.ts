@@ -33,7 +33,7 @@ app.use(router);
 
 try {
   await checkForUpdates();
-  if (__DEBUG_ASSERTIONS__) {
+  if (__DEBUG_ASSERTIONS__ && __DESKTOP__) {
     await attachConsole();
   }
 }

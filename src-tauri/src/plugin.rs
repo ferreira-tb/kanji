@@ -5,7 +5,7 @@ use tauri::plugin::TauriPlugin;
 #[cfg(desktop)]
 use crate::window::desktop::WindowExt;
 
-#[cfg(debug_assertions)]
+#[cfg(all(desktop, debug_assertions))]
 pub fn log() -> TauriPlugin<Wry> {
   use tauri_plugin_log::{Target, TargetKind};
 

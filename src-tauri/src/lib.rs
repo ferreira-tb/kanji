@@ -70,7 +70,7 @@ pub fn run() {
   #[cfg(mobile)]
   let builder = tauri::Builder::default();
 
-  #[cfg(debug_assertions)]
+  #[cfg(all(desktop, debug_assertions))]
   let builder = builder.plugin(plugin::log());
 
   builder

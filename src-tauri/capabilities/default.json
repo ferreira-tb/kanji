@@ -9,7 +9,6 @@
     "core:path:allow-join",
     "clipboard-manager:allow-write-text",
     "dialog:allow-message",
-    "log:default",
     "pinia:default",
     "process:allow-exit",
     "process:allow-restart",
