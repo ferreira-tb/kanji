@@ -1,7 +1,17 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { handleError } from '@/lib/error';
+import { useLocalStorage } from '@vueuse/core';
+import { BASE_URL_KEY } from '@/lib/local-storage';
 
 export const useSettingsStore = defineStore('settings', () => {
+  const baseUrl = useLocalStorage(BASE_URL_KEY, '192.168.1.65:63500', {
+    initOnMounted: false,
+    listenToStorageChanges: false,
+    writeDefaults: true,
+    onError: handleError,
+  });
+
   const clipboard = ref(__DEFAULT_SETTINGS__.clipboard);
   const editor = ref(__DEFAULT_SETTINGS__.editor);
   const hideOnClose = ref(__DEFAULT_SETTINGS__.hideOnClose);
@@ -24,5 +34,13 @@ export const useSettingsStore = defineStore('settings', () => {
     ignoreSourceWeight,
     setFileName,
     setChunkSize,
+
+    // Mobile
+    baseUrl,
   };
+}, {
+  tauri: {
+    filterKeys: ['baseUrl'],
+    filterKeysStrategy: 'omit',
+  },
 });

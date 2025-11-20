@@ -1,14 +1,8 @@
 <script setup lang="ts">
-import { handleError } from '@/lib/error';
-import { useLocalStorage } from '@vueuse/core';
-import { BASE_URL_KEY } from '@/lib/local-storage';
+import { useSettingsStore } from '@/stores/settings';
 import { Input, Label } from '@tb-dev/vue-components';
 
-const baseUrl = useLocalStorage(BASE_URL_KEY, '', {
-  initOnMounted: true,
-  writeDefaults: true,
-  onError: handleError,
-});
+const settings = useSettingsStore();
 </script>
 
 <template>
@@ -18,7 +12,7 @@ const baseUrl = useLocalStorage(BASE_URL_KEY, '', {
       <Label class="max-w-70">
         <span>Base URL</span>
         <Input
-          v-model="baseUrl"
+          v-model="settings.baseUrl"
           type="text"
           spellcheck="false"
           autocapitalize="off"

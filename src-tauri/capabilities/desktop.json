@@ -5,6 +5,7 @@
   "windows": ["*"],
   "platforms": ["windows"],
   "permissions": [
+    "log:default",
     "updater:allow-check",
     "updater:allow-download",
     "updater:allow-download-and-install",

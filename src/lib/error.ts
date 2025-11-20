@@ -3,7 +3,7 @@ import { message as showMessage } from '@tauri-apps/plugin-dialog';
 
 export function handleError(err: unknown) {
   const message = err instanceof Error ? err.message : String(err);
-  if (__DEBUG_ASSERTIONS__) {
+  if (__DEBUG_ASSERTIONS__ && __DESKTOP__) {
     void logError(message);
   }
 
