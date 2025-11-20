@@ -1,4 +1,5 @@
 interface Settings {
+  readonly clipboard: boolean;
   readonly editor: Editor;
   readonly hideOnClose: boolean;
 

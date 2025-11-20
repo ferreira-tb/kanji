@@ -7,6 +7,7 @@ use tauri_plugin_pinia::ManagerExt as _;
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Settings {
+  pub clipboard: bool,
   pub editor: Editor,
   pub hide_on_close: bool,
 
@@ -20,6 +21,7 @@ pub struct Settings {
 }
 
 impl Settings {
+  pub const DEFAULT_CLIPBOARD: bool = false;
   pub const DEFAULT_EDITOR: Editor = Editor::Code;
   pub const DEFAULT_HIDE_ON_CLOSE: bool = false;
   pub const DEFAULT_SNIPPET_LIMIT: usize = 1000;
@@ -39,6 +41,7 @@ impl Settings {
 impl Default for Settings {
   fn default() -> Self {
     Self {
+      clipboard: Self::DEFAULT_CLIPBOARD,
       editor: Self::DEFAULT_EDITOR,
       hide_on_close: Self::DEFAULT_HIDE_ON_CLOSE,
       snippet_limit: Self::DEFAULT_SNIPPET_LIMIT,
