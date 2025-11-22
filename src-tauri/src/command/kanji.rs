@@ -11,9 +11,9 @@ pub async fn export_set(app: AppHandle) -> CResult<()> {
     .await?
     .first()
   {
-    KanjiSet::load(app.clone())
+    KanjiSet::load(&app)
       .await?
-      .export(app, folder)
+      .export(&app, folder)
       .await?;
   }
 
@@ -22,7 +22,9 @@ pub async fn export_set(app: AppHandle) -> CResult<()> {
 
 #[tauri::command]
 pub async fn get_set(app: AppHandle) -> CResult<KanjiSet> {
-  KanjiSet::load(app).await.map_err(Into::into)
+  KanjiSet::load(&app)
+    .await
+    .map_err(Into::into)
 }
 
 #[tauri::command]

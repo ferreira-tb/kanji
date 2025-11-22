@@ -5,6 +5,8 @@ param(
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 
+pnpm run type-check
+
 if ($Android) {
   cargo tauri android build --apk true
 

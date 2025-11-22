@@ -3,7 +3,6 @@ pub mod desktop;
 #[cfg(mobile)]
 pub mod mobile;
 
-use crate::settings::Settings;
 use serde_json::json;
 use tauri::WebviewUrl;
 
@@ -31,7 +30,6 @@ fn script() -> String {
   }
 
   define!("__DEBUG_ASSERTIONS__", cfg!(debug_assertions));
-  define!("__DEFAULT_SETTINGS__", Settings::default());
   define!("__DESKTOP__", cfg!(desktop));
   define!("__MOBILE__", cfg!(mobile));
   define!("__VERSION__", env!("CARGO_PKG_VERSION"));

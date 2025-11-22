@@ -5,7 +5,7 @@ use serde::Serialize;
 use {
   crate::kanji::{KanjiStats, search as search_kanji},
   crate::manager::ManagerExt,
-  crate::settings::Settings,
+  crate::settings,
   anyhow::Result,
   itertools::Itertools,
   std::path::Path as StdPath,
@@ -25,8 +25,7 @@ pub struct KanjiSet {
 
 #[cfg(desktop)]
 impl KanjiSet {
-  pub async fn load(app: AppHandle) -> Result<Self> {
-    let settings = Settings::get(&app)?;
+  pub async fn load(app: &AppHandle) -> Result<Self> {
     let mut kanjis = search_kanji(app.clone()).await?;
     kanjis.sort_by_key(KanjiStats::character);
     kanjis.sort_by_key(KanjiStats::seen);
@@ -36,7 +35,7 @@ impl KanjiSet {
       .iter()
       .map(KanjiStats::character)
       .rev()
-      .chunks(settings.set_chunk_size);
+      .chunks(settings::set_chunk_size(app));
 
     let db = app.database();
     for (id, chunk) in (1u32..).zip(&iter) {
@@ -83,10 +82,9 @@ impl KanjiSet {
     })
   }
 
-  pub async fn export(self, app: AppHandle, folder: &StdPath) -> Result<()> {
-    let settings = Settings::get(&app)?;
+  pub async fn export(self, app: &AppHandle, folder: &StdPath) -> Result<()> {
     let sets = KanjiSet::load(app).await?;
-    let path = folder.join(settings.set_file_name.as_ref());
+    let path = folder.join(settings::set_file_name(app));
     let mut file = File::create(path).await?;
 
     for chunk in &sets.chunks {

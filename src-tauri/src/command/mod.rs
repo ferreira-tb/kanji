@@ -6,8 +6,7 @@ pub mod source_group;
 
 use crate::error::CResult;
 use crate::manager::ManagerExt;
-use crate::settings::Editor;
-use crate::tray;
+use crate::{settings, tray};
 use itertools::Itertools;
 use std::net::SocketAddrV4;
 use std::path::PathBuf;
@@ -34,12 +33,13 @@ pub async fn get_server_addr(app: AppHandle) -> SocketAddrV4 {
 
 #[tauri::command]
 pub async fn open_editor(app: AppHandle, path: PathBuf, line: u32) -> CResult<()> {
-  let editor = Editor::get(&app);
+  use crate::settings::Editor::*;
+
+  let editor = settings::editor(&app);
   let path = format!("{}:{}", path.to_string_lossy(), line);
   let args: &[&str] = match editor {
-    Editor::Code => &[editor.as_ref(), "--goto", path.as_str()],
-    Editor::CodeInsiders => &[editor.as_ref(), "--goto", path.as_str()],
-    Editor::Zed => &[editor.as_ref(), path.as_str()],
+    Code | CodeInsiders => &[editor.as_ref(), "--goto", path.as_str()],
+    Zed => &[editor.as_ref(), path.as_str()],
   };
 
   Command::new("pwsh")

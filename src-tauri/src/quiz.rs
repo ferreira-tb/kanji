@@ -7,7 +7,7 @@ use {
   crate::database::model::source::Source,
   crate::kanji::{blocking_search_with_options, is_kanji},
   crate::manager::ManagerExt,
-  crate::settings::Settings,
+  crate::settings,
   anyhow::{Error, Result, bail},
   itertools::Itertools,
   rand::seq::{IndexedRandom, IteratorRandom, SliceRandom},
@@ -52,7 +52,6 @@ impl Quiz {
     let sources = Arc::from(sources);
     let questions = Arc::new(Mutex::new(Vec::new()));
     let semaphore = Arc::new(Semaphore::new(100));
-    let settings = Arc::new(Settings::get(&app)?);
 
     let mut set: JoinSet<Result<()>> = kanjis
       .into_iter()
@@ -64,7 +63,6 @@ impl Quiz {
         let sources = Arc::clone(&sources);
         let questions = Arc::clone(&questions);
         let semaphore = Arc::clone(&semaphore);
-        let settings = Arc::clone(&settings);
 
         async move {
           let permit = semaphore.acquire().await?;
@@ -72,9 +70,7 @@ impl Quiz {
             snippet::blocking_search_with_options(&app, kanji)
               .sources(&sources)
               .limit(1)
-              .min_len(settings.snippet_min_len)
               .shuffle(true)
-              .ignore_source_weight(settings.ignore_source_weight)
               .call()
           });
 
@@ -111,7 +107,7 @@ impl Quiz {
   }
 
   async fn from_random_chunk(app: AppHandle) -> Result<Self> {
-    let chunk_size = Settings::get(&app)?.set_chunk_size;
+    let chunk_size = settings::set_chunk_size(&app);
     let kanjis = app
       .database()
       .get_kanji_chars()?
@@ -134,7 +130,7 @@ impl Quiz {
       }
     });
 
-    let chunk_size = Settings::get(&app)?.set_chunk_size;
+    let chunk_size = settings::set_chunk_size(&app);
     let kanjis = stats
       .await??
       .into_iter()

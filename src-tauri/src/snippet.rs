@@ -1,5 +1,5 @@
 use crate::database::sql_types::{BookmarkId, KanjiChar, SourceId, SourceWeight};
-use crate::settings::Settings;
+use crate::settings;
 use anyhow::Result;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::collections::HashSet;
@@ -119,7 +119,6 @@ pub fn blocking_search(
   kanji: KanjiChar,
   source: Option<SourceId>,
 ) -> Result<Vec<Snippet>> {
-  let settings = Settings::get(app)?;
   let sources = if let Some(id) = source {
     vec![app.database().get_source(id)?]
   } else {
@@ -128,10 +127,8 @@ pub fn blocking_search(
 
   blocking_search_with_options(app, kanji)
     .sources(&sources)
-    .limit(settings.snippet_limit)
-    .min_len(settings.snippet_min_len)
-    .shuffle(settings.shuffle_snippets)
-    .ignore_source_weight(settings.ignore_source_weight)
+    .limit(settings::snippet_limit(app))
+    .shuffle(settings::shuffle_snippets(app))
     .call()
 }
 
@@ -141,16 +138,18 @@ pub fn blocking_search_with_options(
   #[builder(start_fn)] app: &AppHandle,
   #[builder(start_fn)] kanji: KanjiChar,
   #[builder(default)] sources: &[Source],
-  #[builder(default = Settings::DEFAULT_SNIPPET_LIMIT)] limit: usize,
-  #[builder(default = Settings::DEFAULT_SNIPPET_MIN_LEN)] min_len: usize,
-  #[builder(default = Settings::DEFAULT_SHUFFLE_SNIPPETS)] shuffle: bool,
-  #[builder(default = Settings::DEFAULT_IGNORE_SOURCE_WEIGHT)] ignore_source_weight: bool,
+  #[builder(default = settings::DEFAULT_SNIPPET_LIMIT)] limit: usize,
+  #[builder(default = settings::DEFAULT_SHUFFLE_SNIPPETS)] shuffle: bool,
 ) -> Result<Vec<Snippet>> {
   let db = app.database();
   let mut snippets = Vec::new();
 
   let mut buf = [0u8; 4];
   let finder = Finder::new(kanji.encode_utf8(&mut buf));
+
+  let min_len = settings::snippet_min_len(app);
+  let forbidden_words = settings::forbidden_words(app);
+  let ignore_source_weight = settings::ignore_source_weight(app);
 
   for source in sources {
     let source_id = source.id;
@@ -165,7 +164,7 @@ pub fn blocking_search_with_options(
         let Ok(text) = text else { continue };
 
         let text = text.trim();
-        if !should_skip(text, min_len) {
+        if !should_skip(text, min_len, &forbidden_words) {
           let bytes = text.as_bytes();
           if finder.find(bytes).is_some() {
             let name = Arc::clone(&name);
@@ -225,8 +224,14 @@ pub fn blocking_search_with_options(
 }
 
 #[cfg(desktop)]
-fn should_skip(text: &str, min_len: usize) -> bool {
-  if text.is_empty() || text.starts_with('#') || text.starts_with('<') {
+fn should_skip(text: &str, min_len: usize, forbidden_words: &[String]) -> bool {
+  if text.is_empty()
+    || text.starts_with('#')
+    || text.starts_with('<')
+    || forbidden_words
+      .iter()
+      .any(|word| text.contains(word))
+  {
     return true;
   }
 

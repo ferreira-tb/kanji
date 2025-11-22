@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
+  Textarea,
 } from '@tb-dev/vue-components';
 
 const settings = useSettingsStore();
@@ -94,6 +95,18 @@ const settings = useSettingsStore();
           <NumberFieldIncrement />
         </NumberFieldContent>
       </NumberField>
+    </Label>
+
+    <Label class="max-w-70">
+      <span>Forbidden Words</span>
+      <Textarea
+        v-model="settings.forbiddenWords"
+        type="text"
+        spellcheck="false"
+        autocapitalize="off"
+        autocomplete="off"
+        class="max-h-24 resize-none"
+      />
     </Label>
   </div>
 

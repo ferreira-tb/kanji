@@ -12,28 +12,28 @@ export const useSettingsStore = defineStore('settings', () => {
     onError: handleError,
   });
 
-  const clipboard = ref(__DEFAULT_SETTINGS__.clipboard);
-  const editor = ref(__DEFAULT_SETTINGS__.editor);
-  const hideOnClose = ref(__DEFAULT_SETTINGS__.hideOnClose);
-
-  const snippetLimit = ref(__DEFAULT_SETTINGS__.snippetLimit);
-  const snippetMinLen = ref(__DEFAULT_SETTINGS__.snippetMinLen);
-  const shuffleSnippets = ref(__DEFAULT_SETTINGS__.shuffleSnippets);
-  const ignoreSourceWeight = ref(__DEFAULT_SETTINGS__.ignoreSourceWeight);
-
-  const setFileName = ref(__DEFAULT_SETTINGS__.setFileName);
-  const setChunkSize = ref(__DEFAULT_SETTINGS__.setChunkSize);
+  const clipboard = ref(false);
+  const editor = ref<Editor>('code');
+  const forbiddenWords = ref('');
+  const hideOnClose = ref(false);
+  const ignoreSourceWeight = ref(false);
+  const setChunkSize = ref(25);
+  const setFileName = ref('Kanji Set.txt');
+  const shuffleSnippets = ref(true);
+  const snippetLimit = ref(1000);
+  const snippetMinLen = ref(5);
 
   return {
     clipboard,
     editor,
+    forbiddenWords,
     hideOnClose,
+    ignoreSourceWeight,
+    setChunkSize,
+    setFileName,
+    shuffleSnippets,
     snippetLimit,
     snippetMinLen,
-    shuffleSnippets,
-    ignoreSourceWeight,
-    setFileName,
-    setChunkSize,
 
     // Mobile
     baseUrl,
