@@ -1,58 +1,17 @@
-use anyhow::Result;
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use strum::AsRefStr;
 use tauri::AppHandle;
 use tauri_plugin_pinia::ManagerExt as _;
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(default, rename_all = "camelCase")]
-pub struct Settings {
-  pub clipboard: bool,
-  pub editor: Editor,
-  pub hide_on_close: bool,
-
-  pub snippet_limit: usize,
-  pub snippet_min_len: usize,
-  pub shuffle_snippets: bool,
-  pub ignore_source_weight: bool,
-
-  pub set_file_name: Box<str>,
-  pub set_chunk_size: usize,
-}
-
-impl Settings {
-  pub const DEFAULT_CLIPBOARD: bool = false;
-  pub const DEFAULT_EDITOR: Editor = Editor::Code;
-  pub const DEFAULT_HIDE_ON_CLOSE: bool = false;
-  pub const DEFAULT_SNIPPET_LIMIT: usize = 1000;
-  pub const DEFAULT_SNIPPET_MIN_LEN: usize = 5;
-  pub const DEFAULT_SHUFFLE_SNIPPETS: bool = true;
-  pub const DEFAULT_IGNORE_SOURCE_WEIGHT: bool = false;
-  pub const DEFAULT_SET_CHUNK_SIZE: usize = 25;
-
-  pub fn get(app: &AppHandle) -> Result<Self> {
-    app
-      .pinia()
-      .state_or_default("settings")
-      .map_err(Into::into)
-  }
-}
-
-impl Default for Settings {
-  fn default() -> Self {
-    Self {
-      clipboard: Self::DEFAULT_CLIPBOARD,
-      editor: Self::DEFAULT_EDITOR,
-      hide_on_close: Self::DEFAULT_HIDE_ON_CLOSE,
-      snippet_limit: Self::DEFAULT_SNIPPET_LIMIT,
-      snippet_min_len: Self::DEFAULT_SNIPPET_MIN_LEN,
-      shuffle_snippets: Self::DEFAULT_SHUFFLE_SNIPPETS,
-      ignore_source_weight: Self::DEFAULT_IGNORE_SOURCE_WEIGHT,
-      set_file_name: Box::from("Kanji Set.txt"),
-      set_chunk_size: Self::DEFAULT_SET_CHUNK_SIZE,
-    }
-  }
-}
+pub const DEFAULT_EDITOR: Editor = Editor::Code;
+pub const DEFAULT_HIDE_ON_CLOSE: bool = false;
+pub const DEFAULT_IGNORE_SOURCE_WEIGHT: bool = false;
+pub const DEFAULT_SET_CHUNK_SIZE: usize = 25;
+pub const DEFAULT_SET_FILE_NAME: &str = "Kanji Set.txt";
+pub const DEFAULT_SHUFFLE_SNIPPETS: bool = true;
+pub const DEFAULT_SNIPPET_LIMIT: usize = 1000;
+pub const DEFAULT_SNIPPET_MIN_LEN: usize = 5;
 
 #[derive(Clone, Copy, Debug, Default, AsRefStr, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -64,10 +23,64 @@ pub enum Editor {
   Zed,
 }
 
-impl Editor {
-  pub fn get(app: &AppHandle) -> Self {
-    app
-      .pinia()
-      .get_or_default("settings", "editor")
-  }
+fn get_or<T>(app: &AppHandle, key: &str, default: T) -> T
+where
+  T: DeserializeOwned,
+{
+  app.pinia().get_or("settings", key, default)
+}
+
+fn get_or_default<T>(app: &AppHandle, key: &str) -> T
+where
+  T: Default + DeserializeOwned,
+{
+  app.pinia().get_or_default("settings", key)
+}
+
+fn get_or_else<T, F>(app: &AppHandle, key: &str, f: F) -> T
+where
+  T: DeserializeOwned,
+  F: FnOnce() -> T,
+{
+  app.pinia().get_or_else("settings", key, f)
+}
+
+pub fn editor(app: &AppHandle) -> Editor {
+  get_or(app, "editor", DEFAULT_EDITOR)
+}
+
+pub fn forbidden_words(app: &AppHandle) -> Vec<String> {
+  get_or_default::<String>(app, "forbiddenWords")
+    .split(',')
+    .map(|word| word.trim().to_owned())
+    .filter(|word| !word.is_empty())
+    .collect()
+}
+
+pub fn hide_on_close(app: &AppHandle) -> bool {
+  get_or(app, "hideOnClose", DEFAULT_HIDE_ON_CLOSE)
+}
+
+pub fn ignore_source_weight(app: &AppHandle) -> bool {
+  get_or(app, "ignoreSourceWeight", DEFAULT_IGNORE_SOURCE_WEIGHT)
+}
+
+pub fn set_chunk_size(app: &AppHandle) -> usize {
+  get_or(app, "setChunkSize", DEFAULT_SET_CHUNK_SIZE)
+}
+
+pub fn set_file_name(app: &AppHandle) -> String {
+  get_or_else(app, "setFileName", || DEFAULT_SET_FILE_NAME.to_owned())
+}
+
+pub fn shuffle_snippets(app: &AppHandle) -> bool {
+  get_or(app, "shuffleSnippets", DEFAULT_SHUFFLE_SNIPPETS)
+}
+
+pub fn snippet_limit(app: &AppHandle) -> usize {
+  get_or(app, "snippetLimit", DEFAULT_SNIPPET_LIMIT)
+}
+
+pub fn snippet_min_len(app: &AppHandle) -> usize {
+  get_or(app, "snippetMinLen", DEFAULT_SNIPPET_MIN_LEN)
 }

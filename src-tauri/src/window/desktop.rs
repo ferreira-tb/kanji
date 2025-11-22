@@ -1,4 +1,4 @@
-use crate::settings::Settings;
+use crate::settings;
 use anyhow::Result;
 use tauri::{AppHandle, Manager, WebviewWindow, WebviewWindowBuilder, WindowEvent, Wry};
 
@@ -32,8 +32,7 @@ fn on_window_event(app: &AppHandle) -> impl Fn(&WindowEvent) + use<> {
   let app = app.clone();
   move |event| {
     if let WindowEvent::CloseRequested { api, .. } = event
-      && let Ok(settings) = Settings::get(&app)
-      && settings.hide_on_close
+      && settings::hide_on_close(&app)
     {
       api.prevent_close();
       app.main_window().hide().unwrap();
