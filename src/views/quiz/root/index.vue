@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import Chunks from './Chunks.vue';
 import Question from './Question.vue';
+import DialogUrl from './DialogUrl.vue';
 import { useQuiz } from '@/composables/quiz';
 import DialogTextChunk from './DialogTextChunk.vue';
 import DialogSources from '@/components/DialogSources.vue';
@@ -30,9 +31,11 @@ const {
   startSource,
   startRandomSourceGroup,
   startSourceGroup,
+  startUrl,
 } = useQuiz();
 
 const isDialogTextChunkOpen = ref(false);
+const isDialogUrlOpen = ref(false);
 
 const isDialogSourcesOpen = ref(false);
 const selectedSources = ref<SourceId[]>([]);
@@ -59,12 +62,21 @@ async function onSourceGroupStart(ids: readonly SourceGroupId[]) {
       <SidebarTrigger />
 
       <DialogTextChunk
+        v-if="isDialogTextChunkOpen"
         v-model:open="isDialogTextChunkOpen"
         :disabled="isLoading"
         @start="(chars) => startChunk(chars)"
       />
 
+      <DialogUrl
+        v-if="isDialogUrlOpen"
+        v-model:open="isDialogUrlOpen"
+        :disabled="isLoading"
+        @start="(urls) => startUrl(urls)"
+      />
+
       <DialogSources
+        v-if="isDialogSourcesOpen"
         v-model:open="isDialogSourcesOpen"
         v-model:selected="selectedSources"
         confirm-label="Start"
@@ -74,6 +86,7 @@ async function onSourceGroupStart(ids: readonly SourceGroupId[]) {
       />
 
       <DialogSourceGroups
+        v-if="isDialogSourceGroupsOpen"
         v-model:open="isDialogSourceGroupsOpen"
         v-model:selected="selectedSourceGroups"
         confirm-label="Start"
@@ -114,6 +127,10 @@ async function onSourceGroupStart(ids: readonly SourceGroupId[]) {
 
               <DropdownMenuButton :disabled="isLoading" @click="startRandomSourceGroup">
                 <span>Random Source Group</span>
+              </DropdownMenuButton>
+
+              <DropdownMenuButton :disabled="isLoading" @click="() => void (isDialogUrlOpen = true)">
+                <span>Url</span>
               </DropdownMenuButton>
             </DropdownMenuGroup>
           </DropdownMenuContent>

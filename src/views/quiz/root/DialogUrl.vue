@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { toChars } from '@/lib/string';
+import { z } from 'zod';
+import { computed, ref } from 'vue';
 import {
   Button,
   Dialog,
@@ -14,19 +14,31 @@ import {
 
 const props = defineProps<{
   disabled: boolean;
-  onStart: (chars: readonly string[]) => Promise<void>;
+  onStart: (urls: string[]) => Promise<void>;
 }>();
 
 const open = defineModel<boolean>('open', { required: true });
 
 const text = ref('');
 
+const schema = z.url({ protocol: /^https$/ });
+const urls = computed(() => {
+  return text.value
+    .split('\n')
+    .map((url) => url.trim())
+    .filter(validate);
+});
+
 async function start() {
-  const chars = toChars(text.value);
-  if (chars.length > 0) {
+  if (urls.value.length) {
     open.value = false;
-    await props.onStart(chars);
+    await props.onStart(urls.value);
   }
+}
+
+function validate(url: string) {
+  if (url.length === 0) return false;
+  return schema.safeParse(url).success;
 }
 </script>
 
@@ -37,7 +49,7 @@ async function start() {
     <DialogContent class="w-80 md:w-100 max-w-9/10 pb-1">
       <VisuallyHidden>
         <DialogHeader>
-          <DialogTitle>Custom Text Chunk</DialogTitle>
+          <DialogTitle>Url</DialogTitle>
         </DialogHeader>
       </VisuallyHidden>
 
@@ -52,7 +64,7 @@ async function start() {
         />
 
         <div class="flex justify-center items-center">
-          <Button size="sm" :disabled="disabled || text.length === 0" @click="start">
+          <Button size="sm" :disabled="disabled || urls.length === 0" @click="start">
             <span>Start</span>
           </Button>
         </div>

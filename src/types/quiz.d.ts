@@ -6,7 +6,8 @@ type QuizKind =
   | QuizKindSource
   | QuizKindRandomSource
   | QuizKindSourceGroup
-  | QuizKindRandomSourceGroup;
+  | QuizKindRandomSourceGroup
+  | QuizKindUrl;
 
 interface QuizKindChunk {
   readonly kind: 'chunk';
@@ -33,6 +34,11 @@ interface QuizKindSourceGroup {
 
 interface QuizKindRandomSourceGroup {
   readonly kind: 'random-source-group';
+}
+
+interface QuizKindUrl {
+  readonly kind: 'url';
+  readonly urls: readonly string[];
 }
 
 interface QuizQuestion {

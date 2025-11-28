@@ -2,6 +2,7 @@
 
 mod database;
 mod error;
+
 mod kanji;
 mod plugin;
 mod quiz;
@@ -12,6 +13,8 @@ mod window;
 
 #[cfg(desktop)]
 mod command;
+#[cfg(desktop)]
+mod http;
 #[cfg(desktop)]
 mod manager;
 #[cfg(desktop)]
