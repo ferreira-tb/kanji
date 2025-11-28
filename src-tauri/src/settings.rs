@@ -51,9 +51,10 @@ pub fn editor(app: &AppHandle) -> Editor {
 
 pub fn forbidden_words(app: &AppHandle) -> Vec<String> {
   get_or_default::<String>(app, "forbiddenWords")
-    .split(',')
-    .map(|word| word.trim().to_owned())
+    .split('\n')
+    .map(str::trim)
     .filter(|word| !word.is_empty())
+    .map(ToOwned::to_owned)
     .collect()
 }
 

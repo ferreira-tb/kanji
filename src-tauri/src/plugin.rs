@@ -31,6 +31,7 @@ pub fn prevent_default() -> TauriPlugin<Wry> {
         .general_autofill(false)
         .password_autosave(false)
         .pinch_zoom(false)
+        .swipe_navigation(false)
         .zoom_control(false),
     )
     .build()

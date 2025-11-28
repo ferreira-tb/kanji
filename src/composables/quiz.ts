@@ -30,6 +30,7 @@ export function useQuiz() {
       startRandomSourceGroup: value.startRandomSourceGroup,
       startSource: value.startSource,
       startSourceGroup: value.startSourceGroup,
+      startUrl: value.startUrl,
       answer: value.answer,
       next: value.next,
       leave: value.leave,
@@ -120,6 +121,10 @@ function create() {
 
   async function startRandomSourceGroup() {
     await start(() => commands.createQuiz({ kind: 'random-source-group' }));
+  }
+
+  async function startUrl(urls: readonly string[]) {
+    await start(() => commands.createQuiz({ kind: 'url', urls }));
   }
 
   async function answer(option: KanjiChar) {
@@ -240,6 +245,7 @@ function create() {
     startRandomSourceGroup,
     startSource,
     startSourceGroup,
+    startUrl,
     start,
     answer,
     next,

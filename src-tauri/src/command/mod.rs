@@ -84,9 +84,8 @@ pub async fn pick_folders(app: AppHandle) -> CResult<Vec<PathBuf>> {
 
 #[tauri::command]
 pub async fn show_window(window: WebviewWindow) -> CResult<()> {
-  window
-    .show()
-    .and_then(|()| window.unminimize())
-    .and_then(|()| window.set_focus())
-    .map_err(Into::into)
+  window.show()?;
+  window.unminimize()?;
+  window.set_focus()?;
+  Ok(())
 }
