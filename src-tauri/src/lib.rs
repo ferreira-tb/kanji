@@ -1,4 +1,5 @@
 #![feature(file_buffered, try_blocks)]
+#![cfg_attr(mobile, expect(unused))]
 
 mod database;
 mod error;
