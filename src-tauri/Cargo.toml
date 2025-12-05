@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "7.7.0"
+version = "7.7.1"
 publish = false
 
 [package.edition]
@@ -34,7 +34,7 @@ tauri-plugin-process = "2"
 walkdir = "2.5"
 
 [dependencies.derive_more]
-version = "2.0"
+version = "2.1"
 features = ["deref", "display", "from", "into"]
 
 [dependencies.diesel]
@@ -88,7 +88,7 @@ version = "2.5"
 features = ["serde"]
 
 [dependencies.uuid]
-version = "1.18"
+version = "1.19"
 features = ["serde", "v7"]
 
 [target."cfg(windows)".dependencies]
