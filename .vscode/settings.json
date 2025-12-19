@@ -1,19 +1,4 @@
 {
-  "[html]": {
-    "editor.defaultFormatter": "dprint.dprint"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "dprint.dprint"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "dprint.dprint"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "dprint.dprint"
-  },
-  "[markdown]": {
-    "editor.defaultFormatter": "dprint.dprint"
-  },
   "[powershell]": {
     "editor.defaultFormatter": "ms-vscode.powershell"
   },
@@ -23,18 +8,30 @@
   "[toml]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
-  "[typescript]": {
-    "editor.defaultFormatter": "dprint.dprint"
-  },
-  "[vue]": {
-    "editor.defaultFormatter": "dprint.dprint"
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "dprint.dprint"
-  },
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
   "editor.defaultFormatter": "dprint.dprint",
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "githubPullRequests.defaultMergeMethod": "squash",
+  "powershell.codeFormatting.autoCorrectAliases": true,
+  "powershell.codeFormatting.avoidSemicolonsAsLineTerminators": true,
+  "powershell.codeFormatting.useConstantStrings": true,
+  "powershell.codeFormatting.useCorrectCasing": true,
+  "powershell.codeFormatting.whitespaceBetweenParameters": true,
+  "workbench.editor.customLabels.patterns": {
+    "**/App.vue": "${dirname}/App.vue",
+    "**/build.rs": "${dirname}/build.rs",
+    "**/Cargo.toml": "${dirname}/Cargo.toml",
+    "**/index.ts": "${dirname}/index.ts",
+    "**/index.vue": "${dirname}/index.vue",
+    "**/mod.rs": "${dirname}/mod.rs",
+    "**/package.json": "${dirname}/package.json",
+    "**/tsconfig.json": "${dirname}/tsconfig.json",
+    "*/*/**/lib.rs": "${dirname(1)}/lib.rs",
+    "*/*/**/main.rs": "${dirname(1)}/main.rs",
+    "*/Cargo.toml": "<workspace>/Cargo.toml",
+    "*/package.json": "<workspace>/package.json",
+    "*/tsconfig.json": "<workspace>/tsconfig.json"
+  }
 }
