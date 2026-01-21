@@ -2,7 +2,7 @@
 import { useHeight } from '@tb-dev/vue';
 import { type MaybePromise, toPixel } from '@tb-dev/utils';
 import { computed, useTemplateRef, watchEffect } from 'vue';
-import { useSourceGroups } from '@/composables/source-groups';
+import { useSourceGroups } from '@/composables/useSourceGroups';
 import {
   Button,
   Checkbox,

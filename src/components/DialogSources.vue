@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useHeight } from '@tb-dev/vue';
-import { useSources } from '@/composables/sources';
+import { useSources } from '@/composables/useSources';
 import { type MaybePromise, toPixel } from '@tb-dev/utils';
 import { computed, useTemplateRef, watchEffect } from 'vue';
 import {

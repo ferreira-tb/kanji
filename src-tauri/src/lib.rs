@@ -87,7 +87,7 @@ pub fn run() {
     .plugin(tauri_plugin_http::init())
     .setup(|app| setup(app.app_handle()))
     .run(tauri::generate_context!())
-    .expect("failed to start tauri app");
+    .expect("Failed to start Kanji app");
 }
 
 fn setup(app: &AppHandle) -> BoxResult<()> {

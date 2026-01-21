@@ -1,7 +1,7 @@
 import { shallowRef } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useMutex } from '@tb-dev/vue';
 import * as commands from '@/commands';
+import { useMutex } from '@tb-dev/vue';
 import { handleError } from '@/lib/error';
 import { useSettingsStore } from '@/stores/settings';
 

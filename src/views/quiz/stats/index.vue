@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { asyncRef } from '@tb-dev/vue';
 import { formatPercent } from '@/lib/intl';
-import { useQuiz } from '@/composables/quiz';
 import { getQuizSourceStats } from '@/commands';
+import { useQuiz } from '@/composables/useQuiz';
 import { onActivated, onDeactivated } from 'vue';
-import { useSources } from '@/composables/sources';
+import { useSources } from '@/composables/useSources';
 import {
   Button,
   Card,

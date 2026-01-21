@@ -5,7 +5,7 @@ import { useLocalStorage } from '@vueuse/core';
 import { BASE_URL_KEY } from '@/lib/local-storage';
 
 export const useSettingsStore = defineStore('settings', () => {
-  const baseUrl = useLocalStorage(BASE_URL_KEY, '192.168.1.65:63500', {
+  const baseUrl = useLocalStorage(BASE_URL_KEY, '192.168.1.66:63500', {
     initOnMounted: false,
     listenToStorageChanges: false,
     writeDefaults: true,

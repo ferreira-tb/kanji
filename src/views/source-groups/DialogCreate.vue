@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
 import * as commands from '@/commands';
+import { ref, watchEffect } from 'vue';
 import {
   Button,
   Dialog,

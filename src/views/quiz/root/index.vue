@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import Chunks from './Chunks.vue';
 import Question from './Question.vue';
 import DialogUrl from './DialogUrl.vue';
-import { useQuiz } from '@/composables/quiz';
+import { useQuiz } from '@/composables/useQuiz';
 import DialogTextChunk from './DialogTextChunk.vue';
 import DialogSources from '@/components/DialogSources.vue';
 import DialogSourceGroups from '@/components/DialogSourceGroups.vue';

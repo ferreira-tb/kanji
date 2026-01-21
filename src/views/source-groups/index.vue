@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
 import * as commands from '@/commands';
+import { ref, watchEffect } from 'vue';
 import { handleError } from '@/lib/error';
 import DialogCreate from './DialogCreate.vue';
 import DialogSources from '@/components/DialogSources.vue';
-import { useSourceGroups } from '@/composables/source-groups';
+import { useSourceGroups } from '@/composables/useSourceGroups';
 import {
   Button,
   Input,

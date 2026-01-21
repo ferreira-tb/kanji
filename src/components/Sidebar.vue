@@ -8,8 +8,8 @@ import { capitalCase } from 'change-case';
 import { formatPercent } from '@/lib/intl';
 import { useKanjiStore } from '@/stores/kanji';
 import { ChevronUpIcon } from 'lucide-vue-next';
-import { useKanjis } from '@/composables/kanji';
-import { useRanking } from '@/composables/ranking';
+import { useKanjis } from '@/composables/useKanjis';
+import { useRanking } from '@/composables/useRanking';
 import { computed, onBeforeMount, useTemplateRef, watch } from 'vue';
 import {
   Badge,

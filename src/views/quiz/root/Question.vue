@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import * as commands from '@/commands';
-import { useQuiz } from '@/composables/quiz';
+import { useQuiz } from '@/composables/useQuiz';
 import Bookmark from '@/components/Bookmark.vue';
 import { Badge, Button, Card, CardContent, cn } from '@tb-dev/vue-components';
 
