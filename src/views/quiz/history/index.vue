@@ -3,7 +3,7 @@ import { asyncRef } from '@tb-dev/vue';
 import { formatZoned } from '@/lib/date';
 import { getQuizAnswers } from '@/commands';
 import { onActivated, onDeactivated } from 'vue';
-import { useSources } from '@/composables/sources';
+import { useSources } from '@/composables/useSources';
 import {
   Button,
   SidebarTrigger,

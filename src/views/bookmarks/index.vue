@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useSources } from '@/composables/sources';
 import { useSettingsStore } from '@/stores/settings';
-import { useBookmarks } from '@/composables/bookmarks';
+import { useSources } from '@/composables/useSources';
+import { useBookmarks } from '@/composables/useBookmarks';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { Button, Card, CardContent, Loading, SidebarTrigger } from '@tb-dev/vue-components';
 

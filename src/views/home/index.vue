@@ -6,7 +6,7 @@ import { toPixel } from '@tb-dev/utils';
 import { handleError } from '@/lib/error';
 import Search from '@/components/Search.vue';
 import { useKanjiStore } from '@/stores/kanji';
-import { useKanjis } from '@/composables/kanji';
+import { useKanjis } from '@/composables/useKanjis';
 import { useSettingsStore } from '@/stores/settings';
 import { useHeight, useHeightDiff } from '@tb-dev/vue';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';

@@ -13,7 +13,7 @@ pub static HTTP: LazyLock<Client> = LazyLock::new(|| {
     .timeout(Duration::from_secs(30))
     .https_only(true)
     .build()
-    .expect("failed to create http client")
+    .expect("Failed to create http client")
 });
 
 pub async fn get(url: Url) -> Result<String> {

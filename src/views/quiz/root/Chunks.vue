@@ -3,9 +3,9 @@ import * as commands from '@/commands';
 import { sinceZoned } from '@/lib/date';
 import { computed, onMounted } from 'vue';
 import { formatPercent } from '@/lib/intl';
-import { useQuiz } from '@/composables/quiz';
 import { useBreakpoints } from '@tb-dev/vue';
-import { useQuizChunkHistory } from '@/composables/quiz-chunk-history';
+import { useQuiz } from '@/composables/useQuiz';
+import { useQuizChunkHistory } from '@/composables/useQuizChunkHistory';
 import { Badge, Button, Card, CardContent } from '@tb-dev/vue-components';
 
 defineProps<{

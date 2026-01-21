@@ -11,7 +11,7 @@ const search = defineModel<Option<string>>({ required: true });
       <Input
         v-model="search"
         type="text"
-        placeholder="Search"
+        placeholder="検索"
         autocapitalize="off"
         autocomplete="off"
         spellcheck="false"

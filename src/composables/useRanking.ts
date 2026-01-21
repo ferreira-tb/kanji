@@ -1,4 +1,4 @@
-import { useKanjis } from './kanji';
+import { useKanjis } from './useKanjis';
 import { computed, type DeepReadonly, type Ref } from 'vue';
 
 export function useRanking(kanji: Ref<Option<DeepReadonly<KanjiStats>>>) {

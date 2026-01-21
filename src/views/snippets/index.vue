@@ -4,8 +4,8 @@ import { openEditor } from '@/commands';
 import { handleError } from '@tb-dev/vue';
 import { nextTick, onActivated } from 'vue';
 import { useKanjiStore } from '@/stores/kanji';
-import { useSnippets } from '@/composables/snippets';
 import { useSettingsStore } from '@/stores/settings';
+import { useSnippets } from '@/composables/useSnippets';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { Button, Card, CardContent, Loading, SidebarTrigger } from '@tb-dev/vue-components';
 

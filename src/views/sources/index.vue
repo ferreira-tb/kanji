@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import * as commands from '@/commands';
-import { useKanjis } from '@/composables/kanji';
-import { useSources } from '@/composables/sources';
+import { useBreakpoints } from '@tb-dev/vue';
+import { useKanjis } from '@/composables/useKanjis';
+import { useSources } from '@/composables/useSources';
 import {
   Button,
   Checkbox,
@@ -33,6 +34,8 @@ const {
 const loading = computed(() => {
   return isLoadingKanjis.value || isLoadingSources.value;
 });
+
+const { md } = useBreakpoints();
 
 const desktop = globalThis.__DESKTOP__;
 
@@ -88,8 +91,8 @@ function toggle(source: Source) {
         <TableHeader>
           <TableRow class="bg-background hover:bg-background">
             <TableHead></TableHead>
-            <TableHead>Path</TableHead>
-            <TableHead class="max-md:hidden">Name</TableHead>
+            <TableHead class="max-md:hidden">Path</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead class="max-md:hidden">Weight</TableHead>
             <TableHead class="max-lg:hidden"></TableHead>
           </TableRow>
@@ -105,12 +108,12 @@ function toggle(source: Source) {
               />
             </TableCell>
 
-            <TableCell>
+            <TableCell class="max-md:hidden">
               <span class="break-all wrap-anywhere">{{ source.path }}</span>
             </TableCell>
 
-            <TableCell class="max-md:hidden">
-              <div class="flex justify-start items-center gap-2">
+            <TableCell>
+              <div v-if="md" class="flex justify-start items-center gap-2">
                 <Input
                   v-model="source.name"
                   type="text"
@@ -119,6 +122,7 @@ function toggle(source: Source) {
                   @change="() => rename(source)"
                 />
               </div>
+              <span v-else class="break-all wrap-anywhere">{{ source.name }}</span>
             </TableCell>
 
             <TableCell class="max-md:hidden">
