@@ -3,7 +3,7 @@ use crate::database::sql_types::KanjiChar;
 use crate::kanji::is_kanji;
 use crate::manager::ManagerExt;
 use crate::quiz::{MARUMARU, Quiz, QuizQuestion};
-use crate::snippet::blocking_search_with_options as search_snippet;
+use crate::snippet::{Snippet, blocking_search_with_options as search_snippet};
 use anyhow::Result;
 use futures::future::BoxFuture;
 use itertools::Itertools;
@@ -67,11 +67,12 @@ fn make_questions(
       let mut question = None;
       if let Some(snippet) = snippet.await??.pop() {
         let censored = snippet.content().replace(*kanji, MARUMARU);
+        let options = pick_options(&snippet, kanji, &chars);
         question = Some(QuizQuestion {
           snippet,
           censored,
           answer: kanji,
-          options: pick_options(kanji, &chars),
+          options,
         });
       }
 
@@ -82,12 +83,12 @@ fn make_questions(
   }
 }
 
-fn pick_options(answer: KanjiChar, pool: &[KanjiChar]) -> Vec<KanjiChar> {
+fn pick_options(snippet: &Snippet, answer: KanjiChar, pool: &[KanjiChar]) -> Vec<KanjiChar> {
   let mut rng = &mut rand::rng();
   let mut options = pool
     .iter()
-    .filter(|kanji| **kanji != answer)
     .copied()
+    .filter(|kanji| !snippet.contains(*kanji))
     .choose_multiple(&mut rng, 9);
 
   options.push(answer);

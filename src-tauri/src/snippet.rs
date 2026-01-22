@@ -45,6 +45,10 @@ impl Snippet {
     &self.source
   }
 
+  pub fn contains(&self, kanji: KanjiChar) -> bool {
+    self.content.contains(*kanji)
+  }
+
   #[cfg(desktop)]
   pub fn create_bookmark(&self, app: &AppHandle) -> Result<BookmarkId> {
     NewBookmark::from(self).create(app)
