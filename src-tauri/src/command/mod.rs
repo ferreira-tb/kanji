@@ -16,6 +16,8 @@ use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_fs::{FilePath, FsExt};
 use tokio::process::Command;
 use tokio::sync::oneshot;
+
+#[cfg(windows)]
 use windows::Win32::System::Threading::{CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW};
 
 #[tauri::command]
@@ -42,10 +44,20 @@ pub async fn open_editor(app: AppHandle, path: PathBuf, line: u32) -> CResult<()
     Zed => &[editor.as_ref(), path.as_str()],
   };
 
+  #[cfg(windows)]
   Command::new("pwsh")
     .arg("-Command")
     .args(args)
     .creation_flags(CREATE_NEW_PROCESS_GROUP.0 | CREATE_NO_WINDOW.0)
+    .stdin(Stdio::null())
+    .stdout(Stdio::null())
+    .stderr(Stdio::null())
+    .status()
+    .await?;
+
+  #[cfg(not(windows))]
+  Command::new(args[0])
+    .args(&args[1..])
     .stdin(Stdio::null())
     .stdout(Stdio::null())
     .stderr(Stdio::null())

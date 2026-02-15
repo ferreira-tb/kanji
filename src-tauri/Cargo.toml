@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "7.7.6"
+version = "7.8.0"
 publish = false
 
 [package.edition]
@@ -18,12 +18,13 @@ workspace = true
 
 [dependencies]
 anyhow = "1.0"
-bon = "3.8"
+bon = "3.9"
 futures = "0.3"
 globset = "0.4"
 itertools = "0.14"
-local-ip-address = "=0.6.9"
-memchr = "2.7"
+local-ip-address = "=0.6.10"
+memchr = "2.8"
+rand = "0.10"
 serde_json = "1.0"
 tauri-plugin-clipboard-manager = "2"
 tauri-plugin-dialog = "2"
@@ -54,10 +55,6 @@ features = ["serde"]
 version = "0.35"
 features = ["bundled"]
 
-[dependencies.rand]
-version = "0.9"
-features = ["nightly", "simd_support"]
-
 [dependencies.semver]
 version = "1.0"
 features = ["serde"]
@@ -71,7 +68,7 @@ version = "0.27"
 features = ["derive"]
 
 [dependencies.tauri]
-version = "2.9"
+version = "2.10"
 features = ["image-png", "protocol-asset", "rustls-tls", "tray-icon"]
 
 [dependencies.tauri-plugin-pinia]
@@ -88,37 +85,37 @@ version = "2.5"
 features = ["serde"]
 
 [dependencies.uuid]
-version = "1.19"
+version = "1.21"
 features = ["serde", "v7"]
 
-[target."cfg(windows)".dependencies]
-scraper = "0.24"
+[target.'cfg(not(target_os = "android"))'.dependencies]
+scraper = "0.25"
 tauri-plugin-log = "2"
 tauri-plugin-single-instance = "2"
 tauri-plugin-updater = "2"
 
-[target."cfg(windows)".dependencies.axum]
+[target.'cfg(not(target_os = "android"))'.dependencies.axum]
 version = "0.8"
 features = ["macros"]
 
-[target."cfg(windows)".dependencies.log]
+[target.'cfg(not(target_os = "android"))'.dependencies.log]
 version = "0.4"
 features = ["release_max_level_off"]
 
-[target."cfg(windows)".dependencies.reqwest]
-version = "0.12"
-features = ["rustls-tls"]
+[target.'cfg(not(target_os = "android"))'.dependencies.reqwest]
+version = "0.13"
+features = ["rustls"]
 
-[target."cfg(windows)".dependencies.tauri-plugin-prevent-default]
+[target.'cfg(not(target_os = "android"))'.dependencies.tauri-plugin-prevent-default]
 git = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
 branch = "main"
 features = ["platform-windows"]
 
-[target."cfg(windows)".dependencies.tower]
+[target.'cfg(not(target_os = "android"))'.dependencies.tower]
 version = "0.5"
 features = []
 
-[target."cfg(windows)".dependencies.tower-http]
+[target.'cfg(not(target_os = "android"))'.dependencies.tower-http]
 version = "0.6"
 features = ["cors"]
 

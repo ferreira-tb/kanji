@@ -56,8 +56,8 @@ function create() {
 
   const {
     state: set,
-    execute: loadSet,
-    isLoading: isLoadingSet,
+    load: loadSet,
+    loading: isLoadingSet,
   } = asyncRef(null, commands.getSet);
 
   const settings = useSettingsStore();

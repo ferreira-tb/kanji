@@ -49,6 +49,10 @@ impl Backup {
 }
 
 pub fn run(force: bool) -> Result<()> {
+  if !fs::exists(URL)? {
+    return Ok(());
+  }
+
   let dir = PathBuf::from(BACKUP_DIR);
   fs::create_dir_all(&dir)?;
   let mut backup = Backup::read();

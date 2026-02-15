@@ -28,11 +28,11 @@ export function useSnippets() {
     currentSource,
     snippetLimit,
     snippetMinLen,
-  ], () => void snippets.execute());
+  ], () => void snippets.load());
 
   return {
     snippets: snippets.state,
-    loading: snippets.isLoading,
-    load: snippets.execute,
+    loading: snippets.loading,
+    load: snippets.load,
   };
 }

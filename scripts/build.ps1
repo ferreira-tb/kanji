@@ -8,7 +8,7 @@ $PSNativeCommandUseErrorActionPreference = $true
 pnpm run type-check
 
 if ($Android) {
-  cargo tauri android build --apk true
+  cargo tauri android build --apk
 
   $PackageJson = Get-Content -Path 'package.json' -Raw | ConvertFrom-Json -AsHashtable
   $Version = $PackageJson['version']

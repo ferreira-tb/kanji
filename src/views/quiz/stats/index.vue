@@ -22,8 +22,8 @@ import {
 
 const {
   state: stats,
-  execute: load,
-  isLoading: isLoadingStats,
+  load,
+  loading: isLoadingStats,
 } = asyncRef([], getQuizSourceStats, { immediate: false });
 
 const { set, isLoadingSet } = useQuiz();
