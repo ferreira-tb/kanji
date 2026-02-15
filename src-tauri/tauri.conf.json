@@ -1,4 +1,5 @@
 {
+  "$schema": "https://schema.tauri.app/config/2.0.0",
   "productName": "kanji",
   "version": "7.8.0",
   "identifier": "tsukilabs.kanji",
@@ -14,11 +15,7 @@
     "security": {
       "assetProtocol": {
         "enable": true,
-        "scope": [
-          "$APPCACHE/**",
-          "$APPCONFIG/**",
-          "$APPDATA/**"
-        ]
+        "scope": ["$APPCACHE/**", "$APPCONFIG/**", "$APPDATA/**"]
       },
       "csp": {
         "default-src": "'self'",
@@ -29,29 +26,28 @@
     }
   },
   "bundle": {
+    "active": true,
     "publisher": "Tsukilabs",
     "shortDescription": "Kanji frequency in text files",
     "license": "GPL-3.0-only",
     "licenseFile": "../LICENSE",
-    "active": true,
     "createUpdaterArtifacts": true,
-    "targets": [
-      "nsis"
-    ],
+    "targets": ["nsis", "deb"],
+    "category": "Education",
     "icon": [
       "icons/32x32.png",
+      "icons/64x64.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
-      "icons/icon.ico"
+      "icons/icon.ico",
+      "icons/icon.png"
     ]
   },
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDZGRkYxMTA0RUJBNjY0NTEKUldSUlpLYnJCQkgvYnpuMW9ocVllczEzRXZ0V0lMY3RSb0x6S0RwazAzWUsxUXVBTHNkSkgyL3QK",
-      "endpoints": [
-        "https://github.com/ferreira-tb/kanji/releases/latest/download/latest.json"
-      ],
+      "endpoints": ["https://github.com/ferreira-tb/kanji/releases/latest/download/latest.json"],
       "windows": {
         "installMode": "passive"
       }
