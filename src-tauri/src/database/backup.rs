@@ -1,10 +1,11 @@
-use super::{BACKUP_DIR, URL};
+use crate::manager::PathResolverExt;
 use anyhow::Result;
 use jiff::Zoned;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
+use tauri::{AppHandle, Manager};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 struct Backup {
@@ -15,14 +16,14 @@ struct Backup {
 impl Backup {
   const INTERVAL: i32 = 15;
 
-  fn read() -> Self {
-    let backup = fs::read(path()).unwrap_or_default();
+  fn read(path: &Path) -> Self {
+    let backup = fs::read(path).unwrap_or_default();
     serde_json::from_slice(&backup).unwrap_or_default()
   }
 
-  fn write(self) -> Result<()> {
+  fn write(self, path: &Path) -> Result<()> {
     let backup = serde_json::to_vec_pretty(&self)?;
-    fs::write(path(), backup)?;
+    fs::write(path, backup)?;
     Ok(())
   }
 
@@ -48,32 +49,30 @@ impl Backup {
   }
 }
 
-pub fn run(force: bool) -> Result<()> {
-  if !fs::exists(URL)? {
+pub fn run(app: &AppHandle, url: &Path, force: bool) -> Result<()> {
+  if !fs::exists(url)? {
     return Ok(());
   }
 
-  let dir = PathBuf::from(BACKUP_DIR);
+  let dir = app.path().backup_dir()?;
   fs::create_dir_all(&dir)?;
-  let mut backup = Backup::read();
+
+  let path = dir.join("backup.json");
+  let mut backup = Backup::read(&path);
 
   if force || backup.should_backup() {
     let version = version();
     let now = Zoned::now().strftime("%Y%m%d%H%M%S");
     let path = dir.join(format!("kanji-{version}.{now}.db"));
 
-    fs::copy(URL, path)?;
+    fs::copy(url, &path)?;
 
     backup.date = Some(Zoned::now());
     backup.version = Some(version);
-    backup.write()?;
+    backup.write(&path)?;
   }
 
   Ok(())
-}
-
-fn path() -> PathBuf {
-  PathBuf::from(BACKUP_DIR).join("backup.json")
 }
 
 fn version() -> Version {
