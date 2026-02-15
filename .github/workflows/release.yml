@@ -20,10 +20,6 @@ jobs:
             args: ""
 
     runs-on: ${{ matrix.platform }}
-    env:
-      KANJI_DATABASE_URL: ${{ matrix.platform == 'ubuntu-latest' && secrets.KANJI_LINUX_DATABASE_URL || secrets.KANJI_WINDOWS_DATABASE_URL }}
-      KANJI_BACKUP_DIR: ${{ matrix.platform == 'ubuntu-latest' && secrets.KANJI_LINUX_BACKUP_DIR || secrets.KANJI_WINDOWS_BACKUP_DIR }}
-
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4

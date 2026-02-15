@@ -1,4 +1,4 @@
-#![feature(file_buffered, try_blocks)]
+#![feature(file_buffered, nonpoison_mutex, str_as_str, sync_nonpoison, try_blocks)]
 #![cfg_attr(mobile, expect(unused))]
 
 mod database;
@@ -23,9 +23,10 @@ mod server;
 #[cfg(desktop)]
 mod tray;
 
+use crate::manager::PathResolverExt;
 use error::BoxResult;
-use std::env::home_dir;
 use tauri::{AppHandle, Manager};
+use tauri_plugin_pinia::PrettyJsonMarshaler;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -96,22 +97,13 @@ fn setup(app: &AppHandle) -> BoxResult<()> {
     use database::DatabaseHandle;
     use server::Server;
 
-    app.manage(DatabaseHandle::new()?);
+    app.manage(DatabaseHandle::new(app)?);
     app.manage(Server::serve(app)?);
   }
 
-  let pinia_dir = if cfg!(desktop)
-    && let Some(home) = home_dir()
-  {
-    home
-      .join(".tsukilabs")
-      .join(env!("CARGO_PKG_NAME"))
-  } else {
-    app.path().app_cache_dir()?
-  };
-
   let pinia = tauri_plugin_pinia::Builder::new()
-    .path(pinia_dir)
+    .path(app.path().kanji_dir()?)
+    .marshaler(Box::new(PrettyJsonMarshaler))
     .build();
 
   app.plugin(pinia)?;

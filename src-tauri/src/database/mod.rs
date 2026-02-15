@@ -11,20 +11,19 @@ mod migration;
 
 use diesel::Connection;
 use diesel::sqlite::SqliteConnection;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use std::sync::nonpoison::Mutex;
 
 #[cfg(desktop)]
-use {anyhow::Result, std::fs, std::path::Path, std::sync::MutexGuard};
-
-#[cfg(all(desktop, debug_assertions))]
-const URL: &str = env!("KANJI_DATABASE_URL_DEBUG");
-#[cfg(all(desktop, not(debug_assertions)))]
-const URL: &str = env!("KANJI_DATABASE_URL");
-
-#[cfg(all(desktop, debug_assertions))]
-const BACKUP_DIR: &str = env!("KANJI_BACKUP_DIR_DEBUG");
-#[cfg(all(desktop, not(debug_assertions)))]
-const BACKUP_DIR: &str = env!("KANJI_BACKUP_DIR");
+use {
+  crate::manager::PathResolverExt,
+  anyhow::Result,
+  std::fs,
+  std::path::Path,
+  std::sync::nonpoison::MutexGuard,
+  tauri::AppHandle,
+  tauri::Manager,
+};
 
 #[must_use]
 #[derive(Clone)]
@@ -32,21 +31,21 @@ pub struct DatabaseHandle(Arc<Mutex<SqliteConnection>>);
 
 #[cfg(desktop)]
 impl DatabaseHandle {
-  pub fn new() -> Result<Self> {
-    if let Some(dir) = Path::new(URL).parent() {
+  pub fn new(app: &AppHandle) -> Result<Self> {
+    let url = app.path().kanji_dir()?.join("kanji.db");
+    if let Some(dir) = Path::new(&url).parent() {
       fs::create_dir_all(dir)?;
     }
 
-    backup::run(false)?;
-    let mut conn = SqliteConnection::establish(URL)?;
+    backup::run(app, &url, false)?;
+
+    let url = url.to_str().unwrap();
+    let mut conn = SqliteConnection::establish(url)?;
     migration::run_pending_migrations(&mut conn);
     Ok(Self(Arc::new(Mutex::new(conn))))
   }
 
   pub fn conn(&self) -> MutexGuard<'_, SqliteConnection> {
-    self
-      .0
-      .lock()
-      .expect("connection mutex is poisoned")
+    self.0.lock()
   }
 }
