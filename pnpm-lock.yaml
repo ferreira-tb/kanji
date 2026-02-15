@@ -44,6 +44,9 @@ importers:
       '@tb-dev/vue-components':
         specifier: ^7.0.10
         version: 7.0.10(@vue/compiler-sfc@3.5.28)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3)))(typescript@5.9.3)
+      '@tb-dev/vue-sonner':
+        specifier: ^0.1.2
+        version: 0.1.2(typescript@5.9.3)
       '@vueuse/core':
         specifier: ^14.2.1
         version: 14.2.1(vue@3.5.28(typescript@5.9.3))

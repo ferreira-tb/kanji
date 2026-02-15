@@ -24,6 +24,7 @@ mod server;
 mod tray;
 
 use error::BoxResult;
+use std::env::home_dir;
 use tauri::{AppHandle, Manager};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -99,9 +100,18 @@ fn setup(app: &AppHandle) -> BoxResult<()> {
     app.manage(Server::serve(app)?);
   }
 
-  let cache_dir = app.path().app_cache_dir()?;
+  let pinia_dir = if cfg!(desktop)
+    && let Some(home) = home_dir()
+  {
+    home
+      .join(".tsukilabs")
+      .join(env!("CARGO_PKG_NAME"))
+  } else {
+    app.path().app_cache_dir()?
+  };
+
   let pinia = tauri_plugin_pinia::Builder::new()
-    .path(cache_dir)
+    .path(pinia_dir)
     .build();
 
   app.plugin(pinia)?;
