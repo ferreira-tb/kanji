@@ -6,24 +6,40 @@ on:
     branches:
       - release
 
-env:
-  KANJI_DATABASE_URL: ${{ secrets.KANJI_DATABASE_URL }}
-  KANJI_BACKUP_DIR: ${{ secrets.KANJI_BACKUP_DIR }}
-
 jobs:
   release-desktop:
-    runs-on: windows-latest
     permissions:
       contents: write
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: ubuntu-latest
+            args: ""
+          - platform: windows-latest
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
+    env:
+      KANJI_DATABASE_URL: ${{ matrix.platform == 'ubuntu-latest' && secrets.KANJI_LINUX_DATABASE_URL || secrets.KANJI_WINDOWS_DATABASE_URL }}
+      KANJI_BACKUP_DIR: ${{ matrix.platform == 'ubuntu-latest' && secrets.KANJI_LINUX_BACKUP_DIR || secrets.KANJI_WINDOWS_BACKUP_DIR }}
+
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:
           node-version: 24
+          cache: pnpm
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@nightly
+
+      - name: Install dependencies (Ubuntu)
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: Install dependencies
         run: pnpm install
@@ -41,3 +57,4 @@ jobs:
           includeUpdaterJson: true
           updaterJsonPreferNsis: true
           generateReleaseNotes: true
+          args: ${{ matrix.args }}

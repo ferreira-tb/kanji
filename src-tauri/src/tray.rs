@@ -1,13 +1,20 @@
 use crate::window::desktop::WindowExt;
 use anyhow::Result;
-use tauri::menu::{Menu, MenuBuilder, PredefinedMenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent};
-use tauri::{AppHandle, Manager, Wry, include_image};
+use tauri::{AppHandle, include_image};
+
+#[cfg(not(target_os = "linux"))]
+use {
+  tauri::menu::{Menu, MenuBuilder, PredefinedMenuItem},
+  tauri::{Manager, Wry},
+};
 
 const ID: &str = "kanji-tray-icon";
 
+#[cfg(not(target_os = "linux"))]
 struct TrayMenu(Menu<Wry>);
 
+#[cfg(not(target_os = "linux"))]
 impl TrayMenu {
   pub fn new<M: Manager<Wry>>(app: &M) -> Result<Self> {
     MenuBuilder::new(app)
@@ -54,6 +61,10 @@ fn on_left_click(app: &AppHandle) {
   };
 }
 
+#[cfg(target_os = "linux")]
+fn on_right_click(_: &AppHandle) {}
+
+#[cfg(not(target_os = "linux"))]
 fn on_right_click(app: &AppHandle) {
   let window = app.main_window();
   let _ = try {

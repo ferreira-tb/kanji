@@ -89,7 +89,7 @@ fn pick_options(snippet: &Snippet, answer: KanjiChar, pool: &[KanjiChar]) -> Vec
     .iter()
     .copied()
     .filter(|kanji| !snippet.contains(*kanji))
-    .choose_multiple(&mut rng, 9);
+    .sample(&mut rng, 9);
 
   options.push(answer);
   options.shuffle(&mut rng);

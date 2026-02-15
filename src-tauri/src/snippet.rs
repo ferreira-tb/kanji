@@ -205,7 +205,7 @@ pub fn blocking_search_with_options(
       .iter()
       .map(|snippet| snippet.id)
       .collect_vec()
-      .choose_multiple(&mut rng, limit)
+      .sample(&mut rng, limit)
       .copied()
       .collect()
   } else {
@@ -213,7 +213,7 @@ pub fn blocking_search_with_options(
       .iter()
       .map(|snippet| (snippet.id, snippet.source.weight))
       .collect_vec()
-      .choose_multiple_weighted(&mut rng, limit, |(_, weight)| *weight)?
+      .sample_weighted(&mut rng, limit, |(_, weight)| *weight)?
       .map(|(id, _)| *id)
       .collect()
   };

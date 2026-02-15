@@ -54,7 +54,7 @@ impl Quiz {
     let kanjis = app
       .database()
       .get_kanji_chars()?
-      .choose_multiple(&mut rand::rng(), chunk_size)
+      .sample(&mut rand::rng(), chunk_size)
       .copied()
       .collect_vec();
 
@@ -78,7 +78,7 @@ impl Quiz {
       .await??
       .into_iter()
       .map(|stat| stat.character())
-      .choose_multiple(&mut rand::rng(), chunk_size);
+      .sample(&mut rand::rng(), chunk_size);
 
     chunk::with_sources(app, kanjis, sources).await
   }

@@ -1,3 +1,4 @@
+import { platform } from 'node:os';
 import { env } from 'node:process';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
@@ -20,7 +21,7 @@ export default defineConfig({
     copyPublicDir: true,
     emptyOutDir: true,
     minify: true,
-    target: 'esnext',
+    target: platform() === 'win32' ? 'esnext' : 'baseline-widely-available',
     sourcemap: Boolean(env.TAURI_ENV_DEBUG),
   },
   server: {

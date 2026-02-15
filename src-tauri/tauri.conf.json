@@ -1,6 +1,6 @@
 {
   "productName": "kanji",
-  "version": "7.7.6",
+  "version": "7.8.0",
   "identifier": "tsukilabs.kanji",
   "build": {
     "beforeDevCommand": "pnpm run vite:dev",
