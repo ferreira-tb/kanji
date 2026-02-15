@@ -41,7 +41,7 @@ impl PathResolverExt for PathResolver<Wry> {
     };
 
     if cfg!(debug_assertions) {
-      dir.push("dev");
+      dir.push(".dev");
     }
 
     Ok(dir)
