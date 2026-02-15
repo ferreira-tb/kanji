@@ -78,7 +78,6 @@ pub fn run() {
   let builder = builder.plugin(plugin::log());
 
   builder
-    .plugin(tauri_plugin_pinia::init())
     .plugin(tauri_plugin_clipboard_manager::init())
     .plugin(tauri_plugin_fs::init())
     .plugin(tauri_plugin_dialog::init())
@@ -99,6 +98,13 @@ fn setup(app: &AppHandle) -> BoxResult<()> {
     app.manage(DatabaseHandle::new()?);
     app.manage(Server::serve(app)?);
   }
+
+  let cache_dir = app.path().app_cache_dir()?;
+  let pinia = tauri_plugin_pinia::Builder::new()
+    .path(cache_dir)
+    .build();
+
+  app.plugin(pinia)?;
 
   #[cfg(desktop)]
   window::desktop::open(app)?;
