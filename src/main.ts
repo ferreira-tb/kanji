@@ -1,3 +1,4 @@
+import '@tb-dev/vue-sonner/style.css';
 import '@/assets/style/base.css';
 import '@/assets/style/vars.css';
 import '@/assets/style/main.css';

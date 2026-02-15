@@ -1,5 +1,5 @@
+import { toast } from '@tb-dev/vue-sonner';
 import { error as logError } from '@tauri-apps/plugin-log';
-import { message as showMessage } from '@tauri-apps/plugin-dialog';
 
 export function handleError(err: unknown) {
   const message = err instanceof Error ? err.message : String(err);
@@ -7,5 +7,9 @@ export function handleError(err: unknown) {
     void logError(message);
   }
 
-  void showMessage(message, { title: 'Error', kind: 'error' });
+  toast.error(message, {
+    closeButton: false,
+    dismissible: true,
+    duration: 3000,
+  });
 }

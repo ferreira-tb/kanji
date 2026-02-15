@@ -5,10 +5,12 @@ import * as commands from '@/commands';
 import { useColorMode } from '@vueuse/core';
 import Sidebar from '@/components/Sidebar.vue';
 import { exit } from '@tauri-apps/plugin-process';
-import { handleError, onKeyDown } from '@tb-dev/vue';
-import { SidebarProvider } from '@tb-dev/vue-components';
+import { SidebarProvider, Sonner } from '@tb-dev/vue-components';
+import { handleError, onKeyDown, useBreakpoints } from '@tb-dev/vue';
 
 const isSidebarOpen = ref(true);
+
+const { md } = useBreakpoints();
 
 useColorMode({
   initialValue: 'dark',
@@ -40,6 +42,8 @@ onMounted(async () => {
 <template>
   <SidebarProvider v-model:open="isSidebarOpen" style="--sidebar-width: 20rem">
     <Sidebar />
+    <Sonner :position="md ? 'bottom-right' : 'top-center'" />
+
     <main class="h-screen w-full select-none">
       <div class="size-full overflow-hidden p-0">
         <RouterView #default="{ Component }">

@@ -1,6 +1,6 @@
 {
   "name": "kanji",
-  "version": "7.8.0",
+  "version": "7.8.1",
   "type": "module",
   "packageManager": "pnpm@10.29.3",
   "license": "GPL-3.0-only",
@@ -30,6 +30,7 @@
     "@tb-dev/utils": "^7.3.1",
     "@tb-dev/vue": "^4.0.3",
     "@tb-dev/vue-components": "^7.0.10",
+    "@tb-dev/vue-sonner": "^0.1.2",
     "@vueuse/core": "^14.2.1",
     "change-case": "^5.4.4",
     "date-fns": "^4.1.0",
