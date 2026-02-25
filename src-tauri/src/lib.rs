@@ -1,5 +1,5 @@
-#![feature(file_buffered, nonpoison_mutex, str_as_str, sync_nonpoison, try_blocks)]
 #![cfg_attr(mobile, expect(unused))]
+#![feature(file_buffered, nonpoison_mutex, str_as_str, sync_nonpoison, try_blocks)]
 
 mod database;
 mod error;

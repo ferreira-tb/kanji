@@ -57,19 +57,19 @@ pub fn run(app: &AppHandle, url: &Path, force: bool) -> Result<()> {
   let dir = app.path().backup_dir()?;
   fs::create_dir_all(&dir)?;
 
-  let path = dir.join("backup.json");
-  let mut backup = Backup::read(&path);
+  let backup_file = dir.join("backup.json");
+  let mut backup = Backup::read(&backup_file);
 
   if force || backup.should_backup() {
     let version = version();
     let now = Zoned::now().strftime("%Y%m%d%H%M%S");
-    let path = dir.join(format!("kanji-{version}.{now}.db"));
+    let database = dir.join(format!("kanji-{version}.{now}.db"));
 
-    fs::copy(url, &path)?;
+    fs::copy(url, &database)?;
 
     backup.date = Some(Zoned::now());
     backup.version = Some(version);
-    backup.write(&path)?;
+    backup.write(&backup_file)?;
   }
 
   Ok(())
