@@ -144,7 +144,11 @@ function onCardClick(kanji: DeepReadonly<KanjiStats>) {
         </Card>
       </div>
 
-      <div ref="pagination" class="flex justify-center py-3">
+      <div
+        v-if="currentChunk.length > 0 && chunks.size > 1"
+        ref="pagination"
+        class="flex justify-center py-3"
+      >
         <Pagination
           #default="{ page }"
           v-model:page="currentPage"
