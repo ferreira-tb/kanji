@@ -12,9 +12,9 @@ use std::path::PathBuf;
 
 #[derive(FromSqlRow, AsExpression, Clone, Debug, PartialEq, Eq, Hash, Deserialize, Serialize)]
 #[diesel(sql_type = Text)]
-pub struct Path(PathBuf);
+pub struct SqlPath(PathBuf);
 
-impl Deref for Path {
+impl Deref for SqlPath {
   type Target = std::path::Path;
 
   fn deref(&self) -> &Self::Target {
@@ -22,7 +22,7 @@ impl Deref for Path {
   }
 }
 
-impl<T> From<T> for Path
+impl<T> From<T> for SqlPath
 where
   T: AsRef<std::path::Path>,
 {
@@ -31,20 +31,20 @@ where
   }
 }
 
-impl fmt::Display for Path {
+impl fmt::Display for SqlPath {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "{}", self.0.to_string_lossy())
   }
 }
 
-impl FromSql<Text, Sqlite> for Path {
+impl FromSql<Text, Sqlite> for SqlPath {
   fn from_sql(bytes: <Sqlite as Backend>::RawValue<'_>) -> de::Result<Self> {
     let value = <String as FromSql<Text, Sqlite>>::from_sql(bytes)?;
-    Ok(Path(PathBuf::from(value)))
+    Ok(SqlPath(PathBuf::from(value)))
   }
 }
 
-impl ToSql<Text, Sqlite> for Path
+impl ToSql<Text, Sqlite> for SqlPath
 where
   String: ToSql<Text, Sqlite>,
 {
