@@ -1,4 +1,4 @@
-use crate::database::sql_types::{Path, SourceId, SourceWeight, Zoned};
+use crate::database::sql_types::{SourceId, SourceWeight, SqlPath, Zoned};
 use bon::Builder;
 use diesel::prelude::*;
 use serde::Serialize;
@@ -29,7 +29,7 @@ static GLOBSET: LazyLock<GlobSet> = LazyLock::new(|| {
 #[serde(rename_all = "camelCase")]
 pub struct Source {
   pub id: SourceId,
-  pub path: Path,
+  pub path: SqlPath,
   pub name: String,
   pub created_at: Zoned,
   pub updated_at: Zoned,
@@ -55,7 +55,7 @@ impl Source {
 #[diesel(table_name = crate::database::schema::source)]
 pub struct NewSource<'a> {
   #[builder(start_fn, into)]
-  path: Path,
+  path: SqlPath,
 
   #[builder(into)]
   name: &'a str,

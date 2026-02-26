@@ -15,11 +15,7 @@
     "security": {
       "assetProtocol": {
         "enable": true,
-        "scope": [
-          "$APPCACHE/**",
-          "$APPCONFIG/**",
-          "$APPDATA/**"
-        ]
+        "scope": ["$APPCACHE/**", "$APPCONFIG/**", "$APPDATA/**"]
       },
       "csp": {
         "default-src": "'self'",
@@ -36,10 +32,7 @@
     "license": "GPL-3.0-only",
     "licenseFile": "../LICENSE",
     "createUpdaterArtifacts": true,
-    "targets": [
-      "nsis",
-      "deb"
-    ],
+    "targets": ["nsis", "deb"],
     "category": "Education",
     "icon": [
       "icons/32x32.png",
@@ -54,9 +47,7 @@
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDZGRkYxMTA0RUJBNjY0NTEKUldSUlpLYnJCQkgvYnpuMW9ocVllczEzRXZ0V0lMY3RSb0x6S0RwazAzWUsxUXVBTHNkSkgyL3QK",
-      "endpoints": [
-        "https://github.com/ferreira-tb/kanji/releases/latest/download/latest.json"
-      ],
+      "endpoints": ["https://github.com/ferreira-tb/kanji/releases/latest/download/latest.json"],
       "windows": {
         "installMode": "passive"
       }

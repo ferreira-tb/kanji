@@ -1,5 +1,6 @@
 import * as api from '@/api';
 import { clamp } from 'es-toolkit';
+import { handleError } from '@/lib/error';
 import { invoke } from '@tauri-apps/api/core';
 
 export async function clearQuizChunkHistory() {
@@ -51,7 +52,11 @@ export async function createSource(source?: Option<string | string[]>) {
   if (__DESKTOP__) {
     source ??= await pickFolders();
     if (Array.isArray(source)) {
-      await Promise.all(source.map(createSource));
+      for (const result of await Promise.allSettled(source.map(createSource))) {
+        if (result.status === 'rejected') {
+          handleError(result.reason);
+        }
+      }
     }
     else {
       await invoke<SourceId>('create_source', { source });

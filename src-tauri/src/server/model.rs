@@ -2,10 +2,10 @@ use crate::database::sql_types::{
   BookmarkId,
   KanjiChar,
   KanjiSetChunkId,
-  Path,
   SourceGroupId,
   SourceId,
   SourceWeight,
+  SqlPath,
 };
 use crate::quiz::QuizKind;
 use crate::snippet::Snippet;
@@ -40,7 +40,7 @@ pub struct CreateQuizChunkHistoryEntry {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateSourceRequest {
-  pub source: Path,
+  pub source: SqlPath,
 }
 
 #[derive(Debug, Deserialize)]

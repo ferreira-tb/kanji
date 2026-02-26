@@ -1,11 +1,11 @@
 use crate::database::model::source::{NewSource, Source};
-use crate::database::sql_types::{Path, SourceId, SourceWeight};
+use crate::database::sql_types::{SourceId, SourceWeight, SqlPath};
 use crate::error::{CResult, Error};
 use crate::manager::ManagerExt;
 use tauri::AppHandle;
 
 #[tauri::command]
-pub async fn create_source(app: AppHandle, source: Path) -> CResult<SourceId> {
+pub async fn create_source(app: AppHandle, source: SqlPath) -> CResult<SourceId> {
   let name: Option<String> = try { source.file_stem()?.to_str()?.to_owned() };
   let Some(name) = name else {
     return Err(Error::from(format!("Invalid source: {source}")));
