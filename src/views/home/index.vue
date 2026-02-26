@@ -33,30 +33,19 @@ const { kanjis, loading, load } = useKanjis();
 const { isMobile, ...sidebar } = useSidebar();
 
 const currentPage = ref(1);
-const itemsPerPage = ref(50);
-const isPaginationEnabled = computed(() => {
-  return isMobile.value && kanjis.value.length > 500;
+const itemsPerPage = computed(() => {
+  return isMobile.value ? 50 : 200;
 });
 
 const chunks = computed(() => {
-  if (isPaginationEnabled.value) {
-    const map = new Map<number, KanjiStats[]>();
-    const arrays = chunk(kanjis.value, itemsPerPage.value);
-    arrays.forEach((array, index) => map.set(index + 1, array));
-    return map;
-  }
-  else {
-    return null;
-  }
+  const map = new Map<number, KanjiStats[]>();
+  const arrays = chunk(kanjis.value, itemsPerPage.value);
+  arrays.forEach((array, index) => map.set(index + 1, array));
+  return map;
 });
 
 const currentChunk = computed(() => {
-  if (chunks.value) {
-    return chunks.value.get(currentPage.value) ?? [];
-  }
-  else {
-    return kanjis.value;
-  }
+  return chunks.value.get(currentPage.value) ?? [];
 });
 
 const desktop = globalThis.__DESKTOP__;
@@ -68,10 +57,7 @@ const paginationHeight = useHeight(pagination);
 
 const gridMaxHeight = computed(() => {
   let height = contentHeight.value;
-  if (isPaginationEnabled.value) {
-    height -= paginationHeight.value;
-  }
-
+  height -= paginationHeight.value;
   return Math.max(height, 0);
 });
 
@@ -158,7 +144,7 @@ function onCardClick(kanji: DeepReadonly<KanjiStats>) {
         </Card>
       </div>
 
-      <div v-if="isPaginationEnabled" ref="pagination" class="flex justify-center py-3">
+      <div ref="pagination" class="flex justify-center py-3">
         <Pagination
           #default="{ page }"
           v-model:page="currentPage"
@@ -207,6 +193,6 @@ function onCardClick(kanji: DeepReadonly<KanjiStats>) {
   gap: 0.5rem;
   overflow-x: hidden;
   overflow-y: auto;
-  padding-bottom: v-bind("isPaginationEnabled ? '0px': '2rem'");
+  padding-bottom: 0px;
 }
 </style>

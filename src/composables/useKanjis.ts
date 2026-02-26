@@ -4,7 +4,7 @@ import { watchImmediate } from '@vueuse/core';
 import { useKanjiStore } from '@/stores/kanji';
 import { useSettingsStore } from '@/stores/settings';
 import { tryInjectOrElse, useMutex } from '@tb-dev/vue';
-import { computed, effectScope, type InjectionKey, shallowRef } from 'vue';
+import { computed, effectScope, type InjectionKey, markRaw, shallowRef } from 'vue';
 
 const SYMBOL = Symbol() as InjectionKey<ReturnType<typeof create>>;
 
@@ -73,7 +73,8 @@ function create() {
   async function load() {
     await lock(async () => {
       if (__DESKTOP__ || baseUrl.value) {
-        raw.value = await commands.searchKanji();
+        raw.value = await commands.searchKanji()
+          .then((it) => it.map(markRaw));
       }
       else {
         raw.value = [];

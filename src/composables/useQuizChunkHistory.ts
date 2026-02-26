@@ -1,8 +1,8 @@
-import { shallowRef } from 'vue';
 import { storeToRefs } from 'pinia';
 import * as commands from '@/commands';
 import { useMutex } from '@tb-dev/vue';
 import { handleError } from '@/lib/error';
+import { markRaw, shallowRef } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
 
 type QuizChunkHistory = ReadonlyMap<KanjiSetChunkId, QuizChunkHistoryEntry>;
@@ -41,6 +41,6 @@ export function useQuizChunkHistory() {
 
 function toMap(entries: readonly QuizChunkHistoryEntry[]) {
   const map = new Map<KanjiSetChunkId, QuizChunkHistoryEntry>();
-  entries.forEach((entry) => map.set(entry.id, entry));
+  entries.forEach((entry) => map.set(entry.id, markRaw(entry)));
   return map;
 }
