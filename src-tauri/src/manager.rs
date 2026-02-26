@@ -1,11 +1,17 @@
-use crate::database::DatabaseHandle;
-use crate::server::Server;
 use anyhow::Result;
-use std::env::home_dir;
+use std::env;
 use std::path::PathBuf;
+use tauri::Wry;
 use tauri::path::PathResolver;
-use tauri::{Manager, State, Wry};
 
+#[cfg(desktop)]
+use {
+  crate::database::DatabaseHandle,
+  crate::server::Server,
+  tauri::{Manager, State},
+};
+
+#[cfg(desktop)]
 pub trait ManagerExt: Manager<Wry> {
   fn database(&self) -> State<'_, DatabaseHandle> {
     self.app_handle().state::<DatabaseHandle>()
@@ -16,6 +22,7 @@ pub trait ManagerExt: Manager<Wry> {
   }
 }
 
+#[cfg(desktop)]
 impl<T: Manager<Wry>> ManagerExt for T {}
 
 pub trait PathResolverExt {
@@ -29,15 +36,11 @@ pub trait PathResolverExt {
 impl PathResolverExt for PathResolver<Wry> {
   fn kanji_dir(&self) -> Result<PathBuf> {
     let mut dir = if cfg!(desktop)
-      && let Some(home) = home_dir()
+      && let Some(home) = env::home_dir()
     {
-      home
-        .join(".tsukilabs")
-        .join(env!("CARGO_PKG_NAME"))
+      home.join(".tsukilabs/kanji")
     } else {
-      self
-        .app_cache_dir()
-        .or_else(|_| self.app_data_dir())?
+      self.app_data_dir()?
     };
 
     if cfg!(debug_assertions) {
