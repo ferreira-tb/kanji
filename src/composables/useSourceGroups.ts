@@ -4,7 +4,7 @@ import { handleError } from '@/lib/error';
 import { tryOnMounted } from '@vueuse/core';
 import { useSettingsStore } from '@/stores/settings';
 import { tryInjectOrElse, useMutex } from '@tb-dev/vue';
-import { effectScope, type InjectionKey, ref } from 'vue';
+import { effectScope, type InjectionKey, markRaw, ref } from 'vue';
 
 const SYMBOL = Symbol() as InjectionKey<ReturnType<typeof create>>;
 
@@ -33,7 +33,8 @@ function create() {
     try {
       await mutex.acquire();
       if (__DESKTOP__ || baseUrl.value) {
-        sourceGroups.value = await commands.getSourceGroups();
+        sourceGroups.value = await commands.getSourceGroups()
+          .then((it) => it.map(markRaw));
       }
       else {
         sourceGroups.value = [];

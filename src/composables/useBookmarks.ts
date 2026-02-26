@@ -1,8 +1,8 @@
-import { shallowRef } from 'vue';
 import { storeToRefs } from 'pinia';
 import * as commands from '@/commands';
 import { useMutex } from '@tb-dev/vue';
 import { handleError } from '@/lib/error';
+import { markRaw, shallowRef } from 'vue';
 import { tryOnMounted } from '@vueuse/core';
 import { useSettingsStore } from '@/stores/settings';
 
@@ -17,7 +17,8 @@ export function useBookmarks() {
     try {
       await mutex.acquire();
       if (__DESKTOP__ || baseUrl.value) {
-        bookmarks.value = await commands.getBookmarks();
+        bookmarks.value = await commands.getBookmarks()
+          .then((it) => it.map(markRaw));
       }
       else {
         bookmarks.value = [];

@@ -1,5 +1,5 @@
-import { watch } from 'vue';
 import { storeToRefs } from 'pinia';
+import { markRaw, watch } from 'vue';
 import { asyncRef } from '@tb-dev/vue';
 import { searchSnippets } from '@/commands';
 import { useKanjiStore } from '@/stores/kanji';
@@ -16,7 +16,8 @@ export function useSnippets() {
     let result: Snippet[] = [];
     if (currentKanji.value && (__DESKTOP__ || baseUrl.value)) {
       const kanji = currentKanji.value.character;
-      result = await searchSnippets(kanji, currentSource.value?.id);
+      result = await searchSnippets(kanji, currentSource.value?.id)
+        .then((it) => it.map(markRaw));
     }
 
     return result as readonly Snippet[];
