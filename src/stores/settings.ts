@@ -7,7 +7,7 @@ import { BASE_URL_KEY } from '@/lib/local-storage';
 export const useSettingsStore = defineStore('settings', () => {
   const baseUrl = useLocalStorage(BASE_URL_KEY, '192.168.1.69:63500', {
     initOnMounted: false,
-    listenToStorageChanges: false,
+    listenToStorageChanges: true,
     writeDefaults: true,
     onError: handleError,
   });
