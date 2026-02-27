@@ -20,6 +20,7 @@ export function useQuiz() {
       currentQuestion: value.currentQuestion,
       currentIndex: value.currentIndex,
       currentSnippet: value.currentSnippet,
+      currentOptions: value.currentOptions,
       currentBookmark: value.currentBookmark,
       chosenAnswer: value.chosenAnswer,
       canAnswer: value.canAnswer,
@@ -49,6 +50,7 @@ function create() {
   const currentQuestion = ref<Option<QuizQuestion>>();
   const currentIndex = ref<Option<number>>();
   const currentSnippet = computed(() => currentQuestion.value?.snippet);
+  const currentOptions = computed(() => currentQuestion.value?.options ?? []);
   const currentBookmark = computed(() => currentSnippet.value?.bookmark);
 
   const chosenAnswer = ref<Option<KanjiChar>>();
@@ -235,6 +237,7 @@ function create() {
     isLoadingSet,
     currentQuestion: currentQuestion as Readonly<typeof currentQuestion>,
     currentSnippet,
+    currentOptions,
     currentBookmark,
     currentIndex: readonly(currentIndex),
     chosenAnswer: readonly(chosenAnswer),

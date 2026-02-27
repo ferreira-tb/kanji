@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import * as commands from '@/commands';
+import { onKeyDown } from '@tb-dev/vue';
 import { useQuiz } from '@/composables/useQuiz';
 import Bookmark from '@/components/Bookmark.vue';
 import { Badge, Button, Card, CardContent, cn } from '@tb-dev/vue-components';
@@ -13,6 +14,7 @@ const {
   quizSize,
   currentQuestion,
   currentIndex,
+  currentOptions,
   chosenAnswer,
   canAnswer,
   ...quiz
@@ -28,6 +30,17 @@ const question = computed(() => {
 const isBookmarked = computed(() => {
   return typeof quiz.currentBookmark.value === 'number';
 });
+
+if (__DESKTOP__) {
+  onKeyDown('1', () => answer(currentOptions.value.at(0)));
+  onKeyDown('2', () => answer(currentOptions.value.at(1)));
+  onKeyDown('3', () => answer(currentOptions.value.at(2)));
+  onKeyDown('4', () => answer(currentOptions.value.at(3)));
+  onKeyDown('5', () => answer(currentOptions.value.at(4)));
+  onKeyDown('6', () => answer(currentOptions.value.at(5)));
+  onKeyDown('7', () => answer(currentOptions.value.at(6)));
+  onKeyDown('8', () => answer(currentOptions.value.at(7)));
+}
 
 function getCardClass(option: KanjiChar) {
   let classList = 'p-2 md:p-4';
@@ -64,8 +77,13 @@ function getQuestionClass() {
   return cn(classList);
 }
 
-async function answer(option: KanjiChar) {
-  if (canAnswer.value && !props.disabled) {
+async function answer(option: Option<KanjiChar>) {
+  if (
+    option &&
+    currentOptions.value.includes(option) &&
+    canAnswer.value &&
+    !props.disabled
+  ) {
     await quiz.answer(option);
   }
 }
@@ -108,9 +126,9 @@ async function bookmark() {
       </span>
     </div>
 
-    <div v-if="currentQuestion" class="flex flex-col gap-8">
+    <div v-if="currentQuestion && currentOptions.length > 0" class="flex flex-col gap-8">
       <div class="grid grid-cols-5 gap-4">
-        <div v-for="option of currentQuestion.options" :key="option">
+        <div v-for="option of currentOptions" :key="option">
           <Card
             :class="getCardClass(option)"
             @click="() => answer(option)"
