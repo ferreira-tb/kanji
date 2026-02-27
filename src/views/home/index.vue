@@ -154,7 +154,7 @@ function onCardClick(kanji: DeepReadonly<KanjiStats>) {
           v-model:page="currentPage"
           :total="kanjis.length"
           :items-per-page
-          :sibling-count="1"
+          :sibling-count="isMobile ? 1 : 3"
           show-edges
         >
           <PaginationList #default="{ items }" class="flex items-center gap-1">
