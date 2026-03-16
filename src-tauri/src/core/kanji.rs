@@ -4,6 +4,7 @@ use std::sync::Arc;
 
 #[cfg(desktop)]
 use {
+  crate::core::source::walk_source,
   crate::database::model::kanji::NewKanji,
   crate::database::model::source::Source,
   crate::database::sql_types::Zoned,
@@ -111,7 +112,8 @@ pub fn blocking_search_with_options(
   for source in sources {
     let id = source.id;
     let name: Arc<str> = Arc::from(source.name.as_str());
-    for file in source.walk() {
+
+    for file in walk_source(source)? {
       for character in fs::read_to_string(&file)?
         .chars()
         .filter_map(KanjiChar::from_char)
