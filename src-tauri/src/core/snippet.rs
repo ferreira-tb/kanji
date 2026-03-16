@@ -10,9 +10,9 @@ use std::sync::atomic::Ordering::Relaxed;
 
 #[cfg(desktop)]
 use {
+  crate::core::kanji::is_kanji,
   crate::database::model::bookmark::NewBookmark,
   crate::database::model::source::Source,
-  crate::kanji::is_kanji,
   crate::manager::ManagerExt,
   itertools::Itertools,
   memchr::memmem::Finder,

@@ -1,9 +1,9 @@
+use crate::core::kanji::is_kanji;
+use crate::core::quiz::{MARUMARU, Quiz, QuizQuestion};
+use crate::core::snippet::{Snippet, blocking_search_with_options as search_snippet};
 use crate::database::model::source::Source;
 use crate::database::sql_types::KanjiChar;
-use crate::kanji::is_kanji;
 use crate::manager::ManagerExt;
-use crate::quiz::{MARUMARU, Quiz, QuizQuestion};
-use crate::snippet::{Snippet, blocking_search_with_options as search_snippet};
 use anyhow::Result;
 use futures::future::BoxFuture;
 use itertools::Itertools;

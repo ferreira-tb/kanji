@@ -1,5 +1,5 @@
+use crate::core::snippet::Snippet;
 use crate::database::sql_types::{BookmarkId, SourceId, Zoned};
-use crate::snippet::Snippet;
 use bon::Builder;
 use diesel::prelude::*;
 use serde::Serialize;

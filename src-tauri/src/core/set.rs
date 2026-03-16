@@ -3,7 +3,7 @@ use serde::Serialize;
 
 #[cfg(desktop)]
 use {
-  crate::kanji::{KanjiStats, search as search_kanji},
+  crate::core::kanji::{KanjiStats, search as search_kanji},
   crate::manager::ManagerExt,
   crate::settings,
   anyhow::Result,

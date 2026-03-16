@@ -1,4 +1,4 @@
-use crate::kanji::is_kanji;
+use crate::core::kanji::is_kanji;
 use anyhow::{Result, anyhow};
 use derive_more::{Deref, Display};
 use diesel::backend::Backend;

@@ -4,13 +4,10 @@
 mod database;
 mod error;
 
-mod kanji;
+mod core;
 mod manager;
 mod plugin;
-mod quiz;
-mod set;
 mod settings;
-mod snippet;
 mod window;
 
 #[cfg(desktop)]

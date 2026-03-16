@@ -1,8 +1,8 @@
+use crate::core::kanji::{self, KanjiStats};
+use crate::core::set::KanjiSet;
+use crate::core::snippet::{self, Snippet};
 use crate::database::sql_types::{KanjiChar, SourceId};
 use crate::error::CResult;
-use crate::kanji::{self, KanjiStats};
-use crate::set::KanjiSet;
-use crate::snippet::{self, Snippet};
 use tauri::AppHandle;
 
 #[tauri::command]

@@ -1,6 +1,6 @@
+use crate::core::quiz::Quiz;
 use crate::database::sql_types::KanjiChar;
 use crate::http;
-use crate::quiz::Quiz;
 use anyhow::Result;
 use itertools::Itertools;
 use scraper::Html;

@@ -7,14 +7,14 @@ mod html;
 
 pub use source_stats::QuizSourceStats;
 
+use crate::core::snippet::Snippet;
 use crate::database::sql_types::{KanjiChar, SourceGroupId, SourceId};
-use crate::snippet::Snippet;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
 #[cfg(desktop)]
 use {
-  crate::kanji::blocking_search_with_options,
+  crate::core::kanji::blocking_search_with_options,
   crate::manager::ManagerExt,
   crate::settings,
   anyhow::{Error, Result, bail},
