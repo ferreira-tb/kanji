@@ -1,5 +1,5 @@
 use crate::core::kanji::{self, KanjiStats};
-use crate::core::set::KanjiSet;
+use crate::core::kanji_set::KanjiSet;
 use crate::core::snippet::{self, Snippet};
 use crate::database::sql_types::{KanjiChar, SourceId};
 use crate::error::CResult;
