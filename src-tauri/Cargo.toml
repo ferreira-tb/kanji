@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "9.0.0"
+version = "8.2.0"
 publish = false
 
 [package.edition]
@@ -24,6 +24,7 @@ diesel.workspace = true
 diesel_migrations.workspace = true
 futures.workspace = true
 globset.workspace = true
+ignore.workspace = true
 itertools.workspace = true
 local-ip-address.workspace = true
 jiff.workspace = true
@@ -34,7 +35,6 @@ semver.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 strum.workspace = true
-tap.workspace = true
 tauri-plugin-clipboard-manager.workspace = true
 tauri-plugin-dialog.workspace = true
 tauri-plugin-fs.workspace = true
@@ -45,7 +45,6 @@ tauri-plugin-process.workspace = true
 tokio.workspace = true
 uuid.workspace = true
 url.workspace = true
-walkdir.workspace = true
 
 [dependencies.tauri]
 version = "2.10"

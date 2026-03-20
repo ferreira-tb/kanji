@@ -161,7 +161,7 @@ pub fn blocking_search_with_options(
     let name = Arc::from(source.name.as_str());
     let weight = source.weight;
 
-    for path in walk_source(source)? {
+    for path in walk_source(source) {
       let path = Arc::from(path);
       let file = File::open_buffered(&path)?;
 
