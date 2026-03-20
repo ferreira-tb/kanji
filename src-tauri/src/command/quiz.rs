@@ -1,9 +1,9 @@
+use crate::core::quiz::{Quiz, QuizKind, QuizSourceStats};
 use crate::database::model::quiz_answer::{NewQuizAnswer, QuizAnswer};
 use crate::database::model::quiz_chunk_history::{NewQuizChunkHistoryEntry, QuizChunkHistoryEntry};
 use crate::database::sql_types::{KanjiChar, KanjiSetChunkId, QuizAnswerId, SourceId};
 use crate::error::CResult;
 use crate::manager::ManagerExt;
-use crate::quiz::{Quiz, QuizKind, QuizSourceStats};
 use itertools::Itertools;
 use tauri::AppHandle;
 use tauri::async_runtime::spawn_blocking;

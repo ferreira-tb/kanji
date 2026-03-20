@@ -1,16 +1,13 @@
 #![cfg_attr(mobile, expect(unused))]
-#![feature(file_buffered, nonpoison_mutex, str_as_str, sync_nonpoison, try_blocks)]
+#![feature(file_buffered, nonpoison_mutex, sync_nonpoison, try_blocks)]
 
 mod database;
 mod error;
 
-mod kanji;
+mod core;
 mod manager;
 mod plugin;
-mod quiz;
-mod set;
 mod settings;
-mod snippet;
 mod window;
 
 #[cfg(desktop)]

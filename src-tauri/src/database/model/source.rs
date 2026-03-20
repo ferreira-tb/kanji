@@ -4,24 +4,7 @@ use diesel::prelude::*;
 use serde::Serialize;
 
 #[cfg(desktop)]
-use {
-  crate::manager::ManagerExt,
-  anyhow::Result,
-  globset::{Glob, GlobBuilder, GlobSet, GlobSetBuilder},
-  std::path::PathBuf,
-  std::sync::LazyLock,
-  tauri::AppHandle,
-  walkdir::{DirEntry, WalkDir},
-};
-
-#[cfg(desktop)]
-static GLOBSET: LazyLock<GlobSet> = LazyLock::new(|| {
-  GlobSetBuilder::new()
-    .add(glob("*.md"))
-    .add(glob("*.txt"))
-    .build()
-    .unwrap()
-});
+use {crate::manager::ManagerExt, anyhow::Result, tauri::AppHandle};
 
 #[derive(Identifiable, Queryable, Selectable, Clone, Debug, Serialize)]
 #[diesel(table_name = crate::database::schema::source)]
@@ -35,20 +18,6 @@ pub struct Source {
   pub updated_at: Zoned,
   pub enabled: bool,
   pub weight: SourceWeight,
-}
-
-#[cfg(desktop)]
-impl Source {
-  pub fn walk(&self) -> Vec<PathBuf> {
-    WalkDir::new(&*self.path)
-      .max_depth(1)
-      .sort_by_file_name()
-      .into_iter()
-      .flatten()
-      .map(DirEntry::into_path)
-      .filter(|path| path.is_file() && GLOBSET.is_match(path))
-      .collect()
-  }
 }
 
 #[derive(Insertable, Builder, Clone, Debug)]
@@ -75,12 +44,4 @@ impl NewSource<'_> {
   pub fn create(self, app: &AppHandle) -> Result<SourceId> {
     app.database().create_source(&self)
   }
-}
-
-#[cfg(desktop)]
-fn glob(glob: &str) -> Glob {
-  GlobBuilder::new(glob)
-    .case_insensitive(true)
-    .build()
-    .unwrap()
 }

@@ -1,3 +1,5 @@
+use crate::core::quiz::QuizKind;
+use crate::core::snippet::Snippet;
 use crate::database::sql_types::{
   BookmarkId,
   KanjiChar,
@@ -7,8 +9,6 @@ use crate::database::sql_types::{
   SourceWeight,
   SqlPath,
 };
-use crate::quiz::QuizKind;
-use crate::snippet::Snippet;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]

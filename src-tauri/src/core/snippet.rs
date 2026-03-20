@@ -10,9 +10,10 @@ use std::sync::atomic::Ordering::Relaxed;
 
 #[cfg(desktop)]
 use {
+  crate::core::kanji::is_kanji,
+  crate::core::source::walk_source,
   crate::database::model::bookmark::NewBookmark,
   crate::database::model::source::Source,
-  crate::kanji::is_kanji,
   crate::manager::ManagerExt,
   itertools::Itertools,
   memchr::memmem::Finder,
@@ -160,7 +161,7 @@ pub fn blocking_search_with_options(
     let name = Arc::from(source.name.as_str());
     let weight = source.weight;
 
-    for path in source.walk() {
+    for path in walk_source(source) {
       let path = Arc::from(path);
       let file = File::open_buffered(&path)?;
 

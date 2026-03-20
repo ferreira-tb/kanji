@@ -1,8 +1,8 @@
+use crate::core::snippet::Snippet;
 use crate::database::model::bookmark::Bookmark;
 use crate::database::sql_types::BookmarkId;
 use crate::error::CResult;
 use crate::manager::ManagerExt;
-use crate::snippet::Snippet;
 use tauri::AppHandle;
 
 #[tauri::command]
